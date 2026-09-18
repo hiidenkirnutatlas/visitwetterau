@@ -1,0 +1,234 @@
+{
+    "type": "FeatureCollection",
+    "name": "Wetterau entdecken",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "MUE001",
+                "slug": "burg-muenzenberg",
+                "name": "Burg Münzenberg",
+                "municipality": "Münzenberg",
+                "area": "Wetterau",
+                "category": "Burg und Schloss",
+                "short_description": "Eine der markantesten Burgruinen der Wetterau.",
+                "description": "Die weithin sichtbare Burg Münzenberg ist mit ihren zwei Bergfrieden ein besonders eindrucksvolles Ausflugsziel.",
+                "visit_time": "1–2 Stunden",
+                "parking": true,
+                "family_friendly": true,
+                "accessible": false,
+                "best_season": "Frühling bis Herbst",
+                "image": "assets/images/placeholder.svg",
+                "image_alt": "Platzhalterbild für die Burg Münzenberg",
+                "instagram_url": "",
+                "youtube_url": "",
+                "website_url": "https://www.schloesser-hessen.de/de/burg-muenzenberg",
+                "source_url": "https://www.schloesser-hessen.de/de/burg-muenzenberg",
+                "verified": false,
+                "tags": [
+                    "Burg",
+                    "Mittelalter",
+                    "Aussicht",
+                    "Geschichte"
+                ]
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.7755,
+                    50.4537
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "FRI001",
+                "slug": "burg-friedberg",
+                "name": "Burg Friedberg",
+                "municipality": "Friedberg",
+                "area": "Wetterau",
+                "category": "Burg und Schloss",
+                "short_description": "Eine große historische Burganlage mitten in Friedberg.",
+                "description": "Die Friedberger Burg verbindet Stadtgeschichte, mittelalterliche Architektur und den markanten Adolfsturm.",
+                "visit_time": "1–2 Stunden",
+                "parking": true,
+                "family_friendly": true,
+                "accessible": false,
+                "best_season": "Ganzjährig",
+                "image": "assets/images/placeholder.svg",
+                "image_alt": "Platzhalterbild für die Burg Friedberg",
+                "instagram_url": "",
+                "youtube_url": "",
+                "website_url": "https://www.friedberg-hessen.de/",
+                "source_url": "https://www.friedberg-hessen.de/",
+                "verified": false,
+                "tags": [
+                    "Burg",
+                    "Adolfsturm",
+                    "Altstadt",
+                    "Mittelalter"
+                ]
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.7544,
+                    50.3392
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "GLA001",
+                "slug": "keltenwelt-glauberg",
+                "name": "Keltenwelt am Glauberg",
+                "municipality": "Glauburg",
+                "area": "Wetterau",
+                "category": "Geschichte",
+                "short_description": "Museum, Archäologie und Landschaft am Glauberg.",
+                "description": "Am Glauberg treffen ein modernes Museum, keltische Geschichte, ein rekonstruiertes Grabhügelfeld und weite Ausblicke aufeinander.",
+                "visit_time": "2–3 Stunden",
+                "parking": true,
+                "family_friendly": true,
+                "accessible": true,
+                "best_season": "Ganzjährig",
+                "image": "assets/images/placeholder.svg",
+                "image_alt": "Platzhalterbild für die Keltenwelt am Glauberg",
+                "instagram_url": "",
+                "youtube_url": "",
+                "website_url": "https://www.keltenwelt-glauberg.de/",
+                "source_url": "https://www.keltenwelt-glauberg.de/",
+                "verified": false,
+                "tags": [
+                    "Kelten",
+                    "Museum",
+                    "Archäologie",
+                    "Glauberg"
+                ]
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.0073,
+                    50.3064
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "BUE001",
+                "slug": "altstadt-buedingen",
+                "name": "Altstadt Büdingen",
+                "municipality": "Büdingen",
+                "area": "Wetterau und Oberhessen",
+                "category": "Stadt und Fachwerk",
+                "short_description": "Fachwerk, Stadtmauer und mittelalterliche Gassen.",
+                "description": "Büdingen eignet sich für einen Rundgang entlang der Stadtmauer, durch historische Gassen und vorbei am Jerusalemer Tor.",
+                "visit_time": "2–3 Stunden",
+                "parking": true,
+                "family_friendly": true,
+                "accessible": false,
+                "best_season": "Ganzjährig",
+                "image": "assets/images/placeholder.svg",
+                "image_alt": "Platzhalterbild für die Altstadt von Büdingen",
+                "instagram_url": "",
+                "youtube_url": "",
+                "website_url": "https://www.buedingen.info/",
+                "source_url": "https://www.buedingen.info/",
+                "verified": false,
+                "tags": [
+                    "Fachwerk",
+                    "Altstadt",
+                    "Stadtmauer",
+                    "Jerusalemer Tor"
+                ]
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.1166,
+                    50.2925
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "NID001",
+                "slug": "kurpark-bad-salzhausen",
+                "name": "Kurpark Bad Salzhausen",
+                "municipality": "Nidda",
+                "area": "Wetterau und Oberhessen",
+                "category": "Landesgartenschau 2027",
+                "short_description": "Historischer Kurpark und Standort der Landesgartenschau 2027.",
+                "description": "Der Kurpark Bad Salzhausen gehört zu den zentralen Ausstellungsgeländen der Landesgartenschau Oberhessen 2027.",
+                "visit_time": "1–3 Stunden",
+                "parking": true,
+                "family_friendly": true,
+                "accessible": true,
+                "best_season": "Ganzjährig",
+                "image": "assets/images/placeholder.svg",
+                "image_alt": "Platzhalterbild für den Kurpark Bad Salzhausen",
+                "instagram_url": "",
+                "youtube_url": "",
+                "website_url": "https://www.landesgartenschau-oberhessen.de/",
+                "source_url": "https://www.landesgartenschau-oberhessen.de/",
+                "verified": false,
+                "tags": [
+                    "Kurpark",
+                    "Bad Salzhausen",
+                    "Nidda",
+                    "Landesgartenschau"
+                ]
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.0102,
+                    50.4168
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "GED001",
+                "slug": "schlosspark-gedern",
+                "name": "Schlosspark Gedern",
+                "municipality": "Gedern",
+                "area": "Oberhessen",
+                "category": "Landesgartenschau 2027",
+                "short_description": "Historischer Schlosspark und Ausstellungsgelände 2027.",
+                "description": "Der Schlosspark Gedern wird 2027 eines der beiden eintrittspflichtigen Ausstellungsgelände der Landesgartenschau Oberhessen.",
+                "visit_time": "1–3 Stunden",
+                "parking": true,
+                "family_friendly": true,
+                "accessible": true,
+                "best_season": "Frühling bis Herbst",
+                "image": "assets/images/placeholder.svg",
+                "image_alt": "Platzhalterbild für den Schlosspark Gedern",
+                "instagram_url": "",
+                "youtube_url": "",
+                "website_url": "https://www.landesgartenschau-oberhessen.de/",
+                "source_url": "https://www.landesgartenschau-oberhessen.de/",
+                "verified": false,
+                "tags": [
+                    "Schlosspark",
+                    "Gedern",
+                    "Garten",
+                    "Landesgartenschau"
+                ]
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    9.197,
+                    50.4245
+                ]
+            }
+        }
+    ]
+}
