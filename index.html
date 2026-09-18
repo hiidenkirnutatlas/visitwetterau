@@ -18,15 +18,9 @@
         Ausflugsziele in der Wetterau."
     >
 
-    <meta
-        name="theme-color"
-        content="#244a3a"
-    >
+    <meta name="theme-color" content="#244a3a">
 
-    <meta
-        property="og:title"
-        content="Wetterau entdecken"
-    >
+    <meta property="og:title" content="Wetterau entdecken">
 
     <meta
         property="og:description"
@@ -34,10 +28,7 @@
         Wetterau."
     >
 
-    <meta
-        property="og:type"
-        content="website"
-    >
+    <meta property="og:type" content="website">
 
     <link
         rel="stylesheet"
@@ -46,10 +37,7 @@
         crossorigin=""
     >
 
-    <link
-        rel="stylesheet"
-        href="assets/css/style.css"
-    >
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
@@ -91,7 +79,10 @@
                         Karte entdecken
                     </a>
 
-                    <a class="button button-secondary" href="#social-media">
+                    <a
+                        class="button button-secondary"
+                        href="#social-media"
+                    >
                         Videos ansehen
                     </a>
                 </div>
@@ -100,7 +91,10 @@
     </header>
 
     <main id="main-content">
-        <section class="intro-section" aria-labelledby="intro-title">
+        <section
+            class="intro-section"
+            aria-labelledby="intro-title"
+        >
             <div class="intro-grid">
                 <div>
                     <p class="section-label">
@@ -171,4 +165,228 @@
                     </span>
 
                     <span>
-                 
+                        <span class="legend-symbol">🏺</span>
+                        Geschichte
+                    </span>
+
+                    <span>
+                        <span class="legend-symbol">🌸</span>
+                        Landesgartenschau 2027
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <section
+            id="orte"
+            class="locations-section"
+            aria-labelledby="locations-title"
+        >
+            <div class="section-heading">
+                <p class="section-label">
+                    Ausflugsziele
+                </p>
+
+                <h2 id="locations-title">
+                    Orte suchen und filtern
+                </h2>
+            </div>
+
+            <div class="search-panel">
+                <div class="form-group">
+                    <label for="searchInput">
+                        Suche
+                    </label>
+
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Zum Beispiel Münzenberg oder Büdingen"
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="categoryFilter">
+                        Kategorie
+                    </label>
+
+                    <select id="categoryFilter">
+                        <option value="all">
+                            Alle Kategorien
+                        </option>
+
+                        <option value="Burg und Schloss">
+                            Burgen und Schlösser
+                        </option>
+
+                        <option value="Geschichte">
+                            Geschichte
+                        </option>
+
+                        <option value="Natur">
+                            Natur
+                        </option>
+
+                        <option value="Aussichtspunkt">
+                            Aussichtspunkte
+                        </option>
+
+                        <option value="Stadt und Fachwerk">
+                            Städte und Fachwerk
+                        </option>
+
+                        <option value="Genuss">
+                            Genuss
+                        </option>
+
+                        <option value="Landesgartenschau 2027">
+                            Landesgartenschau 2027
+                        </option>
+                    </select>
+                </div>
+
+                <button
+                    id="resetFilters"
+                    class="reset-button"
+                    type="button"
+                >
+                    Filter zurücksetzen
+                </button>
+            </div>
+
+            <div class="results-header">
+                <p
+                    id="resultCount"
+                    class="result-count"
+                    aria-live="polite"
+                >
+                    Orte werden geladen …
+                </p>
+            </div>
+
+            <div id="results" class="results-grid"></div>
+
+            <noscript>
+                <p class="notice">
+                    Für die Karte und die Suchfunktion muss JavaScript
+                    aktiviert sein.
+                </p>
+            </noscript>
+        </section>
+
+        <section
+            id="social-media"
+            class="social-section"
+            aria-labelledby="social-title"
+        >
+            <div class="social-content">
+                <p class="section-label section-label-light">
+                    Neue Entdeckungen
+                </p>
+
+                <h2 id="social-title">
+                    Begleite mich auf Instagram und YouTube
+                </h2>
+
+                <p>
+                    Auf Instagram findest du kurze Entdeckungen und
+                    aktuelle Eindrücke. Auf YouTube erscheinen
+                    ausführlichere Videos mit Geschichten, Rundgängen
+                    und Ausflugstipps.
+                </p>
+
+                <div class="social-actions">
+                    <!-- DEINNAME später ersetzen. -->
+                    <a
+                        class="button button-light"
+                        href="https://www.instagram.com/DEINNAME/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Instagram öffnen
+                    </a>
+
+                    <!-- DEINNAME später ersetzen. -->
+                    <a
+                        class="button button-outline-light"
+                        href="https://www.youtube.com/@DEINNAME"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        YouTube öffnen
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section
+            id="projekt"
+            class="about-section"
+            aria-labelledby="about-title"
+        >
+            <div class="about-card">
+                <div>
+                    <p class="section-label">
+                        Über das Projekt
+                    </p>
+
+                    <h2 id="about-title">
+                        Die Wetterau nach Feierabend entdecken
+                    </h2>
+                </div>
+
+                <div>
+                    <p>
+                        Dieses Projekt ist ein persönliches und
+                        unabhängiges Angebot. Ich besuche Orte in und um
+                        die Wetterau und dokumentiere, was sich für einen
+                        kurzen Ausflug oder einen freien Nachmittag lohnt.
+                    </p>
+
+                    <p>
+                        Die Website ist keine offizielle Seite des
+                        Wetteraukreises, der TourismusRegion Wetterau oder
+                        der Landesgartenschau Oberhessen.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div>
+                <strong>Wetterau entdecken</strong>
+
+                <p>
+                    Orte, Geschichten und Ausflüge aus der Region.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <a href="#projekt">
+                    Über das Projekt
+                </a>
+
+                <!-- E-Mail-Adresse später ersetzen. -->
+                <a href="mailto:DEINE-EMAIL@BEISPIEL.DE">
+                    Kontakt
+                </a>
+            </div>
+        </div>
+
+        <p class="copyright">
+            © <span id="currentYear"></span> Wetterau entdecken
+        </p>
+    </footer>
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""
+    ></script>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
