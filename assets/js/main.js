@@ -270,11 +270,11 @@ function initializeWebsite() {
 
         const image = document.createElement("img");
         image.src =
-            properties.image || "./assets/images/placeholder.svg";
+            properties.image || "./assets/images/placeholder.png";
         image.alt = properties.image_alt || properties.name;
 
         image.addEventListener("error", () => {
-            image.src = "./assets/images/placeholder.svg";
+            image.src = "./assets/images/placeholder.png";
         });
 
         const category = document.createElement("p");
