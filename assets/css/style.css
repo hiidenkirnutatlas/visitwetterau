@@ -31,8 +31,13 @@ body {
     color: var(--text);
     background: var(--sand-light);
     font-family:
-        Inter, ui-sans-serif, system-ui, -apple-system,
-        BlinkMacSystemFont, "Segoe UI", sans-serif;
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     line-height: 1.6;
 }
 
@@ -51,6 +56,11 @@ select {
     font: inherit;
 }
 
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
 .skip-link {
     position: fixed;
     top: 12px;
@@ -60,7 +70,9 @@ select {
     color: var(--white);
     background: var(--forest-dark);
     border-radius: 8px;
+    text-decoration: none;
     transform: translateY(-150%);
+    transition: transform 180ms ease;
 }
 
 .skip-link:focus {
@@ -69,6 +81,7 @@ select {
 
 .hero {
     min-height: 88vh;
+    min-height: 88dvh;
     color: var(--white);
     background:
         linear-gradient(
@@ -76,7 +89,7 @@ select {
             rgb(17 43 33 / 88%),
             rgb(17 43 33 / 48%)
         ),
-        url("../images/hero_wetterau.jpg");
+        url("../images/hero.png");
     background-color: var(--forest-dark);
     background-position: center;
     background-size: cover;
@@ -84,6 +97,7 @@ select {
 
 .hero-overlay {
     min-height: 88vh;
+    min-height: 88dvh;
     padding: 24px;
 }
 
@@ -99,6 +113,7 @@ select {
     color: var(--white);
     font-size: 1.35rem;
     font-weight: 800;
+    letter-spacing: -0.02em;
     text-decoration: none;
 }
 
@@ -123,6 +138,7 @@ select {
 .hero-content {
     display: flex;
     min-height: 68vh;
+    min-height: 68dvh;
     width: min(100%, var(--content-width));
     margin: 0 auto;
     flex-direction: column;
@@ -149,6 +165,7 @@ select {
     margin: 0;
     font-family: Georgia, "Times New Roman", serif;
     font-size: clamp(2.7rem, 7vw, 5.8rem);
+    font-weight: 700;
     letter-spacing: -0.045em;
     line-height: 0.98;
 }
@@ -177,7 +194,17 @@ select {
     align-items: center;
     justify-content: center;
     font-weight: 750;
+    line-height: 1.2;
     text-decoration: none;
+    transition:
+        background-color 180ms ease,
+        border-color 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
 }
 
 .button-primary {
@@ -185,10 +212,18 @@ select {
     background: var(--grain);
 }
 
+.button-primary:hover {
+    background: #e2b75d;
+}
+
 .button-secondary {
     color: var(--white);
     background: rgb(255 255 255 / 8%);
     border-color: rgb(255 255 255 / 65%);
+}
+
+.button-secondary:hover {
+    background: rgb(255 255 255 / 16%);
 }
 
 section {
@@ -204,11 +239,11 @@ section {
     padding-bottom: 90px;
 }
 
-.intro-grid,
-.about-card {
+.intro-grid {
     display: grid;
     grid-template-columns: 0.9fr 1.1fr;
     gap: clamp(32px, 7vw, 100px);
+    align-items: start;
 }
 
 .intro-grid h2,
@@ -218,6 +253,7 @@ section {
     margin: 0;
     font-family: Georgia, "Times New Roman", serif;
     font-size: clamp(2rem, 4.5vw, 3.7rem);
+    font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 1.08;
 }
@@ -242,11 +278,25 @@ section {
 }
 
 .map-section {
-    width: min(100% - 32px, 1320px);
+    width: 100%;
+    max-width: none;
+    margin: 0 auto;
+    padding-right: 0;
+    padding-left: 0;
+    scroll-margin-top: 20px;
+}
+
+.map-section .section-heading {
+    width: min(90vw, 900px);
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .map-wrapper {
     position: relative;
+    width: 90vw;
+    margin-right: auto;
+    margin-left: auto;
     overflow: hidden;
     background: var(--white);
     border: 1px solid var(--border);
@@ -258,8 +308,8 @@ section {
     position: relative;
     z-index: 1;
     width: 100%;
-    height: 620px;
-    min-height: 480px;
+    height: 70vh;
+    height: 70dvh;
     background: #dce8df;
 }
 
@@ -274,6 +324,7 @@ section {
     background: rgb(23 51 41 / 90%);
     border-radius: 999px;
     font-size: 0.85rem;
+    text-align: center;
     transform: translateX(-50%);
 }
 
@@ -296,16 +347,31 @@ section {
     gap: 18px;
     padding: 18px 22px;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     color: var(--muted);
     background: var(--paper);
     border-top: 1px solid var(--border);
     font-size: 0.9rem;
 }
 
+.map-legend > span {
+    display: inline-flex;
+    gap: 7px;
+    align-items: center;
+}
+
+.legend-symbol {
+    font-size: 1.15rem;
+}
+
 .leaflet-container {
     z-index: 1;
     font-family:
-        Inter, ui-sans-serif, system-ui, sans-serif;
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        sans-serif;
 }
 
 .leaflet-container img {
@@ -321,8 +387,13 @@ section {
     box-shadow: var(--small-shadow);
 }
 
+.leaflet-popup-content {
+    margin: 16px;
+}
+
 .map-popup {
     width: 230px;
+    max-width: 100%;
 }
 
 .map-popup img {
@@ -337,6 +408,7 @@ section {
     margin: 0 0 5px;
     color: var(--forest);
     font-size: 1.1rem;
+    line-height: 1.25;
 }
 
 .map-popup p {
@@ -354,6 +426,7 @@ section {
     margin-top: 10px;
     color: var(--forest);
     font-weight: 750;
+    text-underline-offset: 3px;
 }
 
 .weather-marker-wrapper {
@@ -397,6 +470,10 @@ section {
 
 .marker-lgs {
     background: #b55b78;
+}
+
+.locations-section {
+    scroll-margin-top: 20px;
 }
 
 .search-panel {
@@ -453,15 +530,28 @@ section {
     border-radius: 10px;
     cursor: pointer;
     font-weight: 750;
+    transition:
+        background-color 180ms ease,
+        transform 180ms ease;
 }
 
 .reset-button:hover,
 .card-map-button:hover {
     background: var(--forest-dark);
+    transform: translateY(-1px);
+}
+
+.reset-button:focus-visible,
+.card-map-button:focus-visible {
+    outline: 3px solid rgb(120 152 70 / 35%);
+    outline-offset: 2px;
 }
 
 .results-header {
+    display: flex;
     margin: 32px 0 18px;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .result-count {
@@ -485,6 +575,14 @@ section {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--small-shadow);
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.result-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-4px);
 }
 
 .result-card-image {
@@ -514,6 +612,7 @@ section {
     color: var(--forest);
     font-family: Georgia, "Times New Roman", serif;
     font-size: 1.55rem;
+    line-height: 1.2;
 }
 
 .result-card-location {
@@ -555,6 +654,7 @@ section {
 
 .card-map-button {
     min-height: 43px;
+    font-size: 0.88rem;
 }
 
 .card-external-link {
@@ -565,8 +665,17 @@ section {
     color: var(--forest);
     border: 1px solid var(--forest);
     border-radius: 10px;
+    font-size: 0.88rem;
     font-weight: 750;
     text-decoration: none;
+    transition:
+        background-color 180ms ease,
+        transform 180ms ease;
+}
+
+.card-external-link:hover {
+    background: var(--sand);
+    transform: translateY(-1px);
 }
 
 .empty-results,
@@ -618,12 +727,27 @@ section {
     background: var(--white);
 }
 
+.button-light:hover {
+    background: var(--sand);
+}
+
 .button-outline-light {
     color: var(--white);
     border-color: rgb(255 255 255 / 65%);
 }
 
+.button-outline-light:hover {
+    background: rgb(255 255 255 / 10%);
+}
+
+.about-section {
+    scroll-margin-top: 20px;
+}
+
 .about-card {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: clamp(32px, 7vw, 90px);
     padding: clamp(28px, 6vw, 70px);
     background: var(--sand);
     border-radius: var(--radius);
@@ -631,6 +755,10 @@ section {
 
 .about-card p {
     color: #59645e;
+}
+
+.about-card div:last-child p:first-child {
+    margin-top: 0;
 }
 
 footer {
@@ -660,6 +788,11 @@ footer {
 
 .footer-links a {
     color: var(--white);
+    text-underline-offset: 4px;
+}
+
+.footer-links a:hover {
+    color: var(--grain);
 }
 
 .copyright {
@@ -718,9 +851,19 @@ footer {
         padding-bottom: 65px;
     }
 
+    .map-wrapper {
+        width: 90vw;
+        border-radius: 16px;
+    }
+
+    .map-section .section-heading {
+        width: 90vw;
+    }
+
     #map {
-        height: 520px;
-        min-height: 420px;
+        width: 100%;
+        height: 70vh;
+        height: 70dvh;
     }
 
     .search-panel,
@@ -756,9 +899,30 @@ footer {
         width: 100%;
     }
 
+    .map-wrapper {
+        width: 90vw;
+        border-radius: 14px;
+    }
+
+    .map-section .section-heading {
+        width: 90vw;
+    }
+
     #map {
-        height: 460px;
-        min-height: 380px;
+        width: 100%;
+        height: 70vh;
+        height: 70dvh;
+    }
+
+    .map-legend {
+        gap: 10px 15px;
+        padding: 15px;
+        justify-content: flex-start;
+    }
+
+    .map-status {
+        max-width: calc(100% - 30px);
+        white-space: nowrap;
     }
 
     .result-card-image {
