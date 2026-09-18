@@ -325,12 +325,12 @@ function initializeWebsite() {
         const image = document.createElement("img");
         image.className = "result-card-image";
         image.src =
-            properties.image || "./assets/images/placeholder.svg";
+            properties.image || "./assets/images/placeholder.png";
         image.alt = properties.image_alt || properties.name;
         image.loading = "lazy";
 
         image.addEventListener("error", () => {
-            image.src = "./assets/images/placeholder.svg";
+            image.src = "./assets/images/placeholder.png";
         });
 
         const content = document.createElement("div");
