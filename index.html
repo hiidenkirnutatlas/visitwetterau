@@ -9,7 +9,7 @@
     >
 
     <title>
-        Wetterau entdecken | Ausflugsziele, Geschichten und Videos
+        Wetterau entdecken | Ausflugsziele und Geschichten
     </title>
 
     <meta
@@ -20,24 +20,12 @@
 
     <meta name="theme-color" content="#244a3a">
 
-    <meta property="og:title" content="Wetterau entdecken">
-
-    <meta
-        property="og:description"
-        content="Besondere Orte, Ausflugsziele und Geschichten aus der
-        Wetterau."
-    >
-
-    <meta property="og:type" content="website">
-
     <link
         rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIINfQ3ynhMZJOZ19Z4u9l8gfw2ZxEIlMZE="
-        crossorigin=""
+        href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
     >
 
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 
 <body>
@@ -48,15 +36,15 @@
     <header class="hero">
         <div class="hero-overlay">
             <nav class="navigation" aria-label="Hauptnavigation">
-                <a class="logo" href="#">
+                <a class="logo" href="./">
                     Wetterau entdecken
                 </a>
 
                 <div class="menu">
                     <a href="#karte">Karte</a>
                     <a href="#orte">Orte</a>
-                    <a href="#projekt">Projekt</a>
                     <a href="#social-media">Videos</a>
+                    <a href="#projekt">Projekt</a>
                 </div>
             </nav>
 
@@ -145,34 +133,20 @@
             <div class="map-wrapper">
                 <div
                     id="map"
+                    role="application"
                     aria-label="Interaktive Karte der Wetterau"
                 ></div>
 
+                <p id="mapStatus" class="map-status" aria-live="polite">
+                    Karte wird geladen …
+                </p>
+
                 <div class="map-legend" aria-label="Kartenlegende">
-                    <span>
-                        <span class="legend-symbol">🏰</span>
-                        Burgen
-                    </span>
-
-                    <span>
-                        <span class="legend-symbol">🌳</span>
-                        Natur
-                    </span>
-
-                    <span>
-                        <span class="legend-symbol">🏘️</span>
-                        Orte
-                    </span>
-
-                    <span>
-                        <span class="legend-symbol">🏺</span>
-                        Geschichte
-                    </span>
-
-                    <span>
-                        <span class="legend-symbol">🌸</span>
-                        Landesgartenschau 2027
-                    </span>
+                    <span>🏰 Burgen</span>
+                    <span>🌳 Natur</span>
+                    <span>🏘️ Orte</span>
+                    <span>🏺 Geschichte</span>
+                    <span>🌸 Landesgartenschau 2027</span>
                 </div>
             </div>
         </section>
@@ -269,8 +243,8 @@
 
             <noscript>
                 <p class="notice">
-                    Für die Karte und die Suchfunktion muss JavaScript
-                    aktiviert sein.
+                    Für die Karte und die Suche muss JavaScript aktiviert
+                    sein.
                 </p>
             </noscript>
         </section>
@@ -290,14 +264,12 @@
                 </h2>
 
                 <p>
-                    Auf Instagram findest du kurze Entdeckungen und
-                    aktuelle Eindrücke. Auf YouTube erscheinen
-                    ausführlichere Videos mit Geschichten, Rundgängen
-                    und Ausflugstipps.
+                    Auf Instagram findest du kurze Entdeckungen und aktuelle
+                    Eindrücke. Auf YouTube erscheinen ausführliche Videos
+                    mit Geschichten, Rundgängen und Ausflugstipps.
                 </p>
 
                 <div class="social-actions">
-                    <!-- DEINNAME später ersetzen. -->
                     <a
                         class="button button-light"
                         href="https://www.instagram.com/DEINNAME/"
@@ -307,7 +279,6 @@
                         Instagram öffnen
                     </a>
 
-                    <!-- DEINNAME später ersetzen. -->
                     <a
                         class="button button-outline-light"
                         href="https://www.youtube.com/@DEINNAME"
@@ -338,10 +309,10 @@
 
                 <div>
                     <p>
-                        Dieses Projekt ist ein persönliches und
-                        unabhängiges Angebot. Ich besuche Orte in und um
-                        die Wetterau und dokumentiere, was sich für einen
-                        kurzen Ausflug oder einen freien Nachmittag lohnt.
+                        Dieses Projekt ist ein persönliches und unabhängiges
+                        Angebot. Ich besuche Orte in und um die Wetterau und
+                        dokumentiere, was sich für einen kurzen Ausflug oder
+                        einen freien Nachmittag lohnt.
                     </p>
 
                     <p>
@@ -365,11 +336,8 @@
             </div>
 
             <div class="footer-links">
-                <a href="#projekt">
-                    Über das Projekt
-                </a>
+                <a href="#projekt">Über das Projekt</a>
 
-                <!-- E-Mail-Adresse später ersetzen. -->
                 <a href="mailto:DEINE-EMAIL@BEISPIEL.DE">
                     Kontakt
                 </a>
@@ -382,11 +350,9 @@
     </footer>
 
     <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""
+        src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
     ></script>
 
-    <script src="assets/js/main.js"></script>
+    <script src="./assets/js/main.js"></script>
 </body>
 </html>
