@@ -881,6 +881,19 @@ footer {
 }
 
 @media (max-width: 480px) {
+    .hero {
+    color: var(--white);
+    background:
+        linear-gradient(
+            100deg,
+            rgb(17 43 33 / 88%),
+            rgb(17 43 33 / 48%)
+        ),
+        url("../images/hero.png");
+    background-color: var(--forest-dark);
+    background-position: center;
+    background-size: cover;
+        
     .hero-overlay {
         padding: 18px;
     }
