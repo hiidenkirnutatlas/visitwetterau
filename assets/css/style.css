@@ -31,13 +31,8 @@ body {
     color: var(--text);
     background: var(--sand-light);
     font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+        Inter, ui-sans-serif, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
     line-height: 1.6;
 }
 
@@ -56,11 +51,6 @@ select {
     font: inherit;
 }
 
-button,
-a {
-    -webkit-tap-highlight-color: transparent;
-}
-
 .skip-link {
     position: fixed;
     top: 12px;
@@ -71,7 +61,6 @@ a {
     background: var(--forest-dark);
     border-radius: 8px;
     transform: translateY(-150%);
-    transition: transform 180ms ease;
 }
 
 .skip-link:focus {
@@ -110,7 +99,6 @@ a {
     color: var(--white);
     font-size: 1.35rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
     text-decoration: none;
 }
 
@@ -161,7 +149,6 @@ a {
     margin: 0;
     font-family: Georgia, "Times New Roman", serif;
     font-size: clamp(2.7rem, 7vw, 5.8rem);
-    font-weight: 700;
     letter-spacing: -0.045em;
     line-height: 0.98;
 }
@@ -190,17 +177,7 @@ a {
     align-items: center;
     justify-content: center;
     font-weight: 750;
-    line-height: 1.2;
     text-decoration: none;
-    transition:
-        background-color 180ms ease,
-        border-color 180ms ease,
-        color 180ms ease,
-        transform 180ms ease;
-}
-
-.button:hover {
-    transform: translateY(-2px);
 }
 
 .button-primary {
@@ -208,18 +185,10 @@ a {
     background: var(--grain);
 }
 
-.button-primary:hover {
-    background: #e2b75d;
-}
-
 .button-secondary {
     color: var(--white);
     background: rgb(255 255 255 / 8%);
     border-color: rgb(255 255 255 / 65%);
-}
-
-.button-secondary:hover {
-    background: rgb(255 255 255 / 16%);
 }
 
 section {
@@ -235,11 +204,11 @@ section {
     padding-bottom: 90px;
 }
 
-.intro-grid {
+.intro-grid,
+.about-card {
     display: grid;
     grid-template-columns: 0.9fr 1.1fr;
     gap: clamp(32px, 7vw, 100px);
-    align-items: start;
 }
 
 .intro-grid h2,
@@ -277,6 +246,7 @@ section {
 }
 
 .map-wrapper {
+    position: relative;
     overflow: hidden;
     background: var(--white);
     border: 1px solid var(--border);
@@ -285,10 +255,40 @@ section {
 }
 
 #map {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 620px;
     min-height: 480px;
     background: #dce8df;
+}
+
+.map-status {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    z-index: 1001;
+    margin: 0;
+    padding: 9px 14px;
+    color: var(--white);
+    background: rgb(23 51 41 / 90%);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    transform: translateX(-50%);
+}
+
+.map-status[hidden] {
+    display: none;
+}
+
+.map-error {
+    display: flex;
+    padding: 30px;
+    align-items: center;
+    justify-content: center;
+    color: #842029;
+    background: #f8d7da;
+    text-align: center;
 }
 
 .map-legend {
@@ -302,23 +302,18 @@ section {
     font-size: 0.9rem;
 }
 
-.map-legend > span {
-    display: inline-flex;
-    gap: 7px;
-    align-items: center;
-}
-
-.legend-symbol {
-    font-size: 1.15rem;
-}
-
 .leaflet-container {
     z-index: 1;
     font-family:
-        Inter,
-        ui-sans-serif,
-        system-ui,
-        sans-serif;
+        Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.leaflet-container img {
+    max-width: none !important;
+}
+
+.leaflet-tile {
+    max-width: none !important;
 }
 
 .leaflet-popup-content-wrapper {
@@ -342,7 +337,6 @@ section {
     margin: 0 0 5px;
     color: var(--forest);
     font-size: 1.1rem;
-    line-height: 1.25;
 }
 
 .map-popup p {
@@ -360,7 +354,11 @@ section {
     margin-top: 10px;
     color: var(--forest);
     font-weight: 750;
-    text-underline-offset: 3px;
+}
+
+.weather-marker-wrapper {
+    background: transparent;
+    border: 0;
 }
 
 .custom-map-marker {
@@ -463,10 +461,7 @@ section {
 }
 
 .results-header {
-    display: flex;
     margin: 32px 0 18px;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .result-count {
@@ -490,14 +485,6 @@ section {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--small-shadow);
-    transition:
-        transform 180ms ease,
-        box-shadow 180ms ease;
-}
-
-.result-card:hover {
-    box-shadow: var(--shadow);
-    transform: translateY(-4px);
 }
 
 .result-card-image {
@@ -527,7 +514,6 @@ section {
     color: var(--forest);
     font-family: Georgia, "Times New Roman", serif;
     font-size: 1.55rem;
-    line-height: 1.2;
 }
 
 .result-card-location {
@@ -569,7 +555,6 @@ section {
 
 .card-map-button {
     min-height: 43px;
-    font-size: 0.88rem;
 }
 
 .card-external-link {
@@ -580,13 +565,8 @@ section {
     color: var(--forest);
     border: 1px solid var(--forest);
     border-radius: 10px;
-    font-size: 0.88rem;
     font-weight: 750;
     text-decoration: none;
-}
-
-.card-external-link:hover {
-    background: var(--sand);
 }
 
 .empty-results,
@@ -638,23 +618,12 @@ section {
     background: var(--white);
 }
 
-.button-light:hover {
-    background: var(--sand);
-}
-
 .button-outline-light {
     color: var(--white);
     border-color: rgb(255 255 255 / 65%);
 }
 
-.button-outline-light:hover {
-    background: rgb(255 255 255 / 10%);
-}
-
 .about-card {
-    display: grid;
-    grid-template-columns: 0.9fr 1.1fr;
-    gap: clamp(32px, 7vw, 90px);
     padding: clamp(28px, 6vw, 70px);
     background: var(--sand);
     border-radius: var(--radius);
@@ -662,10 +631,6 @@ section {
 
 .about-card p {
     color: #59645e;
-}
-
-.about-card div:last-child p:first-child {
-    margin-top: 0;
 }
 
 footer {
@@ -695,7 +660,6 @@ footer {
 
 .footer-links a {
     color: var(--white);
-    text-underline-offset: 4px;
 }
 
 .copyright {
@@ -795,10 +759,6 @@ footer {
     #map {
         height: 460px;
         min-height: 380px;
-    }
-
-    .map-legend {
-        gap: 10px 15px;
     }
 
     .result-card-image {
