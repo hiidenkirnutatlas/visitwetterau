@@ -1,288 +1,174 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="de">
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Wetterau entdecken | Ausflugsziele, Geschichten und Videos
+    </title>
 
+    <meta
+        name="description"
+        content="Entdecke Burgen, Natur, Fachwerk, Geschichte und besondere
+        Ausflugsziele in der Wetterau."
+    >
 
-<title>
-Hiidenkirnut Atlas | Explore Finland's Giant Kettles
-</title>
+    <meta
+        name="theme-color"
+        content="#244a3a"
+    >
 
+    <meta
+        property="og:title"
+        content="Wetterau entdecken"
+    >
 
-<meta name="description"
-content="Discover Finland's Hiidenkirnut, ancient giant kettles created after the Ice Age. Explore locations, maps, photos and geological information.">
+    <meta
+        property="og:description"
+        content="Besondere Orte, Ausflugsziele und Geschichten aus der
+        Wetterau."
+    >
 
+    <meta
+        property="og:type"
+        content="website"
+    >
 
-<meta name="keywords"
-content="Hiidenkirnut, Finland, giant kettles, glacial potholes, geology, travel">
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIINfQ3ynhMZJOZ19Z4u9l8gfw2ZxEIlMZE="
+        crossorigin=""
+    >
 
-
-<link rel="stylesheet" href="assets/css/style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css"
+    >
 </head>
 
-
 <body>
-
-
-<header class="hero">
-
-
-<div class="overlay">
-
-
-<nav class="navigation">
-
-
-<div class="logo">
-Hiidenkirnut Atlas
-</div>
-
-
-<div class="menu">
-
-<a href="#map">
-Map
-</a>
-
-<a href="#regions">
-Regions
-</a>
-
-<a href="#about">
-About
-</a>
-
-<a href="#submit">
-Submit
-</a>
-
-<a href="fi/index.html">
-🇫🇮 FI
-</a>
-
-
-</div>
-
-
-</nav>
-
-
-
-<div class="hero-content">
-
-
-<h1>
-Explore Finland's Hiidenkirnut
-</h1>
-
-
-<p>
-Discover ancient giant kettles formed by the forces of the Ice Age.
-</p>
-
-
-<a class="button" href="#map">
-Explore the map
-</a>
-
-
-</div>
-
-
-</div>
-
-</header>
-
-
-
-
-<section id="map" class="map-section">
-
-
-<h2>
-Interactive Map
-</h2>
-
-
-<div id="map"></div>
-
-
-</section>
-
-
-
-
-<section class="search-section">
-
-
-<h2>
-Find a Hiidenkirnu
-</h2>
-
-
-<input 
-type="text"
-placeholder="Search by name, region or municipality..."
->
-
-
-<div class="filters">
-
-
-<button>
-All regions
-</button>
-
-
-<button>
-Lapland
-</button>
-
-
-<button>
-Uusimaa
-</button>
-
-
-<button>
-North Karelia
-</button>
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-<section id="regions">
-
-
-<h2>
-Explore by Region
-</h2>
-
-
-<div class="cards">
-
-
-<div class="card">
-
-<h3>
-Uusimaa
-</h3>
-
-<p>
-Famous locations near Helsinki.
-</p>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-Lapland
-</h3>
-
-<p>
-Northern geological wonders.
-</p>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-Eastern Finland
-</h3>
-
-<p>
-Ancient landscapes and forests.
-</p>
-
-</div>
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-<section id="about">
-
-
-<h2>
-What are Hiidenkirnut?
-</h2>
-
-
-<p>
-
-Hiidenkirnut are giant kettles created when powerful glacial meltwater rotated stones against bedrock after the Ice Age.
-
-</p>
-
-
-</section>
-
-
-
-
-<section id="submit">
-
-
-<h2>
-Submit a Location
-</h2>
-
-
-<p>
-
-Found a Hiidenkirnu? Share the information with our database.
-
-</p>
-
-
-<button class="button">
-
-Submit location
-
-</button>
-
-
-</section>
-
-
-
-
-<footer>
-
-<p>
-© Hiidenkirnut Atlas
-</p>
-
-</footer>
-
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="assets/js/main.js"></script>
-
-
-</body>
-
-</html>
+    <a class="skip-link" href="#main-content">
+        Zum Inhalt springen
+    </a>
+
+    <header class="hero">
+        <div class="hero-overlay">
+            <nav class="navigation" aria-label="Hauptnavigation">
+                <a class="logo" href="#">
+                    Wetterau entdecken
+                </a>
+
+                <div class="menu">
+                    <a href="#karte">Karte</a>
+                    <a href="#orte">Orte</a>
+                    <a href="#projekt">Projekt</a>
+                    <a href="#social-media">Videos</a>
+                </div>
+            </nav>
+
+            <div class="hero-content">
+                <p class="eyebrow">
+                    Zwischen Frankfurt, Taunus und Vogelsberg
+                </p>
+
+                <h1>
+                    Besondere Orte in der Wetterau entdecken
+                </h1>
+
+                <p class="hero-description">
+                    Burgen, Natur, Geschichte, Fachwerk und kleine
+                    Entdeckungen für deinen nächsten Ausflug.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="button button-primary" href="#karte">
+                        Karte entdecken
+                    </a>
+
+                    <a class="button button-secondary" href="#social-media">
+                        Videos ansehen
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="intro-section" aria-labelledby="intro-title">
+            <div class="intro-grid">
+                <div>
+                    <p class="section-label">
+                        Raus und entdecken
+                    </p>
+
+                    <h2 id="intro-title">
+                        Ausflüge direkt vor der Haustür
+                    </h2>
+                </div>
+
+                <div class="intro-copy">
+                    <p>
+                        Die Wetterau ist mehr als Felder und Durchfahrt:
+                        Burgen, Kelten, Römer, Fachwerkstädte,
+                        Streuobstwiesen und besondere Aussichtspunkte
+                        warten darauf, entdeckt zu werden.
+                    </p>
+
+                    <p>
+                        Die Karte ergänzt meine Inhalte auf Instagram und
+                        YouTube mit praktischen Informationen zu den Orten.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section
+            id="karte"
+            class="map-section"
+            aria-labelledby="map-title"
+        >
+            <div class="section-heading">
+                <p class="section-label">
+                    Interaktive Karte
+                </p>
+
+                <h2 id="map-title">
+                    Wohin soll dein nächster Ausflug gehen?
+                </h2>
+
+                <p>
+                    Wähle einen Marker oder filtere die Liste nach Ort und
+                    Kategorie.
+                </p>
+            </div>
+
+            <div class="map-wrapper">
+                <div
+                    id="map"
+                    aria-label="Interaktive Karte der Wetterau"
+                ></div>
+
+                <div class="map-legend" aria-label="Kartenlegende">
+                    <span>
+                        <span class="legend-symbol">🏰</span>
+                        Burgen
+                    </span>
+
+                    <span>
+                        <span class="legend-symbol">🌳</span>
+                        Natur
+                    </span>
+
+                    <span>
+                        <span class="legend-symbol">🏘️</span>
+                        Orte
+                    </span>
+
+                    <span>
+                 
