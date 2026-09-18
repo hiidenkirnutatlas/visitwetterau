@@ -84,7 +84,7 @@ a {
             rgb(17 43 33 / 88%),
             rgb(17 43 33 / 48%)
         ),
-        url("../images/hero.svg");
+        url("../images/hero.png");
     background-size: cover;
     background-position: center;
 }
