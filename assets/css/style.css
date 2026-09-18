@@ -889,7 +889,7 @@ footer {
             rgb(17 43 33 / 88%),
             rgb(17 43 33 / 48%)
         ),
-        url("../images/hero.png");
+        url("../images/hero.jpg");
     background-color: var(--forest-dark);
     background-position: center;
     background-size: cover;
