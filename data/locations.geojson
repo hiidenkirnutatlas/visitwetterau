@@ -230,5 +230,47 @@
                 ]
             }
         }
+{
+    "type": "Feature",
+    "properties": {
+        "id": "REI001",
+        "slug": "bergwerksee-reichelsheim",
+        "name": "Bergwerksee Reichelsheim",
+        "municipality": "Reichelsheim",
+        "area": "Wetterau",
+        "category": "Natur",
+        "short_description": "Ein ehemaliger Braunkohletagebau in der Wetterauer Seenlandschaft.",
+        "description": "Der Bergwerksee zwischen Weckesheim und Dorn-Assenheim entstand aus einem ehemaligen Braunkohletagebau. Rund um den See befinden sich Streuobstwiesen und der Weidenpavillon. Zugänge und örtliche Hinweise müssen beachtet werden.",
+        "visit_time": "1–2 Stunden",
+        "parking": false,
+        "family_friendly": true,
+        "accessible": false,
+        "best_season": "Frühling bis Herbst",
+        "image": "assets/images/locations/bergwerksee-reichelsheim.jpg",
+        "image_alt": "Blick über den Bergwerksee bei Reichelsheim in der Wetterau",
+        "instagram_url": "",
+        "youtube_url": "",
+        "website_url": "https://www.stadt-reichelsheim.de/freizeit-tourismus/seen-gewaesser/bergwerksee/der-bergwerksee/",
+        "source_url": "https://www.stadt-reichelsheim.de/freizeit-tourismus/seen-gewaesser/bergwerksee/der-bergwerksee/",
+        "verified": true,
+        "tags": [
+            "Bergwerksee",
+            "Reichelsheim",
+            "Weckesheim",
+            "Dorn-Assenheim",
+            "Braunkohle",
+            "Wetterauer Seenplatte",
+            "Streuobstwiesen",
+            "Weidenpavillon"
+        ]
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            8.8448,
+            50.3497
+        ]
+    }
+}
     ]
 }
