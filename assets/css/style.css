@@ -52,13 +52,8 @@ a {
 
 button,
 input,
-select {
+    select {
     font: inherit;
-}
-
-button,
-a {
-    -webkit-tap-highlight-color: transparent;
 }
 
 .skip-link {
@@ -82,7 +77,6 @@ a {
 /*
  * Hero
  */
-
 .hero {
     min-height: 88vh;
     min-height: 88dvh;
@@ -190,9 +184,8 @@ a {
 }
 
 /*
- * Schaltflächen
+ * Buttons
  */
-
 .button {
     display: inline-flex;
     min-height: 48px;
@@ -237,7 +230,6 @@ a {
 /*
  * Allgemeine Abschnitte
  */
-
 section {
     width: min(100% - 32px, var(--content-width));
     margin: 0 auto;
@@ -292,7 +284,6 @@ section {
 /*
  * Kartenbereich
  */
-
 .map-section {
     width: 100%;
     max-width: none;
@@ -313,7 +304,6 @@ section {
     width: 90vw;
     margin-right: auto;
     margin-left: auto;
-    overflow: hidden;
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -328,6 +318,8 @@ section {
     height: 70dvh;
     min-height: 480px;
     background: #dce8df;
+    border-radius: var(--radius) var(--radius) 0 0;
+    touch-action: pan-x pan-y;
 }
 
 .map-status {
@@ -341,9 +333,8 @@ section {
     color: var(--white);
     background: rgb(23 51 41 / 92%);
     border-radius: 999px;
-    box-shadow: 0 5px 15px rgb(23 51 41 / 20%);
     font-size: 0.85rem;
-    text-align: center;
+    pointer-events: none;
     transform: translateX(-50%);
 }
 
@@ -364,85 +355,38 @@ section {
 /*
  * Kartenlegende
  */
-
 .map-legend {
     display: flex;
     gap: 10px;
-    padding: 18px 22px;
+    padding: 16px 20px;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     color: var(--muted);
-    background:
-        linear-gradient(
-            135deg,
-            var(--paper),
-            var(--sand-light)
-        );
+    background: var(--paper);
     border-top: 1px solid var(--border);
+    border-radius: 0 0 var(--radius) var(--radius);
 }
 
 .legend-chip,
 .map-legend > span {
     display: inline-flex;
     gap: 7px;
-    min-height: 38px;
-    padding: 7px 12px;
+    min-height: 36px;
+    padding: 6px 12px;
     align-items: center;
     color: var(--text);
     background: var(--white);
-    border: 2px solid rgb(36 74 58 / 14%);
+    border: 1px solid var(--border);
     border-radius: 999px;
-    box-shadow: 0 3px 10px rgb(31 52 43 / 9%);
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     font-weight: 750;
     line-height: 1;
 }
 
-.legend-chip > span,
-.map-legend > span > span {
-    font-size: 1.15rem;
-}
-
-.legend-castle {
-    border-color: #386653;
-    background: #edf4f0;
-}
-
-.legend-nature {
-    border-color: #789846;
-    background: #f1f6e8;
-}
-
-.legend-town {
-    border-color: #5f8990;
-    background: #edf5f6;
-}
-
-.legend-history {
-    border-color: #986b37;
-    background: #f8f0e6;
-}
-
-.legend-lgs {
-    border-color: #b55b78;
-    background: #faedf2;
-}
-
-.legend-region {
-    border-color: var(--grain);
-    background:
-        linear-gradient(
-            135deg,
-            rgb(211 164 73 / 20%),
-            rgb(120 152 70 / 14%)
-        );
-}
-
 /*
- * Leaflet-Grundregeln
+ * Leaflet Basis-Anpassungen
  */
-
 .leaflet-container {
     z-index: 1;
     font-family:
@@ -465,121 +409,50 @@ section {
 }
 
 /*
- * Emoji-Marker
+ * Marker
  */
-
 .weather-marker-wrapper {
-    overflow: visible !important;
     background: transparent;
     border: 0;
 }
 
 .emoji-marker {
     display: flex;
-    width: 52px;
-    height: 52px;
-    border: 4px solid var(--white);
+    width: 46px;
+    height: 46px;
+    border: 3px solid var(--white);
     border-radius: 50%;
     align-items: center;
     justify-content: center;
     background: var(--forest);
-    box-shadow:
-        0 8px 18px rgb(22 44 35 / 32%),
-        0 2px 4px rgb(22 44 35 / 20%);
+    box-shadow: 0 6px 16px rgb(0 0 0 / 25%);
     cursor: pointer;
-    font-size: 25px;
-    transition:
-        transform 160ms ease,
-        box-shadow 160ms ease;
+    font-size: 22px;
+    transition: transform 150ms ease, box-shadow 150ms ease;
 }
 
 .emoji-marker:hover {
-    box-shadow:
-        0 12px 24px rgb(22 44 35 / 38%),
-        0 3px 6px rgb(22 44 35 / 22%);
     transform: scale(1.12);
+    box-shadow: 0 10px 22px rgb(0 0 0 / 35%);
 }
 
-.emoji-marker span {
-    display: block;
-    line-height: 1;
-}
-
-.marker-castle {
-    background:
-        linear-gradient(
-            145deg,
-            #386653,
-            #173329
-        );
-}
-
-.marker-nature {
-    background:
-        linear-gradient(
-            145deg,
-            #a4bf64,
-            #5d7835
-        );
-}
-
-.marker-viewpoint {
-    background:
-        linear-gradient(
-            145deg,
-            #e0b354,
-            #9a7028
-        );
-}
-
-.marker-history {
-    background:
-        linear-gradient(
-            145deg,
-            #c79555,
-            #85582f
-        );
-}
-
-.marker-town {
-    background:
-        linear-gradient(
-            145deg,
-            #84acb1,
-            #4f777e
-        );
-}
-
-.marker-food {
-    background:
-        linear-gradient(
-            145deg,
-            #b7a24f,
-            #6f792f
-        );
-}
-
-.marker-lgs {
-    background:
-        linear-gradient(
-            145deg,
-            #dd89a5,
-            #a84769
-        );
-}
-
-.marker-default {
-    background:
-        linear-gradient(
-            145deg,
-            #708178,
-            #3f5048
-        );
-}
+.marker-castle { background: linear-gradient(145deg, #386653, #173329); }
+.marker-nature { background: linear-gradient(145deg, #a4bf64, #5d7835); }
+.marker-viewpoint { background: linear-gradient(145deg, #e0b354, #9a7028); }
+.marker-history { background: linear-gradient(145deg, #c79555, #85582f); }
+.marker-town { background: linear-gradient(145deg, #84acb1, #4f777e); }
+.marker-food { background: linear-gradient(145deg, #b7a24f, #6f792f); }
+.marker-lgs { background: linear-gradient(145deg, #dd89a5, #a84769); }
+.marker-default { background: linear-gradient(145deg, #708178, #3f5048); }
 
 /*
- * Hover-Vorschau
+ * Hover-Vorschau (Leaflet Tooltip)
+ * Wichtig: Leaflet-Tooltips werden standardmäßig abgeschnitten,
+ * daher müssen wir das Parent-Pane sichtbar machen.
  */
+.leaflet-pane.leaflet-tooltip-pane {
+    overflow: visible !important;
+}
 
 .location-preview-tooltip.leaflet-tooltip {
     max-width: calc(100vw - 40px);
@@ -587,24 +460,33 @@ section {
     color: var(--text);
     background: transparent;
     border: 0;
-    border-radius: 16px;
+    border-radius: 14px;
     box-shadow: none;
     white-space: normal;
+    opacity: 1;
 }
 
+/* Pfeil des Tooltips anpassen */
 .location-preview-tooltip.leaflet-tooltip-top::before {
     border-top-color: var(--paper);
 }
 
-.marker-preview-card {
+.location-preview-tooltip.leaflet-tooltip-bottom::before {
+    border-bottom-color: var(--paper);
+}
+
+/*
+ * Die eigentliche Hover-Box
+ */
+.marker-hover-card {
     overflow: hidden;
-    width: 290px;
+    width: 260px;
     max-width: calc(100vw - 40px);
     margin: 0;
     color: var(--text);
     background: rgb(255 253 248 / 98%);
     border: 1px solid rgb(36 74 58 / 18%);
-    border-radius: 16px;
+    border-radius: 14px;
     box-shadow:
         0 18px 45px rgb(17 43 33 / 25%),
         0 4px 12px rgb(17 43 33 / 14%);
@@ -612,64 +494,65 @@ section {
     backdrop-filter: blur(8px);
 }
 
-.marker-preview-image {
+.marker-hover-card img {
     width: 100%;
-    height: 130px;
+    height: 120px;
     object-fit: cover;
 }
 
-.marker-preview-content {
-    padding: 14px 16px 16px;
+.marker-hover-body {
+    padding: 12px 14px 14px;
 }
 
-.marker-preview-category {
-    margin: 0 0 5px;
+.marker-hover-cat {
+    display: block;
+    margin-bottom: 3px;
     color: var(--apple-dark);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 850;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
 
-.marker-preview-title {
+.marker-hover-body strong {
     display: block;
     margin: 0;
     color: var(--forest-dark);
     font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.18rem;
+    font-size: 1.12rem;
     line-height: 1.2;
 }
 
-.marker-preview-location {
-    margin: 5px 0 0;
+.marker-hover-body small {
+    display: block;
+    margin-top: 3px;
     color: var(--muted);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
 }
 
-.marker-preview-description {
+.marker-hover-body p {
     display: -webkit-box;
     overflow: hidden;
-    margin: 9px 0 0;
+    margin: 7px 0 0;
     color: var(--muted);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     line-height: 1.4;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
 }
 
-.marker-preview-hint {
+.marker-hover-hint {
     display: block;
-    margin-top: 10px;
+    margin-top: 9px;
     color: var(--forest);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 800;
 }
 
 /*
- * Großes Karten-Popup
+ * Großes Popup
  */
-
 .leaflet-popup-content-wrapper {
     overflow: hidden;
     padding: 0;
@@ -683,72 +566,68 @@ section {
 }
 
 .map-popup {
-    width: 285px;
+    width: 270px;
     max-width: 100%;
     background: var(--paper);
 }
 
 .map-popup-image {
     width: 100%;
-    height: 150px;
+    height: 140px;
     object-fit: cover;
 }
 
 .map-popup > *:not(.map-popup-image) {
-    margin-right: 17px;
-    margin-left: 17px;
+    margin-right: 15px;
+    margin-left: 15px;
 }
 
 .map-popup .popup-category {
-    margin-top: 15px;
-    margin-bottom: 5px;
+    margin-top: 12px;
+    margin-bottom: 4px;
+    color: var(--apple-dark);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
 }
 
 .map-popup h3 {
     margin-top: 0;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     color: var(--forest);
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 1.25rem;
+    font-family: Georgia, serif;
+    font-size: 1.22rem;
     line-height: 1.2;
 }
 
-.popup-category {
-    color: var(--apple-dark);
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-}
-
 .popup-location {
-    margin-top: 5px;
-    margin-bottom: 8px;
+    margin-top: 4px;
+    margin-bottom: 6px;
     color: var(--muted);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
 }
 
 .popup-description {
-    margin-top: 8px;
-    margin-bottom: 12px;
+    margin-top: 6px;
+    margin-bottom: 10px;
     color: var(--muted);
-    font-size: 0.86rem;
-    line-height: 1.45;
+    font-size: 0.84rem;
+    line-height: 1.4;
 }
 
 .popup-facts {
     display: flex;
     gap: 6px;
     margin-top: 0;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     padding: 0;
     flex-wrap: wrap;
     list-style: none;
 }
 
 .popup-facts li {
-    padding: 5px 8px;
+    padding: 4px 8px;
     color: var(--forest);
     background: var(--sand);
     border-radius: 999px;
@@ -758,15 +637,15 @@ section {
 
 .popup-button {
     display: flex;
-    min-height: 42px;
-    margin-top: 12px;
-    margin-bottom: 17px;
-    padding: 9px 13px;
+    min-height: 38px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    padding: 8px 12px;
     align-items: center;
     justify-content: center;
     color: var(--white) !important;
     background: var(--forest);
-    border-radius: 9px;
+    border-radius: 8px;
     font-size: 0.82rem;
     font-weight: 750;
     text-decoration: none;
@@ -779,17 +658,13 @@ section {
 /*
  * Suche und Filter
  */
-
 .locations-section {
     scroll-margin-top: 20px;
 }
 
 .search-panel {
     display: grid;
-    grid-template-columns:
-        minmax(260px, 1.5fr)
-        minmax(220px, 1fr)
-        auto;
+    grid-template-columns: minmax(260px, 1.5fr) minmax(220px, 1fr) auto;
     gap: 18px;
     padding: 24px;
     align-items: end;
@@ -838,9 +713,7 @@ section {
     border-radius: 10px;
     cursor: pointer;
     font-weight: 750;
-    transition:
-        background-color 180ms ease,
-        transform 180ms ease;
+    transition: background-color 180ms ease, transform 180ms ease;
 }
 
 .reset-button:hover,
@@ -849,16 +722,9 @@ section {
     transform: translateY(-1px);
 }
 
-.reset-button:focus-visible,
-.card-map-button:focus-visible {
-    outline: 3px solid rgb(120 152 70 / 35%);
-    outline-offset: 2px;
-}
-
 /*
  * Ergebnisliste
  */
-
 .results-header {
     display: flex;
     margin: 32px 0 18px;
@@ -887,9 +753,7 @@ section {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--small-shadow);
-    transition:
-        transform 180ms ease,
-        box-shadow 180ms ease;
+    transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
 .result-card:hover {
@@ -922,7 +786,7 @@ section {
 .result-card h3 {
     margin: 0;
     color: var(--forest);
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: Georgia, serif;
     font-size: 1.55rem;
     line-height: 1.2;
 }
@@ -980,9 +844,6 @@ section {
     font-size: 0.88rem;
     font-weight: 750;
     text-decoration: none;
-    transition:
-        background-color 180ms ease,
-        transform 180ms ease;
 }
 
 .card-external-link:hover {
@@ -1004,18 +865,12 @@ section {
 /*
  * Social-Media-Bereich
  */
-
 .social-section {
     width: 100%;
     max-width: none;
     padding: 90px 24px;
     color: var(--white);
-    background:
-        linear-gradient(
-            130deg,
-            var(--forest-dark),
-            var(--forest)
-        );
+    background: linear-gradient(130deg, var(--forest-dark), var(--forest));
 }
 
 .social-content {
@@ -1043,10 +898,6 @@ section {
     background: var(--white);
 }
 
-.button-light:hover {
-    background: var(--sand);
-}
-
 .button-outline-light {
     color: var(--white);
     border-color: rgb(255 255 255 / 65%);
@@ -1059,7 +910,6 @@ section {
 /*
  * Projektbereich
  */
-
 .about-section {
     scroll-margin-top: 20px;
 }
@@ -1084,7 +934,6 @@ section {
 /*
  * Footer
  */
-
 footer {
     padding: 55px 24px 24px;
     color: rgb(255 255 255 / 80%);
@@ -1128,9 +977,8 @@ footer {
 }
 
 /*
- * Tablet
+ * Responsive
  */
-
 @media (max-width: 900px) {
     .results-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1144,10 +992,6 @@ footer {
         grid-column: 1 / -1;
     }
 }
-
-/*
- * Smartphone und kleine Tablets
- */
 
 @media (max-width: 720px) {
     .hero,
@@ -1184,18 +1028,16 @@ footer {
     }
 
     .map-wrapper {
-        width: 90vw;
+        width: 94vw;
         border-radius: 16px;
     }
 
     .map-section .section-heading {
-        width: 90vw;
+        width: 94vw;
     }
 
     #map {
-        width: 100%;
-        height: 70vh;
-        height: 70dvh;
+        height: 65vh;
         min-height: 420px;
     }
 
@@ -1218,10 +1060,6 @@ footer {
         padding: 18px;
     }
 
-    .menu {
-        font-size: 0.9rem;
-    }
-
     .hero-actions,
     .social-actions {
         flex-direction: column;
@@ -1232,56 +1070,42 @@ footer {
         width: 100%;
     }
 
-    .map-wrapper {
-        width: 90vw;
-        border-radius: 14px;
-    }
-
-    .map-section .section-heading {
-        width: 90vw;
-    }
-
     #map {
-        width: 100%;
-        height: 70vh;
-        height: 70dvh;
-        min-height: 400px;
+        height: 60vh;
+        min-height: 380px;
     }
 
     .map-legend {
         gap: 8px;
-        padding: 14px;
+        padding: 12px;
         justify-content: flex-start;
     }
 
     .legend-chip,
     .map-legend > span {
-        min-height: 34px;
-        padding: 6px 10px;
-        font-size: 0.76rem;
+        min-height: 32px;
+        padding: 4px 8px;
+        font-size: 0.74rem;
     }
 
     .emoji-marker {
-        width: 48px;
-        height: 48px;
-        font-size: 22px;
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+    }
+
+    .marker-hover-card {
+        width: 220px;
     }
 
     .result-card-image {
-        height: 190px;
-    }
-
-    .map-status {
-        max-width: calc(100% - 30px);
-        white-space: normal;
+        height: 180px;
     }
 }
 
 /*
- * Auf Touchgeräten gibt es keinen echten Hover.
- * Dort wird ausschließlich das normale Popup per Antippen verwendet.
+ * Touch-Geräte: Kein Hover, nur Tap
  */
-
 @media (hover: none), (pointer: coarse) {
     .location-preview-tooltip {
         display: none !important;
@@ -1291,10 +1115,6 @@ footer {
         transform: none;
     }
 }
-
-/*
- * Reduzierte Animationen
- */
 
 @media (prefers-reduced-motion: reduce) {
     html {
