@@ -79,6 +79,10 @@ a {
     transform: translateY(0);
 }
 
+/*
+ * Hero
+ */
+
 .hero {
     min-height: 88vh;
     min-height: 88dvh;
@@ -89,7 +93,7 @@ a {
             rgb(17 43 33 / 88%),
             rgb(17 43 33 / 48%)
         ),
-        url("../images/hero_wetterau.jpg");
+        url("../images/hero.png");
     background-color: var(--forest-dark);
     background-position: center;
     background-size: cover;
@@ -185,6 +189,10 @@ a {
     flex-wrap: wrap;
 }
 
+/*
+ * Schaltflächen
+ */
+
 .button {
     display: inline-flex;
     min-height: 48px;
@@ -225,6 +233,10 @@ a {
 .button-secondary:hover {
     background: rgb(255 255 255 / 16%);
 }
+
+/*
+ * Allgemeine Abschnitte
+ */
 
 section {
     width: min(100% - 32px, var(--content-width));
@@ -277,6 +289,10 @@ section {
     color: var(--muted);
 }
 
+/*
+ * Kartenbereich
+ */
+
 .map-section {
     width: 100%;
     max-width: none;
@@ -310,6 +326,7 @@ section {
     width: 100%;
     height: 70vh;
     height: 70dvh;
+    min-height: 480px;
     background: #dce8df;
 }
 
@@ -318,11 +335,13 @@ section {
     top: 18px;
     left: 50%;
     z-index: 1001;
+    max-width: calc(100% - 40px);
     margin: 0;
     padding: 9px 14px;
     color: var(--white);
-    background: rgb(23 51 41 / 90%);
+    background: rgb(23 51 41 / 92%);
     border-radius: 999px;
+    box-shadow: 0 5px 15px rgb(23 51 41 / 20%);
     font-size: 0.85rem;
     text-align: center;
     transform: translateX(-50%);
@@ -342,28 +361,87 @@ section {
     text-align: center;
 }
 
+/*
+ * Kartenlegende
+ */
+
 .map-legend {
     display: flex;
-    gap: 18px;
+    gap: 10px;
     padding: 18px 22px;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     color: var(--muted);
-    background: var(--paper);
+    background:
+        linear-gradient(
+            135deg,
+            var(--paper),
+            var(--sand-light)
+        );
     border-top: 1px solid var(--border);
-    font-size: 0.9rem;
 }
 
+.legend-chip,
 .map-legend > span {
     display: inline-flex;
     gap: 7px;
+    min-height: 38px;
+    padding: 7px 12px;
     align-items: center;
+    color: var(--text);
+    background: var(--white);
+    border: 2px solid rgb(36 74 58 / 14%);
+    border-radius: 999px;
+    box-shadow: 0 3px 10px rgb(31 52 43 / 9%);
+    font-size: 0.84rem;
+    font-weight: 750;
+    line-height: 1;
 }
 
-.legend-symbol {
+.legend-chip > span,
+.map-legend > span > span {
     font-size: 1.15rem;
 }
+
+.legend-castle {
+    border-color: #386653;
+    background: #edf4f0;
+}
+
+.legend-nature {
+    border-color: #789846;
+    background: #f1f6e8;
+}
+
+.legend-town {
+    border-color: #5f8990;
+    background: #edf5f6;
+}
+
+.legend-history {
+    border-color: #986b37;
+    background: #f8f0e6;
+}
+
+.legend-lgs {
+    border-color: #b55b78;
+    background: #faedf2;
+}
+
+.legend-region {
+    border-color: var(--grain);
+    background:
+        linear-gradient(
+            135deg,
+            rgb(211 164 73 / 20%),
+            rgb(120 152 70 / 14%)
+        );
+}
+
+/*
+ * Leaflet-Grundregeln
+ */
 
 .leaflet-container {
     z-index: 1;
@@ -382,54 +460,16 @@ section {
     max-width: none !important;
 }
 
-.leaflet-popup-content-wrapper {
-    border-radius: 14px;
-    box-shadow: var(--small-shadow);
+.leaflet-control-attribution {
+    font-size: 0.68rem;
 }
 
-.leaflet-popup-content {
-    margin: 16px;
-}
-
-.map-popup {
-    width: 230px;
-    max-width: 100%;
-}
-
-.map-popup img {
-    width: 100%;
-    height: 125px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    object-fit: cover;
-}
-
-.map-popup h3 {
-    margin: 0 0 5px;
-    color: var(--forest);
-    font-size: 1.1rem;
-    line-height: 1.25;
-}
-
-.map-popup p {
-    margin: 5px 0;
-}
-
-.popup-category {
-    color: var(--apple-dark);
-    font-size: 0.82rem;
-    font-weight: 750;
-}
-
-.popup-button {
-    display: inline-flex;
-    margin-top: 10px;
-    color: var(--forest);
-    font-weight: 750;
-    text-underline-offset: 3px;
-}
+/*
+ * Emoji-Marker
+ */
 
 .weather-marker-wrapper {
+    overflow: visible !important;
     background: transparent;
     border: 0;
 }
@@ -483,6 +523,15 @@ section {
         );
 }
 
+.marker-viewpoint {
+    background:
+        linear-gradient(
+            145deg,
+            #e0b354,
+            #9a7028
+        );
+}
+
 .marker-history {
     background:
         linear-gradient(
@@ -501,6 +550,15 @@ section {
         );
 }
 
+.marker-food {
+    background:
+        linear-gradient(
+            145deg,
+            #b7a24f,
+            #6f792f
+        );
+}
+
 .marker-lgs {
     background:
         linear-gradient(
@@ -510,25 +568,217 @@ section {
         );
 }
 
-.marker-castle {
+.marker-default {
+    background:
+        linear-gradient(
+            145deg,
+            #708178,
+            #3f5048
+        );
+}
+
+/*
+ * Hover-Vorschau
+ */
+
+.location-preview-tooltip.leaflet-tooltip {
+    max-width: calc(100vw - 40px);
+    padding: 0;
+    color: var(--text);
+    background: transparent;
+    border: 0;
+    border-radius: 16px;
+    box-shadow: none;
+    white-space: normal;
+}
+
+.location-preview-tooltip.leaflet-tooltip-top::before {
+    border-top-color: var(--paper);
+}
+
+.marker-preview-card {
+    overflow: hidden;
+    width: 290px;
+    max-width: calc(100vw - 40px);
+    margin: 0;
+    color: var(--text);
+    background: rgb(255 253 248 / 98%);
+    border: 1px solid rgb(36 74 58 / 18%);
+    border-radius: 16px;
+    box-shadow:
+        0 18px 45px rgb(17 43 33 / 25%),
+        0 4px 12px rgb(17 43 33 / 14%);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+.marker-preview-image {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+}
+
+.marker-preview-content {
+    padding: 14px 16px 16px;
+}
+
+.marker-preview-category {
+    margin: 0 0 5px;
+    color: var(--apple-dark);
+    font-size: 0.7rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.marker-preview-title {
+    display: block;
+    margin: 0;
+    color: var(--forest-dark);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.18rem;
+    line-height: 1.2;
+}
+
+.marker-preview-location {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.marker-preview-description {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 9px 0 0;
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.4;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.marker-preview-hint {
+    display: block;
+    margin-top: 10px;
+    color: var(--forest);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+/*
+ * Großes Karten-Popup
+ */
+
+.leaflet-popup-content-wrapper {
+    overflow: hidden;
+    padding: 0;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+
+.leaflet-popup-content {
+    width: auto !important;
+    margin: 0;
+}
+
+.map-popup {
+    width: 285px;
+    max-width: 100%;
+    background: var(--paper);
+}
+
+.map-popup-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.map-popup > *:not(.map-popup-image) {
+    margin-right: 17px;
+    margin-left: 17px;
+}
+
+.map-popup .popup-category {
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.map-popup h3 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    color: var(--forest);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.25rem;
+    line-height: 1.2;
+}
+
+.popup-category {
+    color: var(--apple-dark);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.popup-location {
+    margin-top: 5px;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.popup-description {
+    margin-top: 8px;
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.45;
+}
+
+.popup-facts {
+    display: flex;
+    gap: 6px;
+    margin-top: 0;
+    margin-bottom: 14px;
+    padding: 0;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.popup-facts li {
+    padding: 5px 8px;
+    color: var(--forest);
+    background: var(--sand);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.popup-button {
+    display: flex;
+    min-height: 42px;
+    margin-top: 12px;
+    margin-bottom: 17px;
+    padding: 9px 13px;
+    align-items: center;
+    justify-content: center;
+    color: var(--white) !important;
     background: var(--forest);
+    border-radius: 9px;
+    font-size: 0.82rem;
+    font-weight: 750;
+    text-decoration: none;
 }
 
-.marker-nature {
-    background: var(--apple-dark);
+.popup-button:hover {
+    background: var(--forest-dark);
 }
 
-.marker-history {
-    background: #986b37;
-}
-
-.marker-town {
-    background: var(--water);
-}
-
-.marker-lgs {
-    background: #b55b78;
-}
+/*
+ * Suche und Filter
+ */
 
 .locations-section {
     scroll-margin-top: 20px;
@@ -604,6 +854,10 @@ section {
     outline: 3px solid rgb(120 152 70 / 35%);
     outline-offset: 2px;
 }
+
+/*
+ * Ergebnisliste
+ */
 
 .results-header {
     display: flex;
@@ -747,6 +1001,10 @@ section {
     text-align: center;
 }
 
+/*
+ * Social-Media-Bereich
+ */
+
 .social-section {
     width: 100%;
     max-width: none;
@@ -798,6 +1056,10 @@ section {
     background: rgb(255 255 255 / 10%);
 }
 
+/*
+ * Projektbereich
+ */
+
 .about-section {
     scroll-margin-top: 20px;
 }
@@ -818,6 +1080,10 @@ section {
 .about-card div:last-child p:first-child {
     margin-top: 0;
 }
+
+/*
+ * Footer
+ */
 
 footer {
     padding: 55px 24px 24px;
@@ -861,6 +1127,10 @@ footer {
     font-size: 0.85rem;
 }
 
+/*
+ * Tablet
+ */
+
 @media (max-width: 900px) {
     .results-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -874,6 +1144,10 @@ footer {
         grid-column: 1 / -1;
     }
 }
+
+/*
+ * Smartphone und kleine Tablets
+ */
 
 @media (max-width: 720px) {
     .hero,
@@ -922,6 +1196,7 @@ footer {
         width: 100%;
         height: 70vh;
         height: 70dvh;
+        min-height: 420px;
     }
 
     .search-panel,
@@ -939,19 +1214,6 @@ footer {
 }
 
 @media (max-width: 480px) {
-    .hero {
-    color: var(--white);
-    background:
-        linear-gradient(
-            100deg,
-            rgb(17 43 33 / 88%),
-            rgb(17 43 33 / 48%)
-        ),
-        url("../images/hero_wetterau.jpg");
-    background-color: var(--forest-dark);
-    background-position: center;
-    background-size: cover;
-        
     .hero-overlay {
         padding: 18px;
     }
@@ -983,89 +1245,56 @@ footer {
         width: 100%;
         height: 70vh;
         height: 70dvh;
+        min-height: 400px;
     }
 
     .map-legend {
-    display: flex;
-    gap: 10px;
-    padding: 18px 22px;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    color: var(--muted);
-    background:
-        linear-gradient(
-            135deg,
-            var(--paper),
-            var(--sand-light)
-        );
-    border-top: 1px solid var(--border);
-}
+        gap: 8px;
+        padding: 14px;
+        justify-content: flex-start;
+    }
 
-.legend-chip {
-    display: inline-flex;
-    gap: 7px;
-    min-height: 38px;
-    padding: 7px 12px;
-    align-items: center;
-    color: var(--text);
-    background: var(--white);
-    border: 2px solid transparent;
-    border-radius: 999px;
-    box-shadow: 0 3px 10px rgb(31 52 43 / 9%);
-    font-size: 0.84rem;
-    font-weight: 750;
-    line-height: 1;
-}
+    .legend-chip,
+    .map-legend > span {
+        min-height: 34px;
+        padding: 6px 10px;
+        font-size: 0.76rem;
+    }
 
-.legend-chip > span {
-    font-size: 1.15rem;
-}
-
-.legend-castle {
-    border-color: #386653;
-    background: #edf4f0;
-}
-
-.legend-nature {
-    border-color: #789846;
-    background: #f1f6e8;
-}
-
-.legend-town {
-    border-color: #5f8990;
-    background: #edf5f6;
-}
-
-.legend-history {
-    border-color: #986b37;
-    background: #f8f0e6;
-}
-
-.legend-lgs {
-    border-color: #b55b78;
-    background: #faedf2;
-}
-
-.legend-region {
-    border-color: var(--grain);
-    background:
-        linear-gradient(
-            135deg,
-            rgb(211 164 73 / 20%),
-            rgb(120 152 70 / 14%)
-        );
-}
-
-    .map-status {
-        max-width: calc(100% - 30px);
-        white-space: nowrap;
+    .emoji-marker {
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
     }
 
     .result-card-image {
         height: 190px;
     }
+
+    .map-status {
+        max-width: calc(100% - 30px);
+        white-space: normal;
+    }
 }
+
+/*
+ * Auf Touchgeräten gibt es keinen echten Hover.
+ * Dort wird ausschließlich das normale Popup per Antippen verwendet.
+ */
+
+@media (hover: none), (pointer: coarse) {
+    .location-preview-tooltip {
+        display: none !important;
+    }
+
+    .emoji-marker:hover {
+        transform: none;
+    }
+}
+
+/*
+ * Reduzierte Animationen
+ */
 
 @media (prefers-reduced-motion: reduce) {
     html {
