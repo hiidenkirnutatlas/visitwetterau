@@ -279,20 +279,25 @@ function initializeWebsite() {
     }
 
     function createMarkerIcon(category) {
-        const markerData = getCategoryData(category);
+    const markerData = getCategoryData(category);
 
-        return L.divIcon({
-            className: "weather-marker-wrapper",
-            html:
-                `<div class="custom-map-marker ` +
-                `${markerData.className}">` +
-                `<span>${markerData.icon}</span>` +
-                `</div>`,
-            iconSize: [42, 42],
-            iconAnchor: [21, 40],
-            popupAnchor: [0, -38]
-        });
-    }
+    return L.divIcon({
+        className: "weather-marker-wrapper",
+        html: `
+            <div
+                class="emoji-marker ${markerData.className}"
+                title="${category || "Ausflugsziel"}"
+            >
+                <span aria-hidden="true">
+                    ${markerData.icon}
+                </span>
+            </div>
+        `,
+        iconSize: [52, 52],
+        iconAnchor: [26, 26],
+        popupAnchor: [0, -30]
+    });
+}
 
     function getCategoryData(category) {
         const categories = {
