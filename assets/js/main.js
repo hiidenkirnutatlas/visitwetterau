@@ -3,80 +3,115 @@
 document.addEventListener("DOMContentLoaded", initializeWebsite);
 
 function initializeWebsite() {
+    /*
+     * Grundlegende DOM-Elemente
+     */
     const mapElement = document.getElementById("map");
-    const mapStatus = document.getElementById("mapStatus");
+    const mapStatusElement = document.getElementById("mapStatus");
     const searchInput = document.getElementById("searchInput");
     const categoryFilter = document.getElementById("categoryFilter");
-    const resetButton = document.getElementById("resetFilters");
+    const resetFiltersButton = document.getElementById("resetFilters");
     const resultsElement = document.getElementById("results");
-    const resultCount = document.getElementById("resultCount");
-    const currentYear = document.getElementById("currentYear");
+    const resultCountElement = document.getElementById("resultCount");
+    const currentYearElement = document.getElementById("currentYear");
 
-    if (currentYear) {
-        currentYear.textContent = new Date().getFullYear();
+    if (currentYearElement) {
+        currentYearElement.textContent = new Date().getFullYear();
     }
 
     if (!mapElement) {
-        console.error("Das Element mit der ID 'map' wurde nicht gefunden.");
+        console.error(
+            "Das Kartenelement mit der ID 'map' wurde nicht gefunden."
+        );
+
         return;
     }
 
     if (typeof L === "undefined") {
         showMapError(
-            "Leaflet konnte nicht geladen werden. " +
+            "Die Kartenbibliothek konnte nicht geladen werden. " +
             "Bitte prüfe deine Internetverbindung."
         );
 
         return;
     }
 
+    /*
+     * Karte erstellen
+     */
+    const WEATHER_REGION_CENTER = [50.34, 8.93];
+    const INITIAL_ZOOM = 10;
+
     const map = L.map(mapElement, {
-        center: [50.34, 8.93],
-        zoom: 10,
-        scrollWheelZoom: false
+        center: WEATHER_REGION_CENTER,
+        zoom: INITIAL_ZOOM,
+        scrollWheelZoom: false,
+        zoomControl: true,
+        attributionControl: true
     });
 
+    /*
+     * Eigene Kartenebene für die Wetteraukreis-Grenze.
+     * Die Ebene liegt über der Grundkarte, aber unter den Markern.
+     */
     map.createPane("regionPane");
 
-    map.getPane("regionPane").style.zIndex = "350";
-    map.getPane("regionPane").style.pointerEvents = "none";
+    const regionPane = map.getPane("regionPane");
 
+    if (regionPane) {
+        regionPane.style.zIndex = "350";
+        regionPane.style.pointerEvents = "none";
+    }
+
+    /*
+     * OpenStreetMap-Grundkarte
+     */
     const tileLayer = L.tileLayer(
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
             maxZoom: 19,
             attribution:
-                "&copy; OpenStreetMap-Mitwirkende"
+                "&copy; " +
+                '<a href="https://www.openstreetmap.org/copyright" ' +
+                'target="_blank" rel="noopener noreferrer">' +
+                "OpenStreetMap-Mitwirkende</a>"
         }
     );
 
     tileLayer.on("load", () => {
-        if (mapStatus) {
-            mapStatus.hidden = true;
-        }
+        hideMapStatus();
     });
 
     tileLayer.on("tileerror", () => {
-        if (mapStatus) {
-            mapStatus.hidden = false;
-            mapStatus.textContent =
-                "Einige Kartenteile konnten nicht geladen werden.";
-        }
+        showMapStatus(
+            "Einige Kartenteile konnten nicht geladen werden."
+        );
     });
 
     tileLayer.addTo(map);
-
-    loadWetterauBoundary();
 
     L.control.scale({
         imperial: false,
         metric: true
     }).addTo(map);
 
+    /*
+     * Daten und Marker
+     */
     let allLocations = [];
-    let markerLayer = L.layerGroup().addTo(map);
+    const markerLayer = L.layerGroup().addTo(map);
     const activeMarkers = new Map();
 
+    /*
+     * GeoJSON-Dateien laden
+     */
+    loadWetterauBoundary();
+    loadLocations();
+
+    /*
+     * Leaflet benötigt nach Größenänderungen manchmal eine
+     * Neuberechnung der Kartenfläche.
+     */
     window.setTimeout(() => {
         map.invalidateSize();
     }, 250);
@@ -85,85 +120,78 @@ function initializeWebsite() {
         map.invalidateSize();
     });
 
+    /*
+     * Offene Hover-Vorschauen beim Verschieben der Karte schließen.
+     */
+    map.on("movestart zoomstart", () => {
+        map.closeTooltip();
+    });
+
+    /*
+     * Wetteraukreis-Grenze laden
+     */
     async function loadWetterauBoundary() {
-    try {
-        const boundaryUrl = new URL(
-            "./data/wetteraukreis.geojson",
-            document.baseURI
-        );
-
-        const response = await fetch(boundaryUrl.href, {
-            cache: "no-store"
-        });
-
-        if (!response.ok) {
-            throw new Error(
-                `Wetteraugrenze konnte nicht geladen werden: ` +
-                `${response.status}`
-            );
-        }
-
-        const boundaryData = await response.json();
-
-        const boundaryLayer = L.geoJSON(boundaryData, {
-            pane: "regionPane",
-            interactive: false,
-            style: {
-                color: "#244a3a",
-                weight: 4,
-                opacity: 0.95,
-                fillColor: "#d3a449",
-                fillOpacity: 0.14,
-                lineCap: "round",
-                lineJoin: "round"
-            }
-        });
-
-        boundaryLayer.addTo(map);
-
-        const regionLabel = boundaryLayer
-            .getBounds()
-            .getCenter();
-
-        L.marker(regionLabel, {
-            interactive: false,
-            keyboard: false,
-            icon: L.divIcon({
-                className: "region-label-wrapper",
-                html: `
-                    <div class="region-label">
-                        <span aria-hidden="true">🌿</span>
-                        Wetteraukreis
-                    </div>
-                `,
-                iconSize: [160, 36],
-                iconAnchor: [80, 18]
-            })
-        }).addTo(map);
-    } catch (error) {
-        console.warn(
-            "Die Wetteraugrenze konnte nicht dargestellt werden.",
-            error
-        );
-    }
-}
-
-    loadLocations();
-
-    async function loadLocations() {
         try {
-            const dataUrl = new URL(
-                "./data/locations.geojson",
+            const boundaryUrl = new URL(
+                "./data/wetteraukreis.geojson",
                 document.baseURI
             );
 
-            const response = await fetch(dataUrl.href, {
+            const response = await fetch(boundaryUrl.href, {
                 cache: "no-store"
             });
 
             if (!response.ok) {
                 throw new Error(
-                    `HTTP-Fehler beim Laden der Orte: ${response.status}`
+                    "Wetteraukreis-Grenze konnte nicht geladen werden: " +
+                    response.status
+                );
+            }
+
+            const boundaryData = await response.json();
+
+            L.geoJSON(boundaryData, {
+                pane: "regionPane",
+                interactive: false,
+                style: {
+                    color: "#244a3a",
+                    weight: 4,
+                    opacity: 0.95,
+                    fillColor: "#d3a449",
+                    fillOpacity: 0.14,
+                    lineCap: "round",
+                    lineJoin: "round"
+                }
+            }).addTo(map);
+        } catch (error) {
+            /*
+             * Die Karte funktioniert auch ohne Regionsgrenze.
+             */
+            console.warn(
+                "Die Wetteraukreis-Grenze konnte nicht angezeigt werden.",
+                error
+            );
+        }
+    }
+
+    /*
+     * Ortsdaten laden
+     */
+    async function loadLocations() {
+        try {
+            const locationsUrl = new URL(
+                "./data/locations.geojson",
+                document.baseURI
+            );
+
+            const response = await fetch(locationsUrl.href, {
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    "Ortsdaten konnten nicht geladen werden: " +
+                    response.status
                 );
             }
 
@@ -181,23 +209,32 @@ function initializeWebsite() {
         } catch (error) {
             console.error(error);
 
-            if (resultCount) {
-                resultCount.textContent =
+            if (resultCountElement) {
+                resultCountElement.textContent =
                     "Die Orte konnten nicht geladen werden.";
             }
 
             if (resultsElement) {
                 resultsElement.replaceChildren(
                     createMessage(
-                        "Fehler beim Laden von data/locations.geojson."
+                        "Beim Laden der Ortsdaten ist ein Fehler " +
+                        "aufgetreten. Prüfe die Datei " +
+                        "data/locations.geojson."
                     )
                 );
             }
         }
     }
 
+    /*
+     * Prüfen, ob ein GeoJSON-Ort vollständig genug ist.
+     */
     function isValidLocation(location) {
-        if (!location || !location.geometry || !location.properties) {
+        if (
+            !location ||
+            !location.geometry ||
+            !location.properties
+        ) {
             return false;
         }
 
@@ -214,7 +251,10 @@ function initializeWebsite() {
         );
     }
 
-    function showLocations(locations, adjustMap) {
+    /*
+     * Orte auf Karte und in Ergebnisliste anzeigen.
+     */
+    function showLocations(locations, adjustMap = false) {
         markerLayer.clearLayers();
         activeMarkers.clear();
 
@@ -228,8 +268,9 @@ function initializeWebsite() {
             if (resultsElement) {
                 resultsElement.appendChild(
                     createMessage(
-                        "Keine passenden Orte gefunden. " +
-                        "Setze die Filter zurück oder ändere die Suche."
+                        "Für diese Suche wurden keine Orte gefunden. " +
+                        "Versuche einen anderen Suchbegriff oder " +
+                        "setze die Filter zurück."
                     )
                 );
             }
@@ -242,16 +283,84 @@ function initializeWebsite() {
         locations.forEach((location) => {
             const properties = location.properties;
             const coordinates = location.geometry.coordinates;
+
+            /*
+             * GeoJSON verwendet:
+             * [Längengrad, Breitengrad]
+             *
+             * Leaflet verwendet:
+             * [Breitengrad, Längengrad]
+             */
             const longitude = coordinates[0];
             const latitude = coordinates[1];
             const latitudeLongitude = [latitude, longitude];
 
             const marker = L.marker(latitudeLongitude, {
                 icon: createMarkerIcon(properties.category),
-                title: properties.name
+                title: properties.name,
+                keyboard: true,
+                riseOnHover: true,
+                riseOffset: 1000
             });
 
-            marker.bindPopup(createPopup(location));
+            /*
+             * Große Detailansicht beim Anklicken.
+             */
+            marker.bindPopup(createPopup(location), {
+                maxWidth: 320,
+                minWidth: 240,
+                autoPan: true,
+                keepInView: true,
+                closeButton: true
+            });
+
+            /*
+             * Kleine Ortsvorschau beim Hover.
+             */
+            marker.bindTooltip(createLocationPreview(location), {
+                direction: "top",
+                offset: [0, -27],
+                opacity: 1,
+                className: "location-preview-tooltip",
+                interactive: false,
+                sticky: false
+            });
+
+            marker.on("click", () => {
+                marker.closeTooltip();
+            });
+
+            marker.on("popupopen", () => {
+                marker.closeTooltip();
+            });
+
+            /*
+             * Tastaturbedienung:
+             * Beim Fokus wird die Vorschau geöffnet.
+             */
+            marker.on("add", () => {
+                const markerElement = marker.getElement();
+
+                if (!markerElement) {
+                    return;
+                }
+
+                markerElement.setAttribute(
+                    "aria-label",
+                    properties.name
+                );
+
+                markerElement.addEventListener("focus", () => {
+                    if (!marker.isPopupOpen()) {
+                        marker.openTooltip();
+                    }
+                });
+
+                markerElement.addEventListener("blur", () => {
+                    marker.closeTooltip();
+                });
+            });
+
             marker.addTo(markerLayer);
 
             activeMarkers.set(properties.id, marker);
@@ -264,9 +373,12 @@ function initializeWebsite() {
             }
         });
 
+        /*
+         * Kartenausschnitt an sichtbare Orte anpassen.
+         */
         if (adjustMap && bounds.length > 1) {
             map.fitBounds(bounds, {
-                padding: [45, 45],
+                padding: [55, 55],
                 maxZoom: 11
             });
         } else if (adjustMap && bounds.length === 1) {
@@ -278,27 +390,32 @@ function initializeWebsite() {
         }, 100);
     }
 
+    /*
+     * Emoji-Marker erzeugen.
+     */
     function createMarkerIcon(category) {
-    const markerData = getCategoryData(category);
+        const markerData = getCategoryData(category);
 
-    return L.divIcon({
-        className: "weather-marker-wrapper",
-        html: `
-            <div
-                class="emoji-marker ${markerData.className}"
-                title="${category || "Ausflugsziel"}"
-            >
-                <span aria-hidden="true">
-                    ${markerData.icon}
-                </span>
-            </div>
-        `,
-        iconSize: [52, 52],
-        iconAnchor: [26, 26],
-        popupAnchor: [0, -30]
-    });
-}
+        return L.divIcon({
+            className: "weather-marker-wrapper",
+            html: `
+                <div
+                    class="emoji-marker ${markerData.className}"
+                    aria-hidden="true"
+                >
+                    <span>${markerData.icon}</span>
+                </div>
+            `,
+            iconSize: [52, 52],
+            iconAnchor: [26, 26],
+            popupAnchor: [0, -31],
+            tooltipAnchor: [0, -23]
+        });
+    }
 
+    /*
+     * Kategorie, Emoji und Markerfarbe zuordnen.
+     */
     function getCategoryData(category) {
         const categories = {
             "Burg und Schloss": {
@@ -311,7 +428,7 @@ function initializeWebsite() {
             },
             "Aussichtspunkt": {
                 icon: "🌄",
-                className: "marker-nature"
+                className: "marker-viewpoint"
             },
             "Geschichte": {
                 icon: "🏺",
@@ -323,7 +440,7 @@ function initializeWebsite() {
             },
             "Genuss": {
                 icon: "🍎",
-                className: "marker-nature"
+                className: "marker-food"
             },
             "Landesgartenschau 2027": {
                 icon: "🌸",
@@ -333,48 +450,142 @@ function initializeWebsite() {
 
         return categories[category] || {
             icon: "📍",
-            className: "marker-town"
+            className: "marker-default"
         };
     }
 
+    /*
+     * Kleine Hover-Vorschau erzeugen.
+     */
+    function createLocationPreview(location) {
+        const properties = location.properties;
+        const markerData = getCategoryData(properties.category);
+
+        const preview = document.createElement("article");
+        preview.className = "marker-preview-card";
+
+        const image = document.createElement("img");
+        image.className = "marker-preview-image";
+        image.src =
+            properties.image ||
+            "./assets/images/placeholder.svg";
+        image.alt = "";
+        image.loading = "lazy";
+
+        image.addEventListener("error", () => {
+            image.onerror = null;
+            image.src = "./assets/images/placeholder.svg";
+        });
+
+        const content = document.createElement("div");
+        content.className = "marker-preview-content";
+
+        const category = document.createElement("p");
+        category.className = "marker-preview-category";
+        category.textContent =
+            `${markerData.icon} ` +
+            `${properties.category || "Ausflugsziel"}`;
+
+        const title = document.createElement("strong");
+        title.className = "marker-preview-title";
+        title.textContent = properties.name;
+
+        const locationText = document.createElement("p");
+        locationText.className = "marker-preview-location";
+        locationText.textContent = [
+            properties.municipality,
+            properties.area
+        ]
+            .filter(Boolean)
+            .join(" · ");
+
+        const description = document.createElement("p");
+        description.className = "marker-preview-description";
+        description.textContent =
+            properties.short_description ||
+            properties.description ||
+            "";
+
+        const hint = document.createElement("span");
+        hint.className = "marker-preview-hint";
+        hint.textContent = "Anklicken für Details";
+
+        content.append(
+            category,
+            title,
+            locationText,
+            description,
+            hint
+        );
+
+        preview.append(image, content);
+
+        return preview;
+    }
+
+    /*
+     * Großes Leaflet-Popup erzeugen.
+     */
     function createPopup(location) {
         const properties = location.properties;
-        const popup = document.createElement("article");
+        const markerData = getCategoryData(properties.category);
 
+        const popup = document.createElement("article");
         popup.className = "map-popup";
 
         const image = document.createElement("img");
+        image.className = "map-popup-image";
         image.src =
-            properties.image || "./assets/images/placeholder.png";
-        image.alt = properties.image_alt || properties.name;
+            properties.image ||
+            "./assets/images/placeholder.svg";
+        image.alt =
+            properties.image_alt ||
+            properties.name;
+        image.loading = "lazy";
 
         image.addEventListener("error", () => {
-            image.src = "./assets/images/placeholder.png";
+            image.onerror = null;
+            image.src = "./assets/images/placeholder.svg";
         });
 
         const category = document.createElement("p");
         category.className = "popup-category";
         category.textContent =
-            properties.category || "Ausflugsziel";
+            `${markerData.icon} ` +
+            `${properties.category || "Ausflugsziel"}`;
 
         const title = document.createElement("h3");
         title.textContent = properties.name;
 
-        const municipality = document.createElement("p");
-        municipality.textContent =
-            properties.municipality || "Wetterau";
+        const locationText = document.createElement("p");
+        locationText.className = "popup-location";
+        locationText.textContent = [
+            properties.municipality,
+            properties.area
+        ]
+            .filter(Boolean)
+            .join(" · ");
 
         const description = document.createElement("p");
+        description.className = "popup-description";
         description.textContent =
-            properties.short_description || "";
+            properties.short_description ||
+            properties.description ||
+            "";
 
         popup.append(
             image,
             category,
             title,
-            municipality,
+            locationText,
             description
         );
+
+        const facts = createPopupFacts(properties);
+
+        if (facts.children.length > 0) {
+            popup.appendChild(facts);
+        }
 
         if (isUsableUrl(properties.website_url)) {
             const link = document.createElement("a");
@@ -391,21 +602,64 @@ function initializeWebsite() {
         return popup;
     }
 
+    /*
+     * Fakten im Popup anzeigen.
+     */
+    function createPopupFacts(properties) {
+        const list = document.createElement("ul");
+        list.className = "popup-facts";
+
+        const facts = [];
+
+        if (properties.visit_time) {
+            facts.push(`⏱ ${properties.visit_time}`);
+        }
+
+        if (properties.parking === true) {
+            facts.push("🚗 Parkplatz");
+        }
+
+        if (properties.family_friendly === true) {
+            facts.push("👨‍👩‍👧 Familiengeeignet");
+        }
+
+        if (properties.accessible === true) {
+            facts.push("♿ Barrierearm");
+        }
+
+        facts.forEach((fact) => {
+            const item = document.createElement("li");
+            item.textContent = fact;
+            list.appendChild(item);
+        });
+
+        return list;
+    }
+
+    /*
+     * Ergebniskarte unterhalb der Karte erzeugen.
+     */
     function createResultCard(location) {
         const properties = location.properties;
-        const card = document.createElement("article");
+        const markerData = getCategoryData(properties.category);
 
+        const card = document.createElement("article");
         card.className = "result-card";
+        card.dataset.locationId = properties.id;
 
         const image = document.createElement("img");
         image.className = "result-card-image";
         image.src =
-            properties.image || "./assets/images/placeholder.png";
-        image.alt = properties.image_alt || properties.name;
+            properties.image ||
+            "./assets/images/placeholder.svg";
+        image.alt =
+            properties.image_alt ||
+            properties.name;
         image.loading = "lazy";
 
         image.addEventListener("error", () => {
-            image.src = "./assets/images/placeholder.png";
+            image.onerror = null;
+            image.src = "./assets/images/placeholder.svg";
         });
 
         const content = document.createElement("div");
@@ -414,7 +668,8 @@ function initializeWebsite() {
         const category = document.createElement("p");
         category.className = "result-card-category";
         category.textContent =
-            properties.category || "Ausflugsziel";
+            `${markerData.icon} ` +
+            `${properties.category || "Ausflugsziel"}`;
 
         const title = document.createElement("h3");
         title.textContent = properties.name;
@@ -436,6 +691,64 @@ function initializeWebsite() {
             "";
 
         const facts = createFactsList(properties);
+        const actions = createCardActions(location);
+
+        content.append(
+            category,
+            title,
+            locationText,
+            description
+        );
+
+        if (facts.children.length > 0) {
+            content.appendChild(facts);
+        }
+
+        content.appendChild(actions);
+        card.append(image, content);
+
+        return card;
+    }
+
+    /*
+     * Fakten für die Ergebniskarten.
+     */
+    function createFactsList(properties) {
+        const list = document.createElement("ul");
+        list.className = "result-card-facts";
+
+        const facts = [];
+
+        if (properties.visit_time) {
+            facts.push(`⏱ ${properties.visit_time}`);
+        }
+
+        if (properties.parking === true) {
+            facts.push("🚗 Parkplatz");
+        }
+
+        if (properties.family_friendly === true) {
+            facts.push("👨‍👩‍👧 Familie");
+        }
+
+        if (properties.accessible === true) {
+            facts.push("♿ Barrierearm");
+        }
+
+        facts.forEach((fact) => {
+            const item = document.createElement("li");
+            item.textContent = fact;
+            list.appendChild(item);
+        });
+
+        return list;
+    }
+
+    /*
+     * Schaltflächen der Ergebniskarten.
+     */
+    function createCardActions(location) {
+        const properties = location.properties;
         const actions = document.createElement("div");
 
         actions.className = "result-card-actions";
@@ -475,53 +788,7 @@ function initializeWebsite() {
             );
         }
 
-        content.append(
-            category,
-            title,
-            locationText,
-            description
-        );
-
-        if (facts.children.length > 0) {
-            content.appendChild(facts);
-        }
-
-        content.appendChild(actions);
-        card.append(image, content);
-
-        return card;
-    }
-
-    function createFactsList(properties) {
-        const list = document.createElement("ul");
-        const facts = [];
-
-        list.className = "result-card-facts";
-
-        if (properties.visit_time) {
-            facts.push(`⏱ ${properties.visit_time}`);
-        }
-
-        if (properties.parking === true) {
-            facts.push("🚗 Parkplatz");
-        }
-
-        if (properties.family_friendly === true) {
-            facts.push("👨‍👩‍👧 Familie");
-        }
-
-        if (properties.accessible === true) {
-            facts.push("♿ Barrierearm");
-        }
-
-        facts.forEach((fact) => {
-            const item = document.createElement("li");
-
-            item.textContent = fact;
-            list.appendChild(item);
-        });
-
-        return list;
+        return actions;
     }
 
     function createExternalLink(url, text) {
@@ -536,16 +803,22 @@ function initializeWebsite() {
         return link;
     }
 
+    /*
+     * Ort aus der Ergebnisliste auf der Karte anzeigen.
+     */
     function showLocationOnMap(location) {
         const coordinates = location.geometry.coordinates;
         const longitude = coordinates[0];
         const latitude = coordinates[1];
         const marker = activeMarkers.get(location.properties.id);
+        const mapSection = document.getElementById("karte");
 
-        document.getElementById("karte").scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
+        if (mapSection) {
+            mapSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
 
         window.setTimeout(() => {
             map.invalidateSize();
@@ -555,43 +828,56 @@ function initializeWebsite() {
             });
 
             if (marker) {
+                marker.closeTooltip();
                 marker.openPopup();
             }
-        }, 350);
+        }, 400);
     }
 
+    /*
+     * Orte durchsuchen und filtern.
+     */
     function filterLocations() {
-        const searchValue = normalizeText(searchInput.value);
-        const selectedCategory = categoryFilter.value;
+        const searchValue = normalizeText(
+            searchInput ? searchInput.value : ""
+        );
 
-        const filteredLocations = allLocations.filter((location) => {
-            const properties = location.properties;
-            const tags = Array.isArray(properties.tags)
-                ? properties.tags
-                : [];
+        const selectedCategory = categoryFilter
+            ? categoryFilter.value
+            : "all";
 
-            const searchableContent = [
-                properties.name,
-                properties.municipality,
-                properties.area,
-                properties.category,
-                properties.description,
-                properties.short_description,
-                ...tags
-            ]
-                .filter(Boolean)
-                .join(" ");
+        const filteredLocations = allLocations.filter(
+            (location) => {
+                const properties = location.properties;
 
-            const matchesSearch = normalizeText(
-                searchableContent
-            ).includes(searchValue);
+                const tags = Array.isArray(properties.tags)
+                    ? properties.tags
+                    : [];
 
-            const matchesCategory =
-                selectedCategory === "all" ||
-                properties.category === selectedCategory;
+                const searchableContent = [
+                    properties.name,
+                    properties.municipality,
+                    properties.area,
+                    properties.category,
+                    properties.description,
+                    properties.short_description,
+                    properties.best_season,
+                    ...tags
+                ]
+                    .filter(Boolean)
+                    .join(" ");
 
-            return matchesSearch && matchesCategory;
-        });
+                const matchesSearch = normalizeText(
+                    searchableContent
+                ).includes(searchValue);
+
+                const matchesCategory =
+                    selectedCategory === "all" ||
+                    properties.category === selectedCategory;
+
+                return matchesSearch && matchesCategory;
+            }
+        );
 
         showLocations(filteredLocations, false);
     }
@@ -605,11 +891,11 @@ function initializeWebsite() {
     }
 
     function updateResultCount(count) {
-        if (!resultCount) {
+        if (!resultCountElement) {
             return;
         }
 
-        resultCount.textContent =
+        resultCountElement.textContent =
             count === 1
                 ? "1 Ort gefunden"
                 : `${count} Orte gefunden`;
@@ -641,20 +927,41 @@ function initializeWebsite() {
         }
     }
 
+    /*
+     * Kartenstatus
+     */
+    function showMapStatus(message) {
+        if (!mapStatusElement) {
+            return;
+        }
+
+        mapStatusElement.hidden = false;
+        mapStatusElement.textContent = message;
+    }
+
+    function hideMapStatus() {
+        if (!mapStatusElement) {
+            return;
+        }
+
+        mapStatusElement.hidden = true;
+    }
+
     function showMapError(message) {
         mapElement.classList.add("map-error");
         mapElement.textContent = message;
 
-        if (mapStatus) {
-            mapStatus.hidden = true;
-        }
+        hideMapStatus();
 
-        if (resultCount) {
-            resultCount.textContent =
+        if (resultCountElement) {
+            resultCountElement.textContent =
                 "Die Karte konnte nicht gestartet werden.";
         }
     }
 
+    /*
+     * Such- und Filterereignisse
+     */
     if (searchInput) {
         searchInput.addEventListener("input", filterLocations);
     }
@@ -666,13 +973,21 @@ function initializeWebsite() {
         );
     }
 
-    if (resetButton) {
-        resetButton.addEventListener("click", () => {
-            searchInput.value = "";
-            categoryFilter.value = "all";
+    if (resetFiltersButton) {
+        resetFiltersButton.addEventListener("click", () => {
+            if (searchInput) {
+                searchInput.value = "";
+            }
+
+            if (categoryFilter) {
+                categoryFilter.value = "all";
+            }
 
             showLocations(allLocations, true);
-            searchInput.focus();
+
+            if (searchInput) {
+                searchInput.focus();
+            }
         });
     }
 }
