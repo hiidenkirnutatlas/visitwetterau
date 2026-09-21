@@ -434,22 +434,80 @@ section {
     border: 0;
 }
 
-.custom-map-marker {
+.emoji-marker {
     display: flex;
-    width: 42px;
-    height: 42px;
-    border: 3px solid var(--white);
-    border-radius: 50% 50% 50% 8px;
+    width: 52px;
+    height: 52px;
+    border: 4px solid var(--white);
+    border-radius: 50%;
     align-items: center;
     justify-content: center;
     background: var(--forest);
-    box-shadow: 0 6px 15px rgb(0 0 0 / 25%);
-    font-size: 19px;
-    transform: rotate(-45deg);
+    box-shadow:
+        0 8px 18px rgb(22 44 35 / 32%),
+        0 2px 4px rgb(22 44 35 / 20%);
+    cursor: pointer;
+    font-size: 25px;
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
 }
 
-.custom-map-marker span {
-    transform: rotate(45deg);
+.emoji-marker:hover {
+    box-shadow:
+        0 12px 24px rgb(22 44 35 / 38%),
+        0 3px 6px rgb(22 44 35 / 22%);
+    transform: scale(1.12);
+}
+
+.emoji-marker span {
+    display: block;
+    line-height: 1;
+}
+
+.marker-castle {
+    background:
+        linear-gradient(
+            145deg,
+            #386653,
+            #173329
+        );
+}
+
+.marker-nature {
+    background:
+        linear-gradient(
+            145deg,
+            #a4bf64,
+            #5d7835
+        );
+}
+
+.marker-history {
+    background:
+        linear-gradient(
+            145deg,
+            #c79555,
+            #85582f
+        );
+}
+
+.marker-town {
+    background:
+        linear-gradient(
+            145deg,
+            #84acb1,
+            #4f777e
+        );
+}
+
+.marker-lgs {
+    background:
+        linear-gradient(
+            145deg,
+            #dd89a5,
+            #a84769
+        );
 }
 
 .marker-castle {
@@ -928,10 +986,76 @@ footer {
     }
 
     .map-legend {
-        gap: 10px 15px;
-        padding: 15px;
-        justify-content: flex-start;
-    }
+    display: flex;
+    gap: 10px;
+    padding: 18px 22px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    background:
+        linear-gradient(
+            135deg,
+            var(--paper),
+            var(--sand-light)
+        );
+    border-top: 1px solid var(--border);
+}
+
+.legend-chip {
+    display: inline-flex;
+    gap: 7px;
+    min-height: 38px;
+    padding: 7px 12px;
+    align-items: center;
+    color: var(--text);
+    background: var(--white);
+    border: 2px solid transparent;
+    border-radius: 999px;
+    box-shadow: 0 3px 10px rgb(31 52 43 / 9%);
+    font-size: 0.84rem;
+    font-weight: 750;
+    line-height: 1;
+}
+
+.legend-chip > span {
+    font-size: 1.15rem;
+}
+
+.legend-castle {
+    border-color: #386653;
+    background: #edf4f0;
+}
+
+.legend-nature {
+    border-color: #789846;
+    background: #f1f6e8;
+}
+
+.legend-town {
+    border-color: #5f8990;
+    background: #edf5f6;
+}
+
+.legend-history {
+    border-color: #986b37;
+    background: #f8f0e6;
+}
+
+.legend-lgs {
+    border-color: #b55b78;
+    background: #faedf2;
+}
+
+.legend-region {
+    border-color: var(--grain);
+    background:
+        linear-gradient(
+            135deg,
+            rgb(211 164 73 / 20%),
+            rgb(120 152 70 / 14%)
+        );
+}
 
     .map-status {
         max-width: calc(100% - 30px);
