@@ -36,6 +36,11 @@ function initializeWebsite() {
         scrollWheelZoom: false
     });
 
+    map.createPane("regionPane");
+
+    map.getPane("regionPane").style.zIndex = "350";
+    map.getPane("regionPane").style.pointerEvents = "none";
+
     const tileLayer = L.tileLayer(
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
@@ -61,6 +66,8 @@ function initializeWebsite() {
 
     tileLayer.addTo(map);
 
+    loadWetterauBoundary();
+
     L.control.scale({
         imperial: false,
         metric: true
@@ -77,6 +84,69 @@ function initializeWebsite() {
     window.addEventListener("resize", () => {
         map.invalidateSize();
     });
+
+    async function loadWetterauBoundary() {
+    try {
+        const boundaryUrl = new URL(
+            "./data/wetteraukreis.geojson",
+            document.baseURI
+        );
+
+        const response = await fetch(boundaryUrl.href, {
+            cache: "no-store"
+        });
+
+        if (!response.ok) {
+            throw new Error(
+                `Wetteraugrenze konnte nicht geladen werden: ` +
+                `${response.status}`
+            );
+        }
+
+        const boundaryData = await response.json();
+
+        const boundaryLayer = L.geoJSON(boundaryData, {
+            pane: "regionPane",
+            interactive: false,
+            style: {
+                color: "#244a3a",
+                weight: 4,
+                opacity: 0.95,
+                fillColor: "#d3a449",
+                fillOpacity: 0.14,
+                lineCap: "round",
+                lineJoin: "round"
+            }
+        });
+
+        boundaryLayer.addTo(map);
+
+        const regionLabel = boundaryLayer
+            .getBounds()
+            .getCenter();
+
+        L.marker(regionLabel, {
+            interactive: false,
+            keyboard: false,
+            icon: L.divIcon({
+                className: "region-label-wrapper",
+                html: `
+                    <div class="region-label">
+                        <span aria-hidden="true">🌿</span>
+                        Wetteraukreis
+                    </div>
+                `,
+                iconSize: [160, 36],
+                iconAnchor: [80, 18]
+            })
+        }).addTo(map);
+    } catch (error) {
+        console.warn(
+            "Die Wetteraugrenze konnte nicht dargestellt werden.",
+            error
+        );
+    }
+}
 
     loadLocations();
 
