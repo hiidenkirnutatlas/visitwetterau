@@ -29,13 +29,13 @@ function initializeWebsite() {
     const WEATHER_REGION_CENTER = [50.34, 8.93];
     const INITIAL_ZOOM = 10;
 
-    // Karte initialisieren mit vollem Dragging & Touch-Support
+    // Karte initialisieren mit vollem Touch- & Drag-Support
     const map = L.map(mapElement, {
         center: WEATHER_REGION_CENTER,
         zoom: INITIAL_ZOOM,
         scrollWheelZoom: false,
         dragging: true,
-        tap: false, // Behebt den bekannten iOS/Android Touch-Bug in Leaflet
+        tap: false,
         touchZoom: true
     });
 
@@ -151,6 +151,7 @@ function initializeWebsite() {
         }
 
         const bounds = [];
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         locations.forEach((location) => {
             const props = location.properties;
@@ -158,20 +159,37 @@ function initializeWebsite() {
             const latLng = [lat, lng];
 
             const marker = L.marker(latLng, {
-                icon: createMarkerIcon(location),
+                icon: createMarkerIcon(props.category),
                 title: props.name,
                 riseOnHover: true
             });
 
-            // Großes Popup mit sauberem Auto-Pan
+            // 1. Großes Popup für Klick
             marker.bindPopup(createPopup(location), {
                 maxWidth: 290,
                 minWidth: 250,
                 autoPan: true,
                 autoPanPadding: [30, 30],
                 closeButton: true,
-                offset: [0, -14]
+                offset: [0, -18]
             });
+
+            // 2. Schnelle Vorschau-Hover-Card für Desktop (Mouse)
+            if (!isTouchDevice) {
+                marker.bindTooltip(createLocationPreview(location), {
+                    direction: "top",
+                    offset: [0, -22],
+                    opacity: 1,
+                    className: "location-preview-tooltip",
+                    interactive: false,
+                    sticky: false
+                });
+
+                // Sofortiges Schließen der Vorschau, wenn geklickt wird
+                marker.on("click", function () {
+                    this.closeTooltip();
+                });
+            }
 
             marker.addTo(markerLayer);
             activeMarkers.set(props.id, marker);
@@ -191,39 +209,15 @@ function initializeWebsite() {
         window.setTimeout(() => map.invalidateSize(), 100);
     }
 
-    // Marker mit integrierter CSS-Hover-Vorschau (blockiert keine Touch- oder Klick-Events)
-    function createMarkerIcon(location) {
-        const props = location.properties;
-        const markerData = getCategoryData(props.category);
-        const image = props.image || "./assets/images/placeholder.svg";
-        const title = escapeHtml(props.name || "");
-        const category = escapeHtml(props.category || "Ausflugsziel");
-        const municipality = escapeHtml([props.municipality, props.area].filter(Boolean).join(" · "));
-        const desc = escapeHtml(props.short_description || props.description || "");
-
-        const html = `
-            <div class="marker-container">
-                <div class="emoji-marker ${markerData.className}">
-                    <span>${markerData.icon}</span>
-                </div>
-                <div class="marker-hover-card">
-                    <img src="${image}" alt="" loading="lazy" onerror="this.src='./assets/images/placeholder.svg'">
-                    <div class="marker-hover-body">
-                        <span class="marker-hover-cat">${markerData.icon} ${category}</span>
-                        <strong>${title}</strong>
-                        <small>${municipality}</small>
-                        ${desc ? `<p>${desc}</p>` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-
+    function createMarkerIcon(category) {
+        const markerData = getCategoryData(category);
         return L.divIcon({
             className: "weather-marker-wrapper",
-            html: html,
+            html: `<div class="emoji-marker ${markerData.className}"><span>${markerData.icon}</span></div>`,
             iconSize: [46, 46],
             iconAnchor: [23, 23],
-            popupAnchor: [0, -26]
+            popupAnchor: [0, -23],
+            tooltipAnchor: [0, -23]
         });
     }
 
@@ -238,6 +232,31 @@ function initializeWebsite() {
             "Landesgartenschau 2027": { icon: "🌸", className: "marker-lgs" }
         };
         return categories[category] || { icon: "📍", className: "marker-default" };
+    }
+
+    // Hover-Preview HTML für Leaflet-Tooltip
+    function createLocationPreview(location) {
+        const props = location.properties;
+        const markerData = getCategoryData(props.category);
+        const image = props.image || "./assets/images/placeholder.svg";
+        const title = escapeHtml(props.name || "");
+        const category = escapeHtml(props.category || "Ausflugsziel");
+        const municipality = escapeHtml([props.municipality, props.area].filter(Boolean).join(" · "));
+        const desc = escapeHtml(props.short_description || props.description || "");
+
+        const preview = document.createElement("article");
+        preview.className = "marker-hover-card";
+        preview.innerHTML = `
+            <img src="${image}" alt="" loading="lazy" onerror="this.src='./assets/images/placeholder.svg'">
+            <div class="marker-hover-body">
+                <span class="marker-hover-cat">${markerData.icon} ${category}</span>
+                <strong>${title}</strong>
+                <small>${municipality}</small>
+                ${desc ? `<p>${desc}</p>` : ''}
+                <span class="marker-hover-hint">Klicken für Details</span>
+            </div>
+        `;
+        return preview;
     }
 
     function createPopup(location) {
