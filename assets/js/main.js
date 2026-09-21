@@ -17,7 +17,7 @@ function initializeWebsite() {
     }
 
     if (!mapElement) {
-        console.error("Kartenelement #map wurde nicht gefunden.");
+        console.error("Kartenelement #map nicht gefunden.");
         return;
     }
 
@@ -29,12 +29,14 @@ function initializeWebsite() {
     const WEATHER_REGION_CENTER = [50.34, 8.93];
     const INITIAL_ZOOM = 10;
 
+    // Karte initialisieren mit vollem Dragging & Touch-Support
     const map = L.map(mapElement, {
         center: WEATHER_REGION_CENTER,
         zoom: INITIAL_ZOOM,
         scrollWheelZoom: false,
-        zoomControl: true,
-        attributionControl: true
+        dragging: true,
+        tap: false, // Behebt den bekannten iOS/Android Touch-Bug in Leaflet
+        touchZoom: true
     });
 
     // Eigene Ebene für die Umrandung (unter den Markern)
@@ -55,7 +57,7 @@ function initializeWebsite() {
     );
 
     tileLayer.on("load", hideMapStatus);
-    tileLayer.on("tileerror", () => showMapStatus("Kartenkacheln konnten nicht vollständig geladen werden."));
+    tileLayer.on("tileerror", () => showMapStatus("Kartenkacheln konnten nicht geladen werden."));
     tileLayer.addTo(map);
 
     L.control.scale({ imperial: false, metric: true }).addTo(map);
@@ -70,10 +72,6 @@ function initializeWebsite() {
     window.setTimeout(() => map.invalidateSize(), 250);
     window.addEventListener("resize", () => map.invalidateSize());
 
-    map.on("movestart zoomstart", () => {
-        map.closeTooltip();
-    });
-
     // Grenze laden
     async function loadWetterauBoundary() {
         try {
@@ -87,10 +85,10 @@ function initializeWebsite() {
                 interactive: false,
                 style: {
                     color: "#244a3a",
-                    weight: 4,
-                    opacity: 0.95,
+                    weight: 3,
+                    opacity: 0.9,
                     fillColor: "#d3a449",
-                    fillOpacity: 0.14,
+                    fillOpacity: 0.12,
                     lineCap: "round",
                     lineJoin: "round"
                 }
@@ -153,7 +151,6 @@ function initializeWebsite() {
         }
 
         const bounds = [];
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         locations.forEach((location) => {
             const props = location.properties;
@@ -161,51 +158,19 @@ function initializeWebsite() {
             const latLng = [lat, lng];
 
             const marker = L.marker(latLng, {
-                icon: createMarkerIcon(props.category),
+                icon: createMarkerIcon(location),
                 title: props.name,
-                keyboard: true,
                 riseOnHover: true
             });
 
-            // Großes Popup mit automatischem Pan
+            // Großes Popup mit sauberem Auto-Pan
             marker.bindPopup(createPopup(location), {
-                maxWidth: 300,
-                minWidth: 260,
+                maxWidth: 290,
+                minWidth: 250,
                 autoPan: true,
-                autoPanPadding: [40, 40],
-                autoPanPaddingTopLeft: [40, 40],
-                autoPanPaddingBottomRight: [40, 40],
-                closeButton: true
-            });
-
-            // Hover-Vorschau nur auf Geräten mit Maus (verhindert Doppelklick auf Touch)
-            if (!isTouchDevice) {
-                marker.bindTooltip(createLocationPreview(location), {
-                    direction: "top",
-                    offset: [0, -28],
-                    opacity: 1,
-                    className: "location-preview-tooltip",
-                    interactive: false
-                });
-
-                marker.on("mouseover", function () {
-                    if (!this.isPopupOpen()) {
-                        this.openTooltip();
-                    }
-                });
-
-                marker.on("mouseout", function () {
-                    this.closeTooltip();
-                });
-            }
-
-            // Beim direkten Klick: Tooltip sofort weg, Popup auf, leicht anzentrieren
-            marker.on("click", function () {
-                this.closeTooltip();
-                map.flyTo(latLng, Math.max(map.getZoom(), 13), {
-                    animate: true,
-                    duration: 0.5
-                });
+                autoPanPadding: [30, 30],
+                closeButton: true,
+                offset: [0, -14]
             });
 
             marker.addTo(markerLayer);
@@ -218,7 +183,7 @@ function initializeWebsite() {
         });
 
         if (adjustMap && bounds.length > 1) {
-            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 11 });
+            map.fitBounds(bounds, { padding: [40, 40], maxZoom: 11 });
         } else if (adjustMap && bounds.length === 1) {
             map.setView(bounds[0], 13);
         }
@@ -226,15 +191,39 @@ function initializeWebsite() {
         window.setTimeout(() => map.invalidateSize(), 100);
     }
 
-    function createMarkerIcon(category) {
-        const markerData = getCategoryData(category);
+    // Marker mit integrierter CSS-Hover-Vorschau (blockiert keine Touch- oder Klick-Events)
+    function createMarkerIcon(location) {
+        const props = location.properties;
+        const markerData = getCategoryData(props.category);
+        const image = props.image || "./assets/images/placeholder.svg";
+        const title = escapeHtml(props.name || "");
+        const category = escapeHtml(props.category || "Ausflugsziel");
+        const municipality = escapeHtml([props.municipality, props.area].filter(Boolean).join(" · "));
+        const desc = escapeHtml(props.short_description || props.description || "");
+
+        const html = `
+            <div class="marker-container">
+                <div class="emoji-marker ${markerData.className}">
+                    <span>${markerData.icon}</span>
+                </div>
+                <div class="marker-hover-card">
+                    <img src="${image}" alt="" loading="lazy" onerror="this.src='./assets/images/placeholder.svg'">
+                    <div class="marker-hover-body">
+                        <span class="marker-hover-cat">${markerData.icon} ${category}</span>
+                        <strong>${title}</strong>
+                        <small>${municipality}</small>
+                        ${desc ? `<p>${desc}</p>` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+
         return L.divIcon({
             className: "weather-marker-wrapper",
-            html: `<div class="emoji-marker ${markerData.className}"><span>${markerData.icon}</span></div>`,
-            iconSize: [52, 52],
-            iconAnchor: [26, 26],
-            popupAnchor: [0, -28],
-            tooltipAnchor: [0, -28]
+            html: html,
+            iconSize: [46, 46],
+            iconAnchor: [23, 23],
+            popupAnchor: [0, -26]
         });
     }
 
@@ -249,48 +238,6 @@ function initializeWebsite() {
             "Landesgartenschau 2027": { icon: "🌸", className: "marker-lgs" }
         };
         return categories[category] || { icon: "📍", className: "marker-default" };
-    }
-
-    function createLocationPreview(location) {
-        const props = location.properties;
-        const markerData = getCategoryData(props.category);
-
-        const preview = document.createElement("article");
-        preview.className = "marker-preview-card";
-
-        const image = document.createElement("img");
-        image.className = "marker-preview-image";
-        image.src = props.image || "./assets/images/placeholder.svg";
-        image.alt = "";
-        image.loading = "lazy";
-        image.onerror = () => { image.src = "./assets/images/placeholder.svg"; };
-
-        const content = document.createElement("div");
-        content.className = "marker-preview-content";
-
-        const category = document.createElement("p");
-        category.className = "marker-preview-category";
-        category.textContent = `${markerData.icon} ${props.category || "Ausflugsziel"}`;
-
-        const title = document.createElement("strong");
-        title.className = "marker-preview-title";
-        title.textContent = props.name;
-
-        const locationText = document.createElement("p");
-        locationText.className = "marker-preview-location";
-        locationText.textContent = [props.municipality, props.area].filter(Boolean).join(" · ");
-
-        const description = document.createElement("p");
-        description.className = "marker-preview-description";
-        description.textContent = props.short_description || props.description || "";
-
-        const hint = document.createElement("span");
-        hint.className = "marker-preview-hint";
-        hint.textContent = "Klicken für Details";
-
-        content.append(category, title, locationText, description, hint);
-        preview.append(image, content);
-        return preview;
     }
 
     function createPopup(location) {
@@ -464,9 +411,8 @@ function initializeWebsite() {
 
         window.setTimeout(() => {
             map.invalidateSize();
-            map.flyTo([lat, lng], 14, { animate: true, duration: 0.8 });
+            map.setView([lat, lng], 14, { animate: true });
             if (marker) {
-                marker.closeTooltip();
                 marker.openPopup();
             }
         }, 300);
@@ -505,6 +451,15 @@ function initializeWebsite() {
             .replace(/[\u0300-\u036f]/g, "")
             .toLocaleLowerCase("de")
             .trim();
+    }
+
+    function escapeHtml(str) {
+        return String(str || "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
     }
 
     function updateResultCount(count) {
