@@ -3,9 +3,6 @@
 document.addEventListener("DOMContentLoaded", initializeWebsite);
 
 function initializeWebsite() {
-    /*
-     * Grundlegende DOM-Elemente
-     */
     const mapElement = document.getElementById("map");
     const mapStatusElement = document.getElementById("mapStatus");
     const searchInput = document.getElementById("searchInput");
@@ -20,25 +17,15 @@ function initializeWebsite() {
     }
 
     if (!mapElement) {
-        console.error(
-            "Das Kartenelement mit der ID 'map' wurde nicht gefunden."
-        );
-
+        console.error("Kartenelement #map wurde nicht gefunden.");
         return;
     }
 
     if (typeof L === "undefined") {
-        showMapError(
-            "Die Kartenbibliothek konnte nicht geladen werden. " +
-            "Bitte prüfe deine Internetverbindung."
-        );
-
+        showMapError("Kartenbibliothek konnte nicht geladen werden.");
         return;
     }
 
-    /*
-     * Karte erstellen
-     */
     const WEATHER_REGION_CENTER = [50.34, 8.93];
     const INITIAL_ZOOM = 10;
 
@@ -50,106 +37,51 @@ function initializeWebsite() {
         attributionControl: true
     });
 
-    /*
-     * Eigene Kartenebene für die Wetteraukreis-Grenze.
-     * Die Ebene liegt über der Grundkarte, aber unter den Markern.
-     */
+    // Eigene Ebene für die Umrandung (unter den Markern)
     map.createPane("regionPane");
-
     const regionPane = map.getPane("regionPane");
-
     if (regionPane) {
         regionPane.style.zIndex = "350";
         regionPane.style.pointerEvents = "none";
     }
 
-    /*
-     * OpenStreetMap-Grundkarte
-     */
     const tileLayer = L.tileLayer(
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
             maxZoom: 19,
             attribution:
-                "&copy; " +
-                '<a href="https://www.openstreetmap.org/copyright" ' +
-                'target="_blank" rel="noopener noreferrer">' +
-                "OpenStreetMap-Mitwirkende</a>"
+                '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>'
         }
     );
 
-    tileLayer.on("load", () => {
-        hideMapStatus();
-    });
-
-    tileLayer.on("tileerror", () => {
-        showMapStatus(
-            "Einige Kartenteile konnten nicht geladen werden."
-        );
-    });
-
+    tileLayer.on("load", hideMapStatus);
+    tileLayer.on("tileerror", () => showMapStatus("Kartenkacheln konnten nicht vollständig geladen werden."));
     tileLayer.addTo(map);
 
-    L.control.scale({
-        imperial: false,
-        metric: true
-    }).addTo(map);
+    L.control.scale({ imperial: false, metric: true }).addTo(map);
 
-    /*
-     * Daten und Marker
-     */
     let allLocations = [];
     const markerLayer = L.layerGroup().addTo(map);
     const activeMarkers = new Map();
 
-    /*
-     * GeoJSON-Dateien laden
-     */
     loadWetterauBoundary();
     loadLocations();
 
-    /*
-     * Leaflet benötigt nach Größenänderungen manchmal eine
-     * Neuberechnung der Kartenfläche.
-     */
-    window.setTimeout(() => {
-        map.invalidateSize();
-    }, 250);
+    window.setTimeout(() => map.invalidateSize(), 250);
+    window.addEventListener("resize", () => map.invalidateSize());
 
-    window.addEventListener("resize", () => {
-        map.invalidateSize();
-    });
-
-    /*
-     * Offene Hover-Vorschauen beim Verschieben der Karte schließen.
-     */
     map.on("movestart zoomstart", () => {
         map.closeTooltip();
     });
 
-    /*
-     * Wetteraukreis-Grenze laden
-     */
+    // Grenze laden
     async function loadWetterauBoundary() {
         try {
-            const boundaryUrl = new URL(
-                "./data/wetteraukreis.geojson",
-                document.baseURI
-            );
-
-            const response = await fetch(boundaryUrl.href, {
-                cache: "no-store"
-            });
-
-            if (!response.ok) {
-                throw new Error(
-                    "Wetteraukreis-Grenze konnte nicht geladen werden: " +
-                    response.status
-                );
-            }
+            const boundaryUrl = new URL("./data/wetteraukreis.geojson", document.baseURI);
+            const response = await fetch(boundaryUrl.href, { cache: "no-store" });
+            if (!response.ok) return;
 
             const boundaryData = await response.json();
-
             L.geoJSON(boundaryData, {
                 pane: "regionPane",
                 interactive: false,
@@ -164,628 +96,348 @@ function initializeWebsite() {
                 }
             }).addTo(map);
         } catch (error) {
-            /*
-             * Die Karte funktioniert auch ohne Regionsgrenze.
-             */
-            console.warn(
-                "Die Wetteraukreis-Grenze konnte nicht angezeigt werden.",
-                error
-            );
+            console.warn("Wetteraukreis-Grenze nicht geladen:", error);
         }
     }
 
-    /*
-     * Ortsdaten laden
-     */
+    // Orte laden
     async function loadLocations() {
         try {
-            const locationsUrl = new URL(
-                "./data/locations.geojson",
-                document.baseURI
-            );
-
-            const response = await fetch(locationsUrl.href, {
-                cache: "no-store"
-            });
-
-            if (!response.ok) {
-                throw new Error(
-                    "Ortsdaten konnten nicht geladen werden: " +
-                    response.status
-                );
-            }
+            const locationsUrl = new URL("./data/locations.geojson", document.baseURI);
+            const response = await fetch(locationsUrl.href, { cache: "no-store" });
+            if (!response.ok) throw new Error("Fehler beim Laden: " + response.status);
 
             const data = await response.json();
-
-            if (!Array.isArray(data.features)) {
-                throw new Error(
-                    "Die GeoJSON-Datei enthält kein features-Array."
-                );
-            }
+            if (!Array.isArray(data.features)) throw new Error("Kein features-Array");
 
             allLocations = data.features.filter(isValidLocation);
-
             showLocations(allLocations, true);
         } catch (error) {
             console.error(error);
-
-            if (resultCountElement) {
-                resultCountElement.textContent =
-                    "Die Orte konnten nicht geladen werden.";
-            }
-
+            if (resultCountElement) resultCountElement.textContent = "Orte konnten nicht geladen werden.";
             if (resultsElement) {
                 resultsElement.replaceChildren(
-                    createMessage(
-                        "Beim Laden der Ortsdaten ist ein Fehler " +
-                        "aufgetreten. Prüfe die Datei " +
-                        "data/locations.geojson."
-                    )
+                    createMessage("Beim Laden der Orte ist ein Fehler aufgetreten.")
                 );
             }
         }
     }
 
-    /*
-     * Prüfen, ob ein GeoJSON-Ort vollständig genug ist.
-     */
-    function isValidLocation(location) {
-        if (
-            !location ||
-            !location.geometry ||
-            !location.properties
-        ) {
-            return false;
-        }
-
-        const coordinates = location.geometry.coordinates;
-
+    function isValidLocation(loc) {
+        const coords = loc?.geometry?.coordinates;
         return (
-            location.geometry.type === "Point" &&
-            Array.isArray(coordinates) &&
-            coordinates.length >= 2 &&
-            Number.isFinite(coordinates[0]) &&
-            Number.isFinite(coordinates[1]) &&
-            Boolean(location.properties.id) &&
-            Boolean(location.properties.name)
+            loc?.geometry?.type === "Point" &&
+            Array.isArray(coords) &&
+            coords.length >= 2 &&
+            Number.isFinite(coords[0]) &&
+            Number.isFinite(coords[1]) &&
+            Boolean(loc?.properties?.id) &&
+            Boolean(loc?.properties?.name)
         );
     }
 
-    /*
-     * Orte auf Karte und in Ergebnisliste anzeigen.
-     */
     function showLocations(locations, adjustMap = false) {
         markerLayer.clearLayers();
         activeMarkers.clear();
 
-        if (resultsElement) {
-            resultsElement.replaceChildren();
-        }
-
+        if (resultsElement) resultsElement.replaceChildren();
         updateResultCount(locations.length);
 
         if (locations.length === 0) {
             if (resultsElement) {
                 resultsElement.appendChild(
-                    createMessage(
-                        "Für diese Suche wurden keine Orte gefunden. " +
-                        "Versuche einen anderen Suchbegriff oder " +
-                        "setze die Filter zurück."
-                    )
+                    createMessage("Keine passenden Orte gefunden. Bitte Filter zurücksetzen.")
                 );
             }
-
             return;
         }
 
         const bounds = [];
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
         locations.forEach((location) => {
-            const properties = location.properties;
-            const coordinates = location.geometry.coordinates;
+            const props = location.properties;
+            const [lng, lat] = location.geometry.coordinates;
+            const latLng = [lat, lng];
 
-            /*
-             * GeoJSON verwendet:
-             * [Längengrad, Breitengrad]
-             *
-             * Leaflet verwendet:
-             * [Breitengrad, Längengrad]
-             */
-            const longitude = coordinates[0];
-            const latitude = coordinates[1];
-            const latitudeLongitude = [latitude, longitude];
-
-            const marker = L.marker(latitudeLongitude, {
-                icon: createMarkerIcon(properties.category),
-                title: properties.name,
+            const marker = L.marker(latLng, {
+                icon: createMarkerIcon(props.category),
+                title: props.name,
                 keyboard: true,
-                riseOnHover: true,
-                riseOffset: 1000
+                riseOnHover: true
             });
 
-            /*
-             * Große Detailansicht beim Anklicken.
-             */
+            // Großes Popup mit automatischem Pan
             marker.bindPopup(createPopup(location), {
-                maxWidth: 320,
-                minWidth: 240,
+                maxWidth: 300,
+                minWidth: 260,
                 autoPan: true,
-                keepInView: true,
+                autoPanPadding: [40, 40],
+                autoPanPaddingTopLeft: [40, 40],
+                autoPanPaddingBottomRight: [40, 40],
                 closeButton: true
             });
 
-            /*
-             * Kleine Ortsvorschau beim Hover.
-             */
-            marker.bindTooltip(createLocationPreview(location), {
-                direction: "top",
-                offset: [0, -27],
-                opacity: 1,
-                className: "location-preview-tooltip",
-                interactive: false,
-                sticky: false
-            });
+            // Hover-Vorschau nur auf Geräten mit Maus (verhindert Doppelklick auf Touch)
+            if (!isTouchDevice) {
+                marker.bindTooltip(createLocationPreview(location), {
+                    direction: "top",
+                    offset: [0, -28],
+                    opacity: 1,
+                    className: "location-preview-tooltip",
+                    interactive: false
+                });
 
-            marker.on("click", () => {
-                marker.closeTooltip();
-            });
-
-            marker.on("popupopen", () => {
-                marker.closeTooltip();
-            });
-
-            /*
-             * Tastaturbedienung:
-             * Beim Fokus wird die Vorschau geöffnet.
-             */
-            marker.on("add", () => {
-                const markerElement = marker.getElement();
-
-                if (!markerElement) {
-                    return;
-                }
-
-                markerElement.setAttribute(
-                    "aria-label",
-                    properties.name
-                );
-
-                markerElement.addEventListener("focus", () => {
-                    if (!marker.isPopupOpen()) {
-                        marker.openTooltip();
+                marker.on("mouseover", function () {
+                    if (!this.isPopupOpen()) {
+                        this.openTooltip();
                     }
                 });
 
-                markerElement.addEventListener("blur", () => {
-                    marker.closeTooltip();
+                marker.on("mouseout", function () {
+                    this.closeTooltip();
+                });
+            }
+
+            // Beim direkten Klick: Tooltip sofort weg, Popup auf, leicht anzentrieren
+            marker.on("click", function () {
+                this.closeTooltip();
+                map.flyTo(latLng, Math.max(map.getZoom(), 13), {
+                    animate: true,
+                    duration: 0.5
                 });
             });
 
             marker.addTo(markerLayer);
-
-            activeMarkers.set(properties.id, marker);
-            bounds.push(latitudeLongitude);
+            activeMarkers.set(props.id, marker);
+            bounds.push(latLng);
 
             if (resultsElement) {
-                resultsElement.appendChild(
-                    createResultCard(location)
-                );
+                resultsElement.appendChild(createResultCard(location));
             }
         });
 
-        /*
-         * Kartenausschnitt an sichtbare Orte anpassen.
-         */
         if (adjustMap && bounds.length > 1) {
-            map.fitBounds(bounds, {
-                padding: [55, 55],
-                maxZoom: 11
-            });
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 11 });
         } else if (adjustMap && bounds.length === 1) {
             map.setView(bounds[0], 13);
         }
 
-        window.setTimeout(() => {
-            map.invalidateSize();
-        }, 100);
+        window.setTimeout(() => map.invalidateSize(), 100);
     }
 
-    /*
-     * Emoji-Marker erzeugen.
-     */
     function createMarkerIcon(category) {
         const markerData = getCategoryData(category);
-
         return L.divIcon({
             className: "weather-marker-wrapper",
-            html: `
-                <div
-                    class="emoji-marker ${markerData.className}"
-                    aria-hidden="true"
-                >
-                    <span>${markerData.icon}</span>
-                </div>
-            `,
+            html: `<div class="emoji-marker ${markerData.className}"><span>${markerData.icon}</span></div>`,
             iconSize: [52, 52],
             iconAnchor: [26, 26],
-            popupAnchor: [0, -31],
-            tooltipAnchor: [0, -23]
+            popupAnchor: [0, -28],
+            tooltipAnchor: [0, -28]
         });
     }
 
-    /*
-     * Kategorie, Emoji und Markerfarbe zuordnen.
-     */
     function getCategoryData(category) {
         const categories = {
-            "Burg und Schloss": {
-                icon: "🏰",
-                className: "marker-castle"
-            },
-            "Natur": {
-                icon: "🌳",
-                className: "marker-nature"
-            },
-            "Aussichtspunkt": {
-                icon: "🌄",
-                className: "marker-viewpoint"
-            },
-            "Geschichte": {
-                icon: "🏺",
-                className: "marker-history"
-            },
-            "Stadt und Fachwerk": {
-                icon: "🏘️",
-                className: "marker-town"
-            },
-            "Genuss": {
-                icon: "🍎",
-                className: "marker-food"
-            },
-            "Landesgartenschau 2027": {
-                icon: "🌸",
-                className: "marker-lgs"
-            }
+            "Burg und Schloss": { icon: "🏰", className: "marker-castle" },
+            "Natur": { icon: "🌳", className: "marker-nature" },
+            "Aussichtspunkt": { icon: "🌄", className: "marker-viewpoint" },
+            "Geschichte": { icon: "🏺", className: "marker-history" },
+            "Stadt und Fachwerk": { icon: "🏘️", className: "marker-town" },
+            "Genuss": { icon: "🍎", className: "marker-food" },
+            "Landesgartenschau 2027": { icon: "🌸", className: "marker-lgs" }
         };
-
-        return categories[category] || {
-            icon: "📍",
-            className: "marker-default"
-        };
+        return categories[category] || { icon: "📍", className: "marker-default" };
     }
 
-    /*
-     * Kleine Hover-Vorschau erzeugen.
-     */
     function createLocationPreview(location) {
-        const properties = location.properties;
-        const markerData = getCategoryData(properties.category);
+        const props = location.properties;
+        const markerData = getCategoryData(props.category);
 
         const preview = document.createElement("article");
         preview.className = "marker-preview-card";
 
         const image = document.createElement("img");
         image.className = "marker-preview-image";
-        image.src =
-            properties.image ||
-            "./assets/images/placeholder.svg";
+        image.src = props.image || "./assets/images/placeholder.svg";
         image.alt = "";
         image.loading = "lazy";
-
-        image.addEventListener("error", () => {
-            image.onerror = null;
-            image.src = "./assets/images/placeholder.svg";
-        });
+        image.onerror = () => { image.src = "./assets/images/placeholder.svg"; };
 
         const content = document.createElement("div");
         content.className = "marker-preview-content";
 
         const category = document.createElement("p");
         category.className = "marker-preview-category";
-        category.textContent =
-            `${markerData.icon} ` +
-            `${properties.category || "Ausflugsziel"}`;
+        category.textContent = `${markerData.icon} ${props.category || "Ausflugsziel"}`;
 
         const title = document.createElement("strong");
         title.className = "marker-preview-title";
-        title.textContent = properties.name;
+        title.textContent = props.name;
 
         const locationText = document.createElement("p");
         locationText.className = "marker-preview-location";
-        locationText.textContent = [
-            properties.municipality,
-            properties.area
-        ]
-            .filter(Boolean)
-            .join(" · ");
+        locationText.textContent = [props.municipality, props.area].filter(Boolean).join(" · ");
 
         const description = document.createElement("p");
         description.className = "marker-preview-description";
-        description.textContent =
-            properties.short_description ||
-            properties.description ||
-            "";
+        description.textContent = props.short_description || props.description || "";
 
         const hint = document.createElement("span");
         hint.className = "marker-preview-hint";
-        hint.textContent = "Anklicken für Details";
+        hint.textContent = "Klicken für Details";
 
-        content.append(
-            category,
-            title,
-            locationText,
-            description,
-            hint
-        );
-
+        content.append(category, title, locationText, description, hint);
         preview.append(image, content);
-
         return preview;
     }
 
-    /*
-     * Großes Leaflet-Popup erzeugen.
-     */
     function createPopup(location) {
-        const properties = location.properties;
-        const markerData = getCategoryData(properties.category);
+        const props = location.properties;
+        const markerData = getCategoryData(props.category);
 
         const popup = document.createElement("article");
         popup.className = "map-popup";
 
         const image = document.createElement("img");
         image.className = "map-popup-image";
-        image.src =
-            properties.image ||
-            "./assets/images/placeholder.svg";
-        image.alt =
-            properties.image_alt ||
-            properties.name;
+        image.src = props.image || "./assets/images/placeholder.svg";
+        image.alt = props.image_alt || props.name;
         image.loading = "lazy";
-
-        image.addEventListener("error", () => {
-            image.onerror = null;
-            image.src = "./assets/images/placeholder.svg";
-        });
+        image.onerror = () => { image.src = "./assets/images/placeholder.svg"; };
 
         const category = document.createElement("p");
         category.className = "popup-category";
-        category.textContent =
-            `${markerData.icon} ` +
-            `${properties.category || "Ausflugsziel"}`;
+        category.textContent = `${markerData.icon} ${props.category || "Ausflugsziel"}`;
 
         const title = document.createElement("h3");
-        title.textContent = properties.name;
+        title.textContent = props.name;
 
         const locationText = document.createElement("p");
         locationText.className = "popup-location";
-        locationText.textContent = [
-            properties.municipality,
-            properties.area
-        ]
-            .filter(Boolean)
-            .join(" · ");
+        locationText.textContent = [props.municipality, props.area].filter(Boolean).join(" · ");
 
         const description = document.createElement("p");
         description.className = "popup-description";
-        description.textContent =
-            properties.short_description ||
-            properties.description ||
-            "";
+        description.textContent = props.short_description || props.description || "";
 
-        popup.append(
-            image,
-            category,
-            title,
-            locationText,
-            description
-        );
+        popup.append(image, category, title, locationText, description);
 
-        const facts = createPopupFacts(properties);
+        const facts = createPopupFacts(props);
+        if (facts.children.length > 0) popup.appendChild(facts);
 
-        if (facts.children.length > 0) {
-            popup.appendChild(facts);
-        }
-
-        if (isUsableUrl(properties.website_url)) {
+        if (isUsableUrl(props.website_url)) {
             const link = document.createElement("a");
-
             link.className = "popup-button";
-            link.href = properties.website_url;
+            link.href = props.website_url;
             link.target = "_blank";
             link.rel = "noopener noreferrer";
             link.textContent = "Weitere Informationen";
-
             popup.appendChild(link);
         }
 
         return popup;
     }
 
-    /*
-     * Fakten im Popup anzeigen.
-     */
-    function createPopupFacts(properties) {
+    function createPopupFacts(props) {
         const list = document.createElement("ul");
         list.className = "popup-facts";
-
         const facts = [];
 
-        if (properties.visit_time) {
-            facts.push(`⏱ ${properties.visit_time}`);
-        }
-
-        if (properties.parking === true) {
-            facts.push("🚗 Parkplatz");
-        }
-
-        if (properties.family_friendly === true) {
-            facts.push("👨‍👩‍👧 Familiengeeignet");
-        }
-
-        if (properties.accessible === true) {
-            facts.push("♿ Barrierearm");
-        }
+        if (props.visit_time) facts.push(`⏱ ${props.visit_time}`);
+        if (props.parking === true) facts.push("🚗 Parkplatz");
+        if (props.family_friendly === true) facts.push("👨‍👩‍👧 Familie");
+        if (props.accessible === true) facts.push("♿ Barrierearm");
 
         facts.forEach((fact) => {
             const item = document.createElement("li");
             item.textContent = fact;
             list.appendChild(item);
         });
-
         return list;
     }
 
-    /*
-     * Ergebniskarte unterhalb der Karte erzeugen.
-     */
     function createResultCard(location) {
-        const properties = location.properties;
-        const markerData = getCategoryData(properties.category);
+        const props = location.properties;
+        const markerData = getCategoryData(props.category);
 
         const card = document.createElement("article");
         card.className = "result-card";
-        card.dataset.locationId = properties.id;
+        card.dataset.locationId = props.id;
 
         const image = document.createElement("img");
         image.className = "result-card-image";
-        image.src =
-            properties.image ||
-            "./assets/images/placeholder.svg";
-        image.alt =
-            properties.image_alt ||
-            properties.name;
+        image.src = props.image || "./assets/images/placeholder.svg";
+        image.alt = props.image_alt || props.name;
         image.loading = "lazy";
-
-        image.addEventListener("error", () => {
-            image.onerror = null;
-            image.src = "./assets/images/placeholder.svg";
-        });
+        image.onerror = () => { image.src = "./assets/images/placeholder.svg"; };
 
         const content = document.createElement("div");
         content.className = "result-card-content";
 
         const category = document.createElement("p");
         category.className = "result-card-category";
-        category.textContent =
-            `${markerData.icon} ` +
-            `${properties.category || "Ausflugsziel"}`;
+        category.textContent = `${markerData.icon} ${props.category || "Ausflugsziel"}`;
 
         const title = document.createElement("h3");
-        title.textContent = properties.name;
+        title.textContent = props.name;
 
         const locationText = document.createElement("p");
         locationText.className = "result-card-location";
-        locationText.textContent = [
-            properties.municipality,
-            properties.area
-        ]
-            .filter(Boolean)
-            .join(" · ");
+        locationText.textContent = [props.municipality, props.area].filter(Boolean).join(" · ");
 
         const description = document.createElement("p");
         description.className = "result-card-description";
-        description.textContent =
-            properties.description ||
-            properties.short_description ||
-            "";
+        description.textContent = props.description || props.short_description || "";
 
-        const facts = createFactsList(properties);
+        const facts = createFactsList(props);
         const actions = createCardActions(location);
 
-        content.append(
-            category,
-            title,
-            locationText,
-            description
-        );
-
-        if (facts.children.length > 0) {
-            content.appendChild(facts);
-        }
-
+        content.append(category, title, locationText, description);
+        if (facts.children.length > 0) content.appendChild(facts);
         content.appendChild(actions);
-        card.append(image, content);
 
+        card.append(image, content);
         return card;
     }
 
-    /*
-     * Fakten für die Ergebniskarten.
-     */
-    function createFactsList(properties) {
+    function createFactsList(props) {
         const list = document.createElement("ul");
         list.className = "result-card-facts";
-
         const facts = [];
 
-        if (properties.visit_time) {
-            facts.push(`⏱ ${properties.visit_time}`);
-        }
-
-        if (properties.parking === true) {
-            facts.push("🚗 Parkplatz");
-        }
-
-        if (properties.family_friendly === true) {
-            facts.push("👨‍👩‍👧 Familie");
-        }
-
-        if (properties.accessible === true) {
-            facts.push("♿ Barrierearm");
-        }
+        if (props.visit_time) facts.push(`⏱ ${props.visit_time}`);
+        if (props.parking === true) facts.push("🚗 Parkplatz");
+        if (props.family_friendly === true) facts.push("👨‍👩‍👧 Familie");
+        if (props.accessible === true) facts.push("♿ Barrierearm");
 
         facts.forEach((fact) => {
             const item = document.createElement("li");
             item.textContent = fact;
             list.appendChild(item);
         });
-
         return list;
     }
 
-    /*
-     * Schaltflächen der Ergebniskarten.
-     */
     function createCardActions(location) {
-        const properties = location.properties;
+        const props = location.properties;
         const actions = document.createElement("div");
-
         actions.className = "result-card-actions";
 
         const mapButton = document.createElement("button");
-
         mapButton.className = "card-map-button";
         mapButton.type = "button";
         mapButton.textContent = "Auf Karte zeigen";
-
-        mapButton.addEventListener("click", () => {
-            showLocationOnMap(location);
-        });
-
+        mapButton.addEventListener("click", () => showLocationOnMap(location));
         actions.appendChild(mapButton);
 
-        if (isUsableUrl(properties.youtube_url)) {
-            actions.appendChild(
-                createExternalLink(
-                    properties.youtube_url,
-                    "YouTube"
-                )
-            );
-        } else if (isUsableUrl(properties.instagram_url)) {
-            actions.appendChild(
-                createExternalLink(
-                    properties.instagram_url,
-                    "Instagram"
-                )
-            );
-        } else if (isUsableUrl(properties.website_url)) {
-            actions.appendChild(
-                createExternalLink(
-                    properties.website_url,
-                    "Mehr erfahren"
-                )
-            );
+        if (isUsableUrl(props.youtube_url)) {
+            actions.appendChild(createExternalLink(props.youtube_url, "YouTube"));
+        } else if (isUsableUrl(props.instagram_url)) {
+            actions.appendChild(createExternalLink(props.instagram_url, "Instagram"));
+        } else if (isUsableUrl(props.website_url)) {
+            actions.appendChild(createExternalLink(props.website_url, "Mehr erfahren"));
         }
 
         return actions;
@@ -793,97 +445,62 @@ function initializeWebsite() {
 
     function createExternalLink(url, text) {
         const link = document.createElement("a");
-
         link.className = "card-external-link";
         link.href = url;
         link.target = "_blank";
         link.rel = "noopener noreferrer";
         link.textContent = text;
-
         return link;
     }
 
-    /*
-     * Ort aus der Ergebnisliste auf der Karte anzeigen.
-     */
     function showLocationOnMap(location) {
-        const coordinates = location.geometry.coordinates;
-        const longitude = coordinates[0];
-        const latitude = coordinates[1];
+        const [lng, lat] = location.geometry.coordinates;
         const marker = activeMarkers.get(location.properties.id);
         const mapSection = document.getElementById("karte");
 
         if (mapSection) {
-            mapSection.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
         }
 
         window.setTimeout(() => {
             map.invalidateSize();
-
-            map.setView([latitude, longitude], 15, {
-                animate: true
-            });
-
+            map.flyTo([lat, lng], 14, { animate: true, duration: 0.8 });
             if (marker) {
                 marker.closeTooltip();
                 marker.openPopup();
             }
-        }, 400);
+        }, 300);
     }
 
-    /*
-     * Orte durchsuchen und filtern.
-     */
     function filterLocations() {
-        const searchValue = normalizeText(
-            searchInput ? searchInput.value : ""
-        );
+        const searchValue = normalizeText(searchInput ? searchInput.value : "");
+        const selectedCategory = categoryFilter ? categoryFilter.value : "all";
 
-        const selectedCategory = categoryFilter
-            ? categoryFilter.value
-            : "all";
+        const filteredLocations = allLocations.filter((location) => {
+            const props = location.properties;
+            const tags = Array.isArray(props.tags) ? props.tags : [];
+            const searchableContent = [
+                props.name,
+                props.municipality,
+                props.area,
+                props.category,
+                props.description,
+                props.short_description,
+                props.best_season,
+                ...tags
+            ].filter(Boolean).join(" ");
 
-        const filteredLocations = allLocations.filter(
-            (location) => {
-                const properties = location.properties;
+            const matchesSearch = normalizeText(searchableContent).includes(searchValue);
+            const matchesCategory = selectedCategory === "all" || props.category === selectedCategory;
 
-                const tags = Array.isArray(properties.tags)
-                    ? properties.tags
-                    : [];
-
-                const searchableContent = [
-                    properties.name,
-                    properties.municipality,
-                    properties.area,
-                    properties.category,
-                    properties.description,
-                    properties.short_description,
-                    properties.best_season,
-                    ...tags
-                ]
-                    .filter(Boolean)
-                    .join(" ");
-
-                const matchesSearch = normalizeText(
-                    searchableContent
-                ).includes(searchValue);
-
-                const matchesCategory =
-                    selectedCategory === "all" ||
-                    properties.category === selectedCategory;
-
-                return matchesSearch && matchesCategory;
-            }
-        );
+            return matchesSearch && matchesCategory;
+        });
 
         showLocations(filteredLocations, false);
     }
 
-    function normalizeText(value) {
-        return String(value || "")
+    function normalizeText(val) {
+        return String(val || "")
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")
             .toLocaleLowerCase("de")
@@ -891,103 +508,53 @@ function initializeWebsite() {
     }
 
     function updateResultCount(count) {
-        if (!resultCountElement) {
-            return;
-        }
-
-        resultCountElement.textContent =
-            count === 1
-                ? "1 Ort gefunden"
-                : `${count} Orte gefunden`;
+        if (!resultCountElement) return;
+        resultCountElement.textContent = count === 1 ? "1 Ort gefunden" : `${count} Orte gefunden`;
     }
 
     function createMessage(text) {
-        const message = document.createElement("p");
-
-        message.className = "empty-results";
-        message.textContent = text;
-
-        return message;
+        const msg = document.createElement("p");
+        msg.className = "empty-results";
+        msg.textContent = text;
+        return msg;
     }
 
-    function isUsableUrl(value) {
-        if (!value) {
-            return false;
-        }
-
+    function isUsableUrl(val) {
+        if (!val) return false;
         try {
-            const url = new URL(value);
-
-            return (
-                url.protocol === "https:" ||
-                url.protocol === "http:"
-            );
-        } catch (error) {
+            const u = new URL(val);
+            return u.protocol === "https:" || u.protocol === "http:";
+        } catch {
             return false;
         }
     }
 
-    /*
-     * Kartenstatus
-     */
-    function showMapStatus(message) {
-        if (!mapStatusElement) {
-            return;
-        }
-
+    function showMapStatus(msg) {
+        if (!mapStatusElement) return;
         mapStatusElement.hidden = false;
-        mapStatusElement.textContent = message;
+        mapStatusElement.textContent = msg;
     }
 
     function hideMapStatus() {
-        if (!mapStatusElement) {
-            return;
-        }
-
+        if (!mapStatusElement) return;
         mapStatusElement.hidden = true;
     }
 
-    function showMapError(message) {
+    function showMapError(msg) {
         mapElement.classList.add("map-error");
-        mapElement.textContent = message;
-
+        mapElement.textContent = msg;
         hideMapStatus();
-
-        if (resultCountElement) {
-            resultCountElement.textContent =
-                "Die Karte konnte nicht gestartet werden.";
-        }
+        if (resultCountElement) resultCountElement.textContent = "Karte konnte nicht geladen werden.";
     }
 
-    /*
-     * Such- und Filterereignisse
-     */
-    if (searchInput) {
-        searchInput.addEventListener("input", filterLocations);
-    }
-
-    if (categoryFilter) {
-        categoryFilter.addEventListener(
-            "change",
-            filterLocations
-        );
-    }
-
+    if (searchInput) searchInput.addEventListener("input", filterLocations);
+    if (categoryFilter) categoryFilter.addEventListener("change", filterLocations);
     if (resetFiltersButton) {
         resetFiltersButton.addEventListener("click", () => {
-            if (searchInput) {
-                searchInput.value = "";
-            }
-
-            if (categoryFilter) {
-                categoryFilter.value = "all";
-            }
-
+            if (searchInput) searchInput.value = "";
+            if (categoryFilter) categoryFilter.value = "all";
             showLocations(allLocations, true);
-
-            if (searchInput) {
-                searchInput.focus();
-            }
+            if (searchInput) searchInput.focus();
         });
     }
 }
