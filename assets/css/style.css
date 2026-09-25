@@ -56,6 +56,11 @@ select {
     font: inherit;
 }
 
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
 .skip-link {
     position: fixed;
     top: 12px;
@@ -75,26 +80,33 @@ select {
 }
 
 /*
- * Hero mit Video und hero.jpg als Fallback
+ * Hero mit Video
+ *
+ * Reihenfolge:
+ * 1. hero.jpg als Fallback
+ * 2. Video
+ * 3. dunkler Verlauf
+ * 4. Navigation und Inhalt
  */
 .hero {
     position: relative;
-    min-height: 88vh;
-    min-height: 88dvh;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    min-height: 680px;
     overflow: hidden;
     color: var(--white);
     background:
         var(--forest-dark)
         url("../images/hero.jpg")
-        center / cover
+        center center / cover
         no-repeat;
-    isolation: isolate;
 }
 
 .hero-video {
     position: absolute;
     inset: 0;
-    z-index: -3;
+    z-index: 0;
     display: block;
     width: 100%;
     height: 100%;
@@ -107,13 +119,13 @@ select {
 .hero-shade {
     position: absolute;
     inset: 0;
-    z-index: -2;
+    z-index: 1;
     background:
         linear-gradient(
             100deg,
             rgb(17 43 33 / 88%) 0%,
-            rgb(17 43 33 / 68%) 45%,
-            rgb(17 43 33 / 35%) 100%
+            rgb(17 43 33 / 66%) 45%,
+            rgb(17 43 33 / 30%) 100%
         );
     pointer-events: none;
 }
@@ -123,13 +135,13 @@ select {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: -1;
-    height: 28%;
+    z-index: 2;
+    height: 30%;
     background:
         linear-gradient(
             to bottom,
             transparent,
-            rgb(17 43 33 / 32%)
+            rgb(17 43 33 / 38%)
         );
     content: "";
     pointer-events: none;
@@ -137,10 +149,13 @@ select {
 
 .hero-overlay {
     position: relative;
-    z-index: 1;
-    min-height: 88vh;
-    min-height: 88dvh;
+    z-index: 3;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 680px;
     padding: 24px;
+    flex-direction: column;
 }
 
 .navigation {
@@ -179,10 +194,9 @@ select {
 
 .hero-content {
     display: flex;
-    min-height: 68vh;
-    min-height: 68dvh;
     width: min(100%, var(--content-width));
     margin: 0 auto;
+    flex: 1;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -210,6 +224,7 @@ select {
     font-weight: 700;
     letter-spacing: -0.045em;
     line-height: 0.98;
+    text-wrap: balance;
 }
 
 .hero-description {
@@ -227,6 +242,9 @@ select {
     flex-wrap: wrap;
 }
 
+/*
+ * Buttons
+ */
 .button {
     display: inline-flex;
     min-height: 48px;
@@ -268,6 +286,9 @@ select {
     background: rgb(255 255 255 / 16%);
 }
 
+/*
+ * Allgemeine Abschnitte
+ */
 section {
     width: min(100% - 32px, var(--content-width));
     margin: 0 auto;
@@ -298,6 +319,7 @@ section {
     font-weight: 700;
     letter-spacing: -0.035em;
     line-height: 1.08;
+    text-wrap: balance;
 }
 
 .intro-copy {
@@ -319,6 +341,9 @@ section {
     color: var(--muted);
 }
 
+/*
+ * Kartenbereich
+ */
 .map-section {
     width: 100%;
     max-width: none;
@@ -387,6 +412,9 @@ section {
     text-align: center;
 }
 
+/*
+ * Kartenlegende
+ */
 .map-legend {
     display: flex;
     gap: 10px;
@@ -416,6 +444,44 @@ section {
     line-height: 1;
 }
 
+.legend-castle {
+    border-color: #386653;
+    background: #edf4f0;
+}
+
+.legend-nature {
+    border-color: #789846;
+    background: #f1f6e8;
+}
+
+.legend-town {
+    border-color: #5f8990;
+    background: #edf5f6;
+}
+
+.legend-history {
+    border-color: #986b37;
+    background: #f8f0e6;
+}
+
+.legend-lgs {
+    border-color: #b55b78;
+    background: #faedf2;
+}
+
+.legend-region {
+    border-color: var(--grain);
+    background:
+        linear-gradient(
+            135deg,
+            rgb(211 164 73 / 20%),
+            rgb(120 152 70 / 14%)
+        );
+}
+
+/*
+ * Leaflet
+ */
 .leaflet-container {
     z-index: 1;
     font-family:
@@ -437,6 +503,9 @@ section {
     font-size: 0.68rem;
 }
 
+/*
+ * Emoji-Marker
+ */
 .weather-marker-wrapper {
     background: transparent;
     border: 0;
@@ -496,6 +565,37 @@ section {
     background: linear-gradient(145deg, #708178, #3f5048);
 }
 
+/*
+ * Beschriftung des Wetteraukreises
+ */
+.region-label-wrapper {
+    background: transparent;
+    border: 0;
+}
+
+.region-label {
+    display: inline-flex;
+    gap: 7px;
+    width: max-content;
+    padding: 8px 14px;
+    align-items: center;
+    justify-content: center;
+    color: var(--forest-dark);
+    background: rgb(255 253 248 / 88%);
+    border: 2px solid rgb(36 74 58 / 65%);
+    border-radius: 999px;
+    box-shadow: 0 5px 15px rgb(23 51 41 / 18%);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+/*
+ * Marker-Hover-Vorschau
+ */
 .leaflet-pane.leaflet-tooltip-pane {
     overflow: visible !important;
 }
@@ -592,6 +692,9 @@ section {
     font-weight: 800;
 }
 
+/*
+ * Karten-Popup
+ */
 .leaflet-popup-content-wrapper {
     overflow: hidden;
     padding: 0;
@@ -634,7 +737,7 @@ section {
     margin-top: 0;
     margin-bottom: 4px;
     color: var(--forest);
-    font-family: Georgia, serif;
+    font-family: Georgia, "Times New Roman", serif;
     font-size: 1.22rem;
     line-height: 1.2;
 }
@@ -694,6 +797,9 @@ section {
     background: var(--forest-dark);
 }
 
+/*
+ * Suche und Filter
+ */
 .locations-section {
     scroll-margin-top: 20px;
 }
@@ -763,6 +869,9 @@ section {
     transform: translateY(-1px);
 }
 
+/*
+ * Ergebnisliste
+ */
 .results-header {
     display: flex;
     margin: 32px 0 18px;
@@ -826,7 +935,7 @@ section {
 .result-card h3 {
     margin: 0;
     color: var(--forest);
-    font-family: Georgia, serif;
+    font-family: Georgia, "Times New Roman", serif;
     font-size: 1.55rem;
     line-height: 1.2;
 }
@@ -884,6 +993,9 @@ section {
     font-size: 0.88rem;
     font-weight: 750;
     text-decoration: none;
+    transition:
+        background-color 180ms ease,
+        transform 180ms ease;
 }
 
 .card-external-link:hover {
@@ -902,6 +1014,9 @@ section {
     text-align: center;
 }
 
+/*
+ * Social Media
+ */
 .social-section {
     width: 100%;
     max-width: none;
@@ -940,6 +1055,10 @@ section {
     background: var(--white);
 }
 
+.button-light:hover {
+    background: var(--sand);
+}
+
 .button-outline-light {
     color: var(--white);
     border-color: rgb(255 255 255 / 65%);
@@ -949,6 +1068,9 @@ section {
     background: rgb(255 255 255 / 10%);
 }
 
+/*
+ * Projektbereich
+ */
 .about-section {
     scroll-margin-top: 20px;
 }
@@ -970,6 +1092,9 @@ section {
     margin-top: 0;
 }
 
+/*
+ * Footer
+ */
 footer {
     padding: 55px 24px 24px;
     color: rgb(255 255 255 / 80%);
@@ -1012,6 +1137,9 @@ footer {
     font-size: 0.85rem;
 }
 
+/*
+ * Tablets
+ */
 @media (max-width: 900px) {
     .results-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1026,13 +1154,26 @@ footer {
     }
 }
 
+/*
+ * Smartphones und kleine Tablets
+ */
 @media (max-width: 720px) {
-    .hero,
+    .hero {
+        height: 100vh;
+        height: 100svh;
+        min-height: 680px;
+    }
+
     .hero-overlay {
-        min-height: 760px;
+        height: 100%;
+        min-height: 680px;
+        padding: 20px;
     }
 
     .hero-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         object-position: center center;
     }
 
@@ -1040,9 +1181,9 @@ footer {
         background:
             linear-gradient(
                 180deg,
-                rgb(17 43 33 / 82%) 0%,
-                rgb(17 43 33 / 45%) 42%,
-                rgb(17 43 33 / 75%) 100%
+                rgb(17 43 33 / 84%) 0%,
+                rgb(17 43 33 / 42%) 38%,
+                rgb(17 43 33 / 78%) 100%
             );
     }
 
@@ -1058,7 +1199,9 @@ footer {
     }
 
     .hero-content {
-        min-height: 600px;
+        width: 100%;
+        min-height: 0;
+        justify-content: center;
     }
 
     .intro-grid,
@@ -1103,9 +1246,25 @@ footer {
     }
 }
 
+/*
+ * Kleine Smartphones
+ */
 @media (max-width: 480px) {
+    .hero {
+        min-height: 700px;
+    }
+
     .hero-overlay {
+        min-height: 700px;
         padding: 18px;
+    }
+
+    .hero-video {
+        object-position: center center;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(2.45rem, 12vw, 3.5rem);
     }
 
     .hero-actions,
@@ -1152,6 +1311,9 @@ footer {
     }
 }
 
+/*
+ * Touch-Geräte: kein Hover
+ */
 @media (hover: none), (pointer: coarse) {
     .location-preview-tooltip {
         display: none !important;
@@ -1162,6 +1324,10 @@ footer {
     }
 }
 
+/*
+ * Reduzierte Bewegung:
+ * Video ausblenden und hero.jpg verwenden.
+ */
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
