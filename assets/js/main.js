@@ -1,21 +1,27 @@
-oder du überprüfst und gibst mir die finale und korrekte js file aus
-
 "use strict";
 
 document.addEventListener("DOMContentLoaded", initializeWebsite);
 
 function initializeWebsite() {
+    const WEATHER_REGION_CENTER = [50.34, 8.93];
+    const INITIAL_ZOOM = 10;
+    const FALLBACK_IMAGE = "./assets/images/placeholder.png";
+
     const mapElement = document.getElementById("map");
     const mapStatusElement = document.getElementById("mapStatus");
     const searchInput = document.getElementById("searchInput");
     const categoryFilter = document.getElementById("categoryFilter");
-    const resetFiltersButton = document.getElementById("resetFilters");
+    const resetFiltersButton =
+        document.getElementById("resetFilters");
     const resultsElement = document.getElementById("results");
-    const resultCountElement = document.getElementById("resultCount");
-    const currentYearElement = document.getElementById("currentYear");
+    const resultCountElement =
+        document.getElementById("resultCount");
+    const currentYearElement =
+        document.getElementById("currentYear");
 
     if (currentYearElement) {
-        currentYearElement.textContent = new Date().getFullYear();
+        currentYearElement.textContent =
+            new Date().getFullYear();
     }
 
     if (!mapElement) {
@@ -24,14 +30,16 @@ function initializeWebsite() {
     }
 
     if (typeof L === "undefined") {
-        showMapError("Kartenbibliothek konnte nicht geladen werden.");
+        showMapError(
+            "Die Kartenbibliothek konnte nicht geladen werden."
+        );
+
         return;
     }
 
-    const WEATHER_REGION_CENTER = [50.34, 8.93];
-    const INITIAL_ZOOM = 10;
-
-    // Karte initialisieren mit vollem Touch- & Drag-Support
+    /*
+     * Leaflet-Karte initialisieren.
+     */
     const map = L.map(mapElement, {
         center: WEATHER_REGION_CENTER,
         zoom: INITIAL_ZOOM,
@@ -41,47 +49,90 @@ function initializeWebsite() {
         touchZoom: true
     });
 
-    // Eigene Ebene für die Umrandung (unter den Markern)
+    /*
+     * Eigene Ebene für die Grenze des Wetteraukreises.
+     * Sie liegt über der Grundkarte, aber unter den Markern.
+     */
     map.createPane("regionPane");
+
     const regionPane = map.getPane("regionPane");
+
     if (regionPane) {
         regionPane.style.zIndex = "350";
         regionPane.style.pointerEvents = "none";
     }
 
+    /*
+     * OpenStreetMap-Grundkarte.
+     */
     const tileLayer = L.tileLayer(
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
             maxZoom: 19,
             attribution:
-                '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>'
+                '&copy; <a ' +
+                'href="https://www.openstreetmap.org/copyright" ' +
+                'target="_blank" rel="noopener noreferrer">' +
+                "OpenStreetMap-Mitwirkende</a>"
         }
     );
 
     tileLayer.on("load", hideMapStatus);
-    tileLayer.on("tileerror", () => showMapStatus("Kartenkacheln konnten nicht geladen werden."));
+
+    tileLayer.on("tileerror", () => {
+        showMapStatus(
+            "Einige Kartenbereiche konnten nicht geladen werden."
+        );
+    });
+
     tileLayer.addTo(map);
 
-    L.control.scale({ imperial: false, metric: true }).addTo(map);
+    L.control.scale({
+        imperial: false,
+        metric: true
+    }).addTo(map);
 
     let allLocations = [];
+
     const markerLayer = L.layerGroup().addTo(map);
     const activeMarkers = new Map();
 
     loadWetterauBoundary();
     loadLocations();
 
-    window.setTimeout(() => map.invalidateSize(), 250);
-    window.addEventListener("resize", () => map.invalidateSize());
+    window.setTimeout(() => {
+        map.invalidateSize();
+    }, 250);
 
-    // Grenze laden
+    window.addEventListener("resize", () => {
+        map.invalidateSize();
+    });
+
+    /*
+     * Grenze des Wetteraukreises laden.
+     */
     async function loadWetterauBoundary() {
         try {
-            const boundaryUrl = new URL("./data/wetteraukreis.geojson", document.baseURI);
-            const response = await fetch(boundaryUrl.href, { cache: "no-store" });
-            if (!response.ok) return;
+            const boundaryUrl = new URL(
+                "./data/wetteraukreis.geojson",
+                document.baseURI
+            );
+
+            const response = await fetch(boundaryUrl.href, {
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                console.warn(
+                    "Wetteraukreis-Grenze nicht gefunden:",
+                    response.status
+                );
+
+                return;
+            }
 
             const boundaryData = await response.json();
+
             L.geoJSON(boundaryData, {
                 pane: "regionPane",
                 interactive: false,
@@ -96,126 +147,228 @@ function initializeWebsite() {
                 }
             }).addTo(map);
         } catch (error) {
-            console.warn("Wetteraukreis-Grenze nicht geladen:", error);
+            console.warn(
+                "Wetteraukreis-Grenze konnte nicht geladen werden:",
+                error
+            );
         }
     }
 
-    // Orte laden
+    /*
+     * Ortsdaten laden.
+     */
     async function loadLocations() {
         try {
-            const locationsUrl = new URL("./data/locations.geojson", document.baseURI);
-            const response = await fetch(locationsUrl.href, { cache: "no-store" });
-            if (!response.ok) throw new Error("Fehler beim Laden: " + response.status);
+            const locationsUrl = new URL(
+                "./data/locations.geojson",
+                document.baseURI
+            );
+
+            const response = await fetch(locationsUrl.href, {
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `Fehler beim Laden der Orte: ${response.status}`
+                );
+            }
 
             const data = await response.json();
-            if (!Array.isArray(data.features)) throw new Error("Kein features-Array");
 
-            allLocations = data.features.filter(isValidLocation);
+            if (!Array.isArray(data.features)) {
+                throw new Error(
+                    "Die GeoJSON-Datei enthält kein features-Array."
+                );
+            }
+
+            allLocations = data.features.filter(
+                isValidLocation
+            );
+
             showLocations(allLocations, true);
         } catch (error) {
-            console.error(error);
-            if (resultCountElement) resultCountElement.textContent = "Orte konnten nicht geladen werden.";
+            console.error(
+                "Ortsdaten konnten nicht geladen werden:",
+                error
+            );
+
+            if (resultCountElement) {
+                resultCountElement.textContent =
+                    "Orte konnten nicht geladen werden.";
+            }
+
             if (resultsElement) {
                 resultsElement.replaceChildren(
-                    createMessage("Beim Laden der Orte ist ein Fehler aufgetreten.")
+                    createMessage(
+                        "Beim Laden der Orte ist ein Fehler " +
+                        "aufgetreten."
+                    )
                 );
             }
         }
     }
 
-    function isValidLocation(loc) {
-        const coords = loc?.geometry?.coordinates;
+    /*
+     * GeoJSON-Eintrag überprüfen.
+     */
+    function isValidLocation(location) {
+        const coordinates =
+            location?.geometry?.coordinates;
+
         return (
-            loc?.geometry?.type === "Point" &&
-            Array.isArray(coords) &&
-            coords.length >= 2 &&
-            Number.isFinite(coords[0]) &&
-            Number.isFinite(coords[1]) &&
-            Boolean(loc?.properties?.id) &&
-            Boolean(loc?.properties?.name)
+            location?.geometry?.type === "Point" &&
+            Array.isArray(coordinates) &&
+            coordinates.length >= 2 &&
+            Number.isFinite(coordinates[0]) &&
+            Number.isFinite(coordinates[1]) &&
+            Boolean(location?.properties?.id) &&
+            Boolean(location?.properties?.name)
         );
     }
 
-    function showLocations(locations, adjustMap = false) {
+    /*
+     * Orte als Marker und Ergebnis-Karten anzeigen.
+     */
+    function showLocations(
+        locations,
+        adjustMap = false
+    ) {
         markerLayer.clearLayers();
         activeMarkers.clear();
 
-        if (resultsElement) resultsElement.replaceChildren();
+        if (resultsElement) {
+            resultsElement.replaceChildren();
+        }
+
         updateResultCount(locations.length);
 
         if (locations.length === 0) {
             if (resultsElement) {
                 resultsElement.appendChild(
-                    createMessage("Keine passenden Orte gefunden. Bitte Filter zurücksetzen.")
+                    createMessage(
+                        "Keine passenden Orte gefunden. " +
+                        "Bitte ändere die Suche oder setze " +
+                        "die Filter zurück."
+                    )
                 );
             }
+
             return;
         }
 
         const bounds = [];
-        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        const isTouchDevice =
+            "ontouchstart" in window ||
+            navigator.maxTouchPoints > 0;
 
         locations.forEach((location) => {
-            const props = location.properties;
-            const [lng, lat] = location.geometry.coordinates;
-            const latLng = [lat, lng];
+            const properties = location.properties;
+            const [longitude, latitude] =
+                location.geometry.coordinates;
+            const latitudeLongitude = [
+                latitude,
+                longitude
+            ];
 
-            const marker = L.marker(latLng, {
-                icon: createMarkerIcon(props.category),
-                title: props.name,
-                riseOnHover: true
-            });
+            const marker = L.marker(
+                latitudeLongitude,
+                {
+                    icon: createMarkerIcon(
+                        properties.category
+                    ),
+                    title: properties.name,
+                    riseOnHover: true
+                }
+            );
 
-            // 1. Großes Popup für Klick
-            marker.bindPopup(createPopup(location), {
-                maxWidth: 290,
-                minWidth: 250,
-                autoPan: true,
-                autoPanPadding: [30, 30],
-                closeButton: true,
-                offset: [0, -18]
-            });
+            /*
+             * Großes Popup beim Anklicken.
+             */
+            marker.bindPopup(
+                createPopup(location),
+                {
+                    maxWidth: 310,
+                    minWidth: 250,
+                    autoPan: true,
+                    autoPanPadding: [30, 30],
+                    closeButton: true,
+                    offset: [0, -18]
+                }
+            );
 
-            // 2. Schnelle Vorschau-Hover-Card für Desktop (Mouse)
+            /*
+             * Hover-Vorschau nur auf Desktop-Geräten.
+             */
             if (!isTouchDevice) {
-                marker.bindTooltip(createLocationPreview(location), {
-                    direction: "top",
-                    offset: [0, -22],
-                    opacity: 1,
-                    className: "location-preview-tooltip",
-                    interactive: false,
-                    sticky: false
-                });
+                marker.bindTooltip(
+                    createLocationPreview(location),
+                    {
+                        direction: "top",
+                        offset: [0, -22],
+                        opacity: 1,
+                        className:
+                            "location-preview-tooltip",
+                        interactive: false,
+                        sticky: false
+                    }
+                );
 
-                // Sofortiges Schließen der Vorschau, wenn geklickt wird
-                marker.on("click", function () {
+                marker.on("click", function closePreview() {
                     this.closeTooltip();
                 });
             }
 
             marker.addTo(markerLayer);
-            activeMarkers.set(props.id, marker);
-            bounds.push(latLng);
+
+            activeMarkers.set(
+                properties.id,
+                marker
+            );
+
+            bounds.push(latitudeLongitude);
 
             if (resultsElement) {
-                resultsElement.appendChild(createResultCard(location));
+                resultsElement.appendChild(
+                    createResultCard(location)
+                );
             }
         });
 
         if (adjustMap && bounds.length > 1) {
-            map.fitBounds(bounds, { padding: [40, 40], maxZoom: 11 });
-        } else if (adjustMap && bounds.length === 1) {
+            map.fitBounds(bounds, {
+                padding: [40, 40],
+                maxZoom: 11
+            });
+        } else if (
+            adjustMap &&
+            bounds.length === 1
+        ) {
             map.setView(bounds[0], 13);
         }
 
-        window.setTimeout(() => map.invalidateSize(), 100);
+        window.setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
     }
 
+    /*
+     * Emoji-Marker erstellen.
+     */
     function createMarkerIcon(category) {
-        const markerData = getCategoryData(category);
+        const markerData =
+            getCategoryData(category);
+
         return L.divIcon({
             className: "weather-marker-wrapper",
-            html: `<div class="emoji-marker ${markerData.className}"><span>${markerData.icon}</span></div>`,
+            html:
+                `<div class="emoji-marker ` +
+                `${markerData.className}">` +
+                `<span aria-hidden="true">` +
+                `${markerData.icon}` +
+                `</span>` +
+                `</div>`,
             iconSize: [46, 46],
             iconAnchor: [23, 23],
             popupAnchor: [0, -23],
@@ -223,625 +376,1082 @@ function initializeWebsite() {
         });
     }
 
+    /*
+     * Kategorie, Emoji und Markerfarbe bestimmen.
+     */
     function getCategoryData(category) {
         const categories = {
-            "Burg und Schloss": { icon: "🏰", className: "marker-castle" },
-            "Natur": { icon: "🌳", className: "marker-nature" },
-            "Aussichtspunkt": { icon: "🌄", className: "marker-viewpoint" },
-            "Geschichte": { icon: "🏺", className: "marker-history" },
-            "Stadt und Fachwerk": { icon: "🏘️", className: "marker-town" },
-            "Genuss": { icon: "🍎", className: "marker-food" },
-            "Landesgartenschau 2027": { icon: "🌸", className: "marker-lgs" }
+            "Burg und Schloss": {
+                icon: "🏰",
+                className: "marker-castle"
+            },
+            Natur: {
+                icon: "🌳",
+                className: "marker-nature"
+            },
+            Aussichtspunkt: {
+                icon: "🌄",
+                className: "marker-viewpoint"
+            },
+            Geschichte: {
+                icon: "🏺",
+                className: "marker-history"
+            },
+            "Stadt und Fachwerk": {
+                icon: "🏘️",
+                className: "marker-town"
+            },
+            Genuss: {
+                icon: "🍎",
+                className: "marker-food"
+            },
+            "Landesgartenschau 2027": {
+                icon: "🌸",
+                className: "marker-lgs"
+            }
         };
-        return categories[category] || { icon: "📍", className: "marker-default" };
+
+        return categories[category] || {
+            icon: "📍",
+            className: "marker-default"
+        };
     }
 
-    // Hover-Preview HTML für Leaflet-Tooltip
-    function createLocationPreview(location) {
-    const props = location.properties;
-    const markerData = getCategoryData(props.category);
-
-    const preview = document.createElement("article");
-
-    preview.className = "marker-hover-card";
-
-    const image = document.createElement("img");
-
-    image.src =
-        props.image || "./assets/images/placeholder.svg";
-    image.alt = "";
-    image.loading = "lazy";
-
-    image.addEventListener("error", () => {
-        image.src = "./assets/images/placeholder.svg";
-    });
-
-    const body = document.createElement("div");
-
-    body.className = "marker-hover-body";
-
-    const category = document.createElement("span");
-
-    category.className = "marker-hover-cat";
-    category.textContent =
-        `${markerData.icon} ` +
-        `${props.category || "Ausflugsziel"}`;
-
-    const title = document.createElement("strong");
-
-    title.textContent = props.name || "";
-
-    const municipality = document.createElement("small");
-
-    municipality.textContent = [
-        props.municipality,
-        props.area
-    ]
-        .filter(Boolean)
-        .join(" · ");
-
-    body.append(
-        category,
-        title,
-        municipality
-    );
-
-    const descriptionText =
-        props.short_description ||
-        props.description ||
-        "";
-
-    if (descriptionText) {
-        const description = document.createElement("p");
-
-        description.textContent = descriptionText;
-        body.appendChild(description);
-    }
-
-    const tags = createTagsList(
-        props.tags,
-        "marker-hover-tags"
-    );
-
-    if (tags.children.length > 0) {
-        body.appendChild(tags);
-    }
-
-    const availableMedia =
-        createAvailableMediaBadges(props);
-
-    if (availableMedia.children.length > 0) {
-        body.appendChild(availableMedia);
-    }
-
-    const hint = document.createElement("span");
-
-    hint.className = "marker-hover-hint";
-    hint.textContent = "Klicken für Details und Links";
-
-    body.appendChild(hint);
-    preview.append(image, body);
-
-    return preview;
-}
-
-    function createAvailableMediaBadges(props) {
-    const container = document.createElement("div");
-
-    container.className = "marker-hover-media";
-
-    if (isUsableUrl(props.instagram_url)) {
-        const instagram = document.createElement("span");
-
-        instagram.textContent = "📸 Instagram";
-        container.appendChild(instagram);
-    }
-
-    if (isUsableUrl(props.youtube_url)) {
-        const youtube = document.createElement("span");
-
-        youtube.textContent = "▶️ YouTube";
-        container.appendChild(youtube);
-    }
-
-    if (isUsableUrl(props.website_url)) {
-        const website = document.createElement("span");
-
-        website.textContent = "🔗 Infos";
-        container.appendChild(website);
-    }
-
-    return container;
-}
-
-    function createPopup(location) {
-    const props = location.properties;
-    const markerData = getCategoryData(props.category);
-
-    const popup = document.createElement("article");
-
-    popup.className = "map-popup";
-
-    const image = document.createElement("img");
-
-    image.className = "map-popup-image";
-    image.src =
-        props.image || "./assets/images/placeholder.svg";
-    image.alt = props.image_alt || props.name;
-    image.loading = "lazy";
-
-    image.addEventListener("error", () => {
-        image.src = "./assets/images/placeholder.svg";
-    });
-
-    const category = document.createElement("p");
-
-    category.className = "popup-category";
-    category.textContent =
-        `${markerData.icon} ` +
-        `${props.category || "Ausflugsziel"}`;
-
-    const title = document.createElement("h3");
-
-    title.textContent = props.name;
-
-    const locationText = document.createElement("p");
-
-    locationText.className = "popup-location";
-    locationText.textContent = [
-        props.municipality,
-        props.area
-    ]
-        .filter(Boolean)
-        .join(" · ");
-
-    const description = document.createElement("p");
-
-    description.className = "popup-description";
-    description.textContent =
-        props.short_description ||
-        props.description ||
-        "";
-
-    popup.append(
-        image,
-        category,
-        title,
-        locationText,
-        description
-    );
-
-    const facts = createPopupFacts(props);
-
-    if (facts.children.length > 0) {
-        popup.appendChild(facts);
-    }
-
-    const tags = createTagsList(
-        props.tags,
-        "popup-tags"
-    );
-
-    if (tags.children.length > 0) {
-        popup.appendChild(tags);
-    }
-
-    const socialLinks = document.createElement("div");
-
-    socialLinks.className = "popup-social-links";
-
-    if (isUsableUrl(props.instagram_url)) {
-        socialLinks.appendChild(
-            createPopupLink(
-                props.instagram_url,
-                "📸",
-                "Instagram",
-                "popup-instagram-link"
-            )
+    /*
+     * Wiederverwendbare Bildfehler-Behandlung.
+     */
+    function setFallbackImage(image) {
+        image.addEventListener(
+            "error",
+            () => {
+                if (
+                    !image.src.endsWith(
+                        "placeholder.png"
+                    )
+                ) {
+                    image.src = FALLBACK_IMAGE;
+                }
+            },
+            {
+                once: true
+            }
         );
     }
 
-    if (isUsableUrl(props.youtube_url)) {
-        socialLinks.appendChild(
-            createPopupLink(
-                props.youtube_url,
-                "▶️",
-                "YouTube",
-                "popup-youtube-link"
-            )
-        );
-    }
+    /*
+     * Tags als Liste erstellen.
+     *
+     * Diese Funktion muss direkt in initializeWebsite()
+     * stehen und darf nicht innerhalb einer anderen
+     * Funktion verschachtelt sein.
+     */
+    function createTagsList(
+        tags,
+        className = "location-tags",
+        limit = 8
+    ) {
+        const list =
+            document.createElement("ul");
 
-    if (isUsableUrl(props.website_url)) {
-        socialLinks.appendChild(
-            createPopupLink(
-                props.website_url,
-                "🔗",
-                "Informationen",
-                "popup-website-link"
-            )
-        );
-    }
+        list.className = className;
 
-    if (socialLinks.children.length > 0) {
-        popup.appendChild(socialLinks);
-    }
+        if (!Array.isArray(tags)) {
+            return list;
+        }
 
-    return popup;
-}
+        tags
+            .filter((tag) => {
+                return (
+                    typeof tag === "string" &&
+                    tag.trim().length > 0
+                );
+            })
+            .slice(0, limit)
+            .forEach((tag) => {
+                const item =
+                    document.createElement("li");
 
-function createPopupLink(
-    url,
-    iconText,
-    labelText,
-    additionalClass
-) {
-    const link = document.createElement("a");
+                const normalizedTag = tag
+                    .trim()
+                    .replace(/\s+/g, "");
 
-    link.className = [
-        "popup-social-link",
-        additionalClass
-    ]
-        .filter(Boolean)
-        .join(" ");
+                item.textContent =
+                    `#${normalizedTag}`;
 
-    link.href = url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.setAttribute(
-        "aria-label",
-        `${labelText} in einem neuen Tab öffnen`
-    );
+                list.appendChild(item);
+            });
 
-    const icon = document.createElement("span");
-
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = iconText;
-
-    const label = document.createElement("span");
-
-    label.textContent = labelText;
-
-    link.append(icon, label);
-
-    return link;
-}
-
-    function createPopupFacts(props) {
-        const list = document.createElement("ul");
-        list.className = "popup-facts";
-        const facts = [];
-
-        if (props.visit_time) facts.push(`⏱ ${props.visit_time}`);
-        if (props.parking === true) facts.push("🚗 Parkplatz");
-        if (props.family_friendly === true) facts.push("👨‍👩‍👧 Familie");
-        if (props.accessible === true) facts.push("♿ Barrierearm");
-
-        facts.forEach((fact) => {
-            const item = document.createElement("li");
-            item.textContent = fact;
-            list.appendChild(item);
-        });
         return list;
     }
 
-    function createResultCard(location) {
-        const props = location.properties;
-        const markerData = getCategoryData(props.category);
+    /*
+     * Medienhinweise für die Hover-Vorschau.
+     *
+     * Die Badges sind keine Links, weil der Tooltip
+     * beim Verlassen des Markers geschlossen wird.
+     */
+    function createAvailableMediaBadges(
+        properties
+    ) {
+        const container =
+            document.createElement("div");
 
-        const card = document.createElement("article");
-        card.className = "result-card";
-        card.dataset.locationId = props.id;
+        container.className =
+            "marker-hover-media";
 
-        const image = document.createElement("img");
-        image.className = "result-card-image";
-        image.src = props.image || "./assets/images/placeholder.svg";
-        image.alt = props.image_alt || props.name;
+        if (
+            isUsableUrl(
+                properties.instagram_url
+            )
+        ) {
+            const instagram =
+                document.createElement("span");
+
+            instagram.textContent =
+                "📸 Instagram";
+
+            container.appendChild(instagram);
+        }
+
+        if (
+            isUsableUrl(
+                properties.youtube_url
+            )
+        ) {
+            const youtube =
+                document.createElement("span");
+
+            youtube.textContent =
+                "▶️ YouTube";
+
+            container.appendChild(youtube);
+        }
+
+        if (
+            isUsableUrl(
+                properties.website_url
+            )
+        ) {
+            const website =
+                document.createElement("span");
+
+            website.textContent = "🔗 Infos";
+
+            container.appendChild(website);
+        }
+
+        return container;
+    }
+
+    /*
+     * Hover-Vorschau erstellen.
+     */
+    function createLocationPreview(location) {
+        const properties = location.properties;
+        const markerData = getCategoryData(
+            properties.category
+        );
+
+        const preview =
+            document.createElement("article");
+
+        preview.className =
+            "marker-hover-card";
+
+        const image =
+            document.createElement("img");
+
+        image.src =
+            properties.image ||
+            FALLBACK_IMAGE;
+        image.alt = "";
         image.loading = "lazy";
-        image.onerror = () => { image.src = "./assets/images/placeholder.svg"; };
 
-        const content = document.createElement("div");
-        content.className = "result-card-content";
+        setFallbackImage(image);
 
-        const category = document.createElement("p");
-        category.className = "result-card-category";
-        category.textContent = `${markerData.icon} ${props.category || "Ausflugsziel"}`;
+        const body =
+            document.createElement("div");
 
-        const title = document.createElement("h3");
-        title.textContent = props.name;
+        body.className =
+            "marker-hover-body";
 
-        const locationText = document.createElement("p");
-        locationText.className = "result-card-location";
-        locationText.textContent = [props.municipality, props.area].filter(Boolean).join(" · ");
+        const category =
+            document.createElement("span");
 
-        const description = document.createElement("p");
-        description.className = "result-card-description";
-        description.textContent = props.description || props.short_description || "";
+        category.className =
+            "marker-hover-cat";
 
-       const facts = createFactsList(props);
-const tags = createTagsList(
-    props.tags,
-    "result-card-tags"
-);
-const actions = createCardActions(location);
+        category.textContent =
+            `${markerData.icon} ` +
+            `${properties.category || "Ausflugsziel"}`;
 
-content.append(
-    category,
-    title,
-    locationText,
-    description
-);
+        const title =
+            document.createElement("strong");
 
-if (facts.children.length > 0) {
-    content.appendChild(facts);
-}
+        title.textContent =
+            properties.name || "";
 
-if (tags.children.length > 0) {
-    content.appendChild(tags);
-}
+        const municipality =
+            document.createElement("small");
 
-content.appendChild(actions);
+        municipality.textContent = [
+            properties.municipality,
+            properties.area
+        ]
+            .filter(Boolean)
+            .join(" · ");
 
+        body.append(
+            category,
+            title,
+            municipality
+        );
+
+        const descriptionText =
+            properties.short_description ||
+            properties.description ||
+            "";
+
+        if (descriptionText) {
+            const description =
+                document.createElement("p");
+
+            description.textContent =
+                descriptionText;
+
+            body.appendChild(description);
+        }
+
+        const tags = createTagsList(
+            properties.tags,
+            "marker-hover-tags",
+            4
+        );
+
+        if (tags.children.length > 0) {
+            body.appendChild(tags);
+        }
+
+        const availableMedia =
+            createAvailableMediaBadges(
+                properties
+            );
+
+        if (
+            availableMedia.children.length > 0
+        ) {
+            body.appendChild(availableMedia);
+        }
+
+        const hint =
+            document.createElement("span");
+
+        hint.className =
+            "marker-hover-hint";
+
+        hint.textContent =
+            "Klicken für Details und Links";
+
+        body.appendChild(hint);
+        preview.append(image, body);
+
+        return preview;
+    }
+
+    /*
+     * Großes Karten-Popup erstellen.
+     */
+    function createPopup(location) {
+        const properties = location.properties;
+        const markerData = getCategoryData(
+            properties.category
+        );
+
+        const popup =
+            document.createElement("article");
+
+        popup.className = "map-popup";
+
+        const image =
+            document.createElement("img");
+
+        image.className = "map-popup-image";
+        image.src =
+            properties.image ||
+            FALLBACK_IMAGE;
+        image.alt =
+            properties.image_alt ||
+            properties.name;
+        image.loading = "lazy";
+
+        setFallbackImage(image);
+
+        const category =
+            document.createElement("p");
+
+        category.className =
+            "popup-category";
+
+        category.textContent =
+            `${markerData.icon} ` +
+            `${properties.category || "Ausflugsziel"}`;
+
+        const title =
+            document.createElement("h3");
+
+        title.textContent = properties.name;
+
+        const locationText =
+            document.createElement("p");
+
+        locationText.className =
+            "popup-location";
+
+        locationText.textContent = [
+            properties.municipality,
+            properties.area
+        ]
+            .filter(Boolean)
+            .join(" · ");
+
+        const description =
+            document.createElement("p");
+
+        description.className =
+            "popup-description";
+
+        description.textContent =
+            properties.short_description ||
+            properties.description ||
+            "";
+
+        popup.append(
+            image,
+            category,
+            title,
+            locationText,
+            description
+        );
+
+        const facts =
+            createPopupFacts(properties);
+
+        if (facts.children.length > 0) {
+            popup.appendChild(facts);
+        }
+
+        const tags = createTagsList(
+            properties.tags,
+            "popup-tags",
+            6
+        );
+
+        if (tags.children.length > 0) {
+            popup.appendChild(tags);
+        }
+
+        const links =
+            createPopupLinks(properties);
+
+        if (links.children.length > 0) {
+            popup.appendChild(links);
+        }
+
+        return popup;
+    }
+
+    /*
+     * Fakten im Karten-Popup.
+     */
+    function createPopupFacts(properties) {
+        const list =
+            document.createElement("ul");
+
+        list.className = "popup-facts";
+
+        const facts =
+            getLocationFacts(properties);
+
+        facts.forEach((fact) => {
+            const item =
+                document.createElement("li");
+
+            item.textContent = fact;
+            list.appendChild(item);
+        });
+
+        return list;
+    }
+
+    /*
+     * Social- und Weblinks im Popup.
+     */
+    function createPopupLinks(properties) {
+        const links =
+            document.createElement("div");
+
+        links.className =
+            "popup-social-links";
+
+        if (
+            isUsableUrl(
+                properties.instagram_url
+            )
+        ) {
+            links.appendChild(
+                createPopupLink(
+                    properties.instagram_url,
+                    "📸",
+                    "Instagram",
+                    "popup-instagram-link"
+                )
+            );
+        }
+
+        if (
+            isUsableUrl(
+                properties.youtube_url
+            )
+        ) {
+            links.appendChild(
+                createPopupLink(
+                    properties.youtube_url,
+                    "▶️",
+                    "YouTube",
+                    "popup-youtube-link"
+                )
+            );
+        }
+
+        if (
+            isUsableUrl(
+                properties.website_url
+            )
+        ) {
+            links.appendChild(
+                createPopupLink(
+                    properties.website_url,
+                    "🔗",
+                    "Informationen",
+                    "popup-website-link"
+                )
+            );
+        }
+
+        return links;
+    }
+
+    /*
+     * Einzelnen Link im Popup erstellen.
+     */
+    function createPopupLink(
+        url,
+        iconText,
+        labelText,
+        additionalClass = ""
+    ) {
+        const link =
+            document.createElement("a");
+
+        link.className = [
+            "popup-social-link",
+            additionalClass
+        ]
+            .filter(Boolean)
+            .join(" ");
+
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+
+        link.setAttribute(
+            "aria-label",
+            `${labelText} in einem neuen Tab öffnen`
+        );
+
+        const icon =
+            document.createElement("span");
+
+        icon.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        icon.textContent = iconText;
+
+        const label =
+            document.createElement("span");
+
+        label.textContent = labelText;
+
+        link.append(icon, label);
+
+        return link;
+    }
+
+    /*
+     * Ergebnis-Karte unterhalb der Karte erstellen.
+     */
+    function createResultCard(location) {
+        const properties = location.properties;
+        const markerData = getCategoryData(
+            properties.category
+        );
+
+        const card =
+            document.createElement("article");
+
+        card.className = "result-card";
+        card.dataset.locationId =
+            properties.id;
+
+        const image =
+            document.createElement("img");
+
+        image.className =
+            "result-card-image";
+
+        image.src =
+            properties.image ||
+            FALLBACK_IMAGE;
+
+        image.alt =
+            properties.image_alt ||
+            properties.name;
+
+        image.loading = "lazy";
+
+        setFallbackImage(image);
+
+        const content =
+            document.createElement("div");
+
+        content.className =
+            "result-card-content";
+
+        const category =
+            document.createElement("p");
+
+        category.className =
+            "result-card-category";
+
+        category.textContent =
+            `${markerData.icon} ` +
+            `${properties.category || "Ausflugsziel"}`;
+
+        const title =
+            document.createElement("h3");
+
+        title.textContent = properties.name;
+
+        const locationText =
+            document.createElement("p");
+
+        locationText.className =
+            "result-card-location";
+
+        locationText.textContent = [
+            properties.municipality,
+            properties.area
+        ]
+            .filter(Boolean)
+            .join(" · ");
+
+        const description =
+            document.createElement("p");
+
+        description.className =
+            "result-card-description";
+
+        description.textContent =
+            properties.description ||
+            properties.short_description ||
+            "";
+
+        const facts =
+            createFactsList(properties);
+
+        const tags = createTagsList(
+            properties.tags,
+            "result-card-tags",
+            8
+        );
+
+        const actions =
+            createCardActions(location);
+
+        content.append(
+            category,
+            title,
+            locationText,
+            description
+        );
+
+        if (facts.children.length > 0) {
+            content.appendChild(facts);
+        }
+
+        if (tags.children.length > 0) {
+            content.appendChild(tags);
+        }
+
+        content.appendChild(actions);
         card.append(image, content);
+
         return card;
     }
 
-    function createFactsList(props) {
-        const list = document.createElement("ul");
-        list.className = "result-card-facts";
-        const facts = [];
+    /*
+     * Faktenliste für Ergebnis-Karten.
+     */
+    function createFactsList(properties) {
+        const list =
+            document.createElement("ul");
 
-        if (props.visit_time) facts.push(`⏱ ${props.visit_time}`);
-        if (props.parking === true) facts.push("🚗 Parkplatz");
-        if (props.family_friendly === true) facts.push("👨‍👩‍👧 Familie");
-        if (props.accessible === true) facts.push("♿ Barrierearm");
+        list.className =
+            "result-card-facts";
+
+        const facts =
+            getLocationFacts(properties);
 
         facts.forEach((fact) => {
-            const item = document.createElement("li");
+            const item =
+                document.createElement("li");
+
             item.textContent = fact;
             list.appendChild(item);
         });
+
         return list;
     }
-
-    function createCardActions(location) {
-    const props = location.properties;
-    const actions = document.createElement("div");
-
-    actions.className = "result-card-actions";
-
-    const mapButton = document.createElement("button");
-
-    mapButton.className = "card-map-button";
-    mapButton.type = "button";
-    mapButton.textContent = "📍 Auf Karte zeigen";
-
-    mapButton.addEventListener("click", () => {
-        showLocationOnMap(location);
-    });
-
-    actions.appendChild(mapButton);
 
     /*
-     * Die Links werden unabhängig voneinander geprüft.
-     * Dadurch können Instagram, YouTube und Website
+     * Fakten zentral zusammenstellen.
+     */
+    function getLocationFacts(properties) {
+        const facts = [];
+
+        if (properties.visit_time) {
+            facts.push(
+                `⏱ ${properties.visit_time}`
+            );
+        }
+
+        if (properties.parking === true) {
+            facts.push("🚗 Parkplatz");
+        }
+
+        if (
+            properties.family_friendly === true
+        ) {
+            facts.push("👨‍👩‍👧 Familie");
+        }
+
+        if (properties.accessible === true) {
+            facts.push("♿ Barrierearm");
+        }
+
+        if (properties.best_season) {
+            facts.push(
+                `🍂 ${properties.best_season}`
+            );
+        }
+
+        return facts;
+    }
+
+    /*
+     * Buttons in einer Ergebnis-Karte.
+     *
+     * Die URLs werden unabhängig voneinander geprüft.
+     * Deshalb können Instagram, YouTube und Website
      * gleichzeitig angezeigt werden.
      */
-    if (isUsableUrl(props.instagram_url)) {
-        actions.appendChild(
-            createExternalLink(
-                props.instagram_url,
-                "Instagram",
-                "card-instagram-link"
-            )
+    function createCardActions(location) {
+        const properties = location.properties;
+
+        const actions =
+            document.createElement("div");
+
+        actions.className =
+            "result-card-actions";
+
+        const mapButton =
+            document.createElement("button");
+
+        mapButton.className =
+            "card-map-button";
+
+        mapButton.type = "button";
+        mapButton.textContent =
+            "📍 Auf Karte zeigen";
+
+        mapButton.addEventListener(
+            "click",
+            () => {
+                showLocationOnMap(location);
+            }
         );
-    }
 
-    if (isUsableUrl(props.youtube_url)) {
-        actions.appendChild(
-            createExternalLink(
-                props.youtube_url,
-                "YouTube",
-                "card-youtube-link"
+        actions.appendChild(mapButton);
+
+        if (
+            isUsableUrl(
+                properties.instagram_url
             )
-        );
-    }
-
-    if (isUsableUrl(props.website_url)) {
-        actions.appendChild(
-            createExternalLink(
-                props.website_url,
-                "Mehr erfahren",
-                "card-website-link"
-            )
-        );
-    }
-
-    return actions;
-}
-
-    function createExternalLink(url, platform, additionalClass = "") {
-    const link = document.createElement("a");
-
-    const platformData = {
-        Instagram: {
-            icon: "📸",
-            label: "Instagram"
-        },
-        YouTube: {
-            icon: "▶️",
-            label: "YouTube"
-        },
-        "Mehr erfahren": {
-            icon: "🔗",
-            label: "Mehr erfahren"
+        ) {
+            actions.appendChild(
+                createExternalLink(
+                    properties.instagram_url,
+                    "Instagram",
+                    "card-instagram-link"
+                )
+            );
         }
-    };
 
-    function createTagsList(tags, className = "location-tags") {
-    const list = document.createElement("ul");
+        if (
+            isUsableUrl(
+                properties.youtube_url
+            )
+        ) {
+            actions.appendChild(
+                createExternalLink(
+                    properties.youtube_url,
+                    "YouTube",
+                    "card-youtube-link"
+                )
+            );
+        }
 
-    list.className = className;
+        if (
+            isUsableUrl(
+                properties.website_url
+            )
+        ) {
+            actions.appendChild(
+                createExternalLink(
+                    properties.website_url,
+                    "Mehr erfahren",
+                    "card-website-link"
+                )
+            );
+        }
 
-    if (!Array.isArray(tags)) {
-        return list;
+        return actions;
     }
 
-    tags
-        .filter((tag) => typeof tag === "string" && tag.trim())
-        .slice(0, 8)
-        .forEach((tag) => {
-            const item = document.createElement("li");
+    /*
+     * Externen Link für Ergebnis-Karten erstellen.
+     */
+    function createExternalLink(
+        url,
+        platform,
+        additionalClass = ""
+    ) {
+        const platformData = {
+            Instagram: {
+                icon: "📸",
+                label: "Instagram"
+            },
+            YouTube: {
+                icon: "▶️",
+                label: "YouTube"
+            },
+            "Mehr erfahren": {
+                icon: "🔗",
+                label: "Mehr erfahren"
+            }
+        };
 
-            item.textContent = `#${tag.trim().replace(/\s+/g, "")}`;
-            list.appendChild(item);
-        });
+        const data =
+            platformData[platform] || {
+                icon: "🔗",
+                label: platform
+            };
 
-    return list;
-}
+        const link =
+            document.createElement("a");
 
-    const data = platformData[platform] || {
-        icon: "🔗",
-        label: platform
-    };
+        link.className = [
+            "card-external-link",
+            additionalClass
+        ]
+            .filter(Boolean)
+            .join(" ");
 
-    link.className = [
-        "card-external-link",
-        additionalClass
-    ]
-        .filter(Boolean)
-        .join(" ");
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
 
-    link.href = url;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.setAttribute(
-        "aria-label",
-        `${data.label} zu diesem Ort in einem neuen Tab öffnen`
-    );
+        link.setAttribute(
+            "aria-label",
+            `${data.label} zu diesem Ort ` +
+            "in einem neuen Tab öffnen"
+        );
 
-    const icon = document.createElement("span");
-    icon.setAttribute("aria-hidden", "true");
-    icon.textContent = data.icon;
+        const icon =
+            document.createElement("span");
 
-    const label = document.createElement("span");
-    label.textContent = data.label;
+        icon.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
-    link.append(icon, label);
+        icon.textContent = data.icon;
 
-    return link;
-}
+        const label =
+            document.createElement("span");
 
+        label.textContent = data.label;
+
+        link.append(icon, label);
+
+        return link;
+    }
+
+    /*
+     * Aus Ergebnis-Karte zur Karte springen.
+     */
     function showLocationOnMap(location) {
-        const [lng, lat] = location.geometry.coordinates;
-        const marker = activeMarkers.get(location.properties.id);
-        const mapSection = document.getElementById("karte");
+        const [longitude, latitude] =
+            location.geometry.coordinates;
+
+        const marker = activeMarkers.get(
+            location.properties.id
+        );
+
+        const mapSection =
+            document.getElementById("karte");
 
         if (mapSection) {
-            mapSection.scrollIntoView({ behavior: "smooth", block: "start" });
+            mapSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
         }
 
         window.setTimeout(() => {
             map.invalidateSize();
-            map.setView([lat, lng], 14, { animate: true });
+
+            map.setView(
+                [latitude, longitude],
+                14,
+                {
+                    animate: true
+                }
+            );
+
             if (marker) {
                 marker.openPopup();
             }
         }, 300);
     }
 
+    /*
+     * Suche und Kategorie-Filter.
+     */
     function filterLocations() {
-        const searchValue = normalizeText(searchInput ? searchInput.value : "");
-        const selectedCategory = categoryFilter ? categoryFilter.value : "all";
+        const searchValue = normalizeText(
+            searchInput
+                ? searchInput.value
+                : ""
+        );
 
-        const filteredLocations = allLocations.filter((location) => {
-            const props = location.properties;
-            const tags = Array.isArray(props.tags) ? props.tags : [];
-            const searchableContent = [
-                props.name,
-                props.municipality,
-                props.area,
-                props.category,
-                props.description,
-                props.short_description,
-                props.best_season,
-                ...tags
-            ].filter(Boolean).join(" ");
+        const selectedCategory =
+            categoryFilter
+                ? categoryFilter.value
+                : "all";
 
-            const matchesSearch = normalizeText(searchableContent).includes(searchValue);
-            const matchesCategory = selectedCategory === "all" || props.category === selectedCategory;
+        const filteredLocations =
+            allLocations.filter((location) => {
+                const properties =
+                    location.properties;
 
-            return matchesSearch && matchesCategory;
-        });
+                const tags =
+                    Array.isArray(properties.tags)
+                        ? properties.tags
+                        : [];
 
-        showLocations(filteredLocations, false);
+                const searchableContent = [
+                    properties.name,
+                    properties.municipality,
+                    properties.area,
+                    properties.category,
+                    properties.description,
+                    properties.short_description,
+                    properties.best_season,
+                    ...tags
+                ]
+                    .filter(Boolean)
+                    .join(" ");
+
+                const matchesSearch =
+                    normalizeText(
+                        searchableContent
+                    ).includes(searchValue);
+
+                const matchesCategory =
+                    selectedCategory === "all" ||
+                    properties.category ===
+                        selectedCategory;
+
+                return (
+                    matchesSearch &&
+                    matchesCategory
+                );
+            });
+
+        showLocations(
+            filteredLocations,
+            false
+        );
     }
 
-    function normalizeText(val) {
-        return String(val || "")
+    /*
+     * Suchtext normalisieren.
+     */
+    function normalizeText(value) {
+        return String(value || "")
             .normalize("NFD")
             .replace(/[\u0300-\u036f]/g, "")
             .toLocaleLowerCase("de")
             .trim();
     }
 
-    function escapeHtml(str) {
-        return String(str || "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
-    }
-
+    /*
+     * Anzahl gefundener Orte aktualisieren.
+     */
     function updateResultCount(count) {
-        if (!resultCountElement) return;
-        resultCountElement.textContent = count === 1 ? "1 Ort gefunden" : `${count} Orte gefunden`;
+        if (!resultCountElement) {
+            return;
+        }
+
+        resultCountElement.textContent =
+            count === 1
+                ? "1 Ort gefunden"
+                : `${count} Orte gefunden`;
     }
 
+    /*
+     * Allgemeine Meldung erstellen.
+     */
     function createMessage(text) {
-        const msg = document.createElement("p");
-        msg.className = "empty-results";
-        msg.textContent = text;
-        return msg;
+        const message =
+            document.createElement("p");
+
+        message.className =
+            "empty-results";
+
+        message.textContent = text;
+
+        return message;
     }
 
-    function isUsableUrl(val) {
-        if (!val) return false;
+    /*
+     * Prüfen, ob eine URL verwendbar ist.
+     */
+    function isUsableUrl(value) {
+        if (
+            typeof value !== "string" ||
+            !value.trim()
+        ) {
+            return false;
+        }
+
         try {
-            const u = new URL(val);
-            return u.protocol === "https:" || u.protocol === "http:";
-        } catch {
+            const url = new URL(value);
+
+            return (
+                url.protocol === "https:" ||
+                url.protocol === "http:"
+            );
+        } catch (error) {
             return false;
         }
     }
 
-    function showMapStatus(msg) {
-        if (!mapStatusElement) return;
+    /*
+     * Kartenstatus anzeigen.
+     */
+    function showMapStatus(message) {
+        if (!mapStatusElement) {
+            return;
+        }
+
         mapStatusElement.hidden = false;
-        mapStatusElement.textContent = msg;
+        mapStatusElement.textContent =
+            message;
     }
 
+    /*
+     * Kartenstatus ausblenden.
+     */
     function hideMapStatus() {
-        if (!mapStatusElement) return;
+        if (!mapStatusElement) {
+            return;
+        }
+
         mapStatusElement.hidden = true;
     }
 
-    function showMapError(msg) {
-        mapElement.classList.add("map-error");
-        mapElement.textContent = msg;
+    /*
+     * Schwerwiegenden Kartenfehler anzeigen.
+     */
+    function showMapError(message) {
+        if (mapElement) {
+            mapElement.classList.add(
+                "map-error"
+            );
+
+            mapElement.textContent = message;
+        }
+
         hideMapStatus();
-        if (resultCountElement) resultCountElement.textContent = "Karte konnte nicht geladen werden.";
+
+        if (resultCountElement) {
+            resultCountElement.textContent =
+                "Die Karte konnte nicht geladen werden.";
+        }
     }
 
-    if (searchInput) searchInput.addEventListener("input", filterLocations);
-    if (categoryFilter) categoryFilter.addEventListener("change", filterLocations);
+    /*
+     * Event-Listener.
+     */
+    if (searchInput) {
+        searchInput.addEventListener(
+            "input",
+            filterLocations
+        );
+    }
+
+    if (categoryFilter) {
+        categoryFilter.addEventListener(
+            "change",
+            filterLocations
+        );
+    }
+
     if (resetFiltersButton) {
-        resetFiltersButton.addEventListener("click", () => {
-            if (searchInput) searchInput.value = "";
-            if (categoryFilter) categoryFilter.value = "all";
-            showLocations(allLocations, true);
-            if (searchInput) searchInput.focus();
-        });
+        resetFiltersButton.addEventListener(
+            "click",
+            () => {
+                if (searchInput) {
+                    searchInput.value = "";
+                }
+
+                if (categoryFilter) {
+                    categoryFilter.value = "all";
+                }
+
+                showLocations(
+                    allLocations,
+                    true
+                );
+
+                if (searchInput) {
+                    searchInput.focus();
+                }
+            }
+        );
     }
 }
