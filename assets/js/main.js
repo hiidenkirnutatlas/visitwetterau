@@ -1,3 +1,5 @@
+oder du überprüfst und gibst mir die finale und korrekte js file aus
+
 "use strict";
 
 document.addEventListener("DOMContentLoaded", initializeWebsite);
