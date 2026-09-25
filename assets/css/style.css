@@ -1138,6 +1138,166 @@ footer {
 }
 
 /*
+ * Tags in Karten, Popup und Hover
+ */
+.result-card-tags,
+.popup-tags,
+.marker-hover-tags {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 18px;
+    padding: 0;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.result-card-tags li,
+.popup-tags li,
+.marker-hover-tags li {
+    max-width: 100%;
+    padding: 4px 8px;
+    overflow: hidden;
+    color: var(--forest);
+    background: rgb(120 152 70 / 12%);
+    border: 1px solid rgb(120 152 70 / 28%);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.popup-tags {
+    margin-right: 15px;
+    margin-bottom: 12px;
+    margin-left: 15px;
+}
+
+.marker-hover-tags {
+    gap: 4px;
+    margin-top: 9px;
+    margin-bottom: 0;
+}
+
+.marker-hover-tags li {
+    padding: 3px 6px;
+    font-size: 0.62rem;
+}
+
+/*
+ * Verfügbare Medien im Hover
+ */
+.marker-hover-media {
+    display: flex;
+    gap: 5px;
+    margin-top: 9px;
+    flex-wrap: wrap;
+}
+
+.marker-hover-media span {
+    padding: 4px 7px;
+    color: var(--forest-dark);
+    background: var(--sand);
+    border-radius: 999px;
+    font-size: 0.64rem;
+    font-weight: 750;
+}
+
+/*
+ * Social-Media-Links im Karten-Popup
+ */
+.popup-social-links {
+    display: grid;
+    gap: 7px;
+    margin: 12px 15px 15px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.popup-social-link {
+    display: inline-flex;
+    gap: 6px;
+    min-height: 38px;
+    padding: 8px 10px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font-size: 0.76rem;
+    font-weight: 750;
+    line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
+}
+
+.popup-instagram-link {
+    color: #7a244f !important;
+    background: #fbeaf2;
+    border-color: #db88ad;
+}
+
+.popup-instagram-link:hover {
+    background: #f6d3e3;
+}
+
+.popup-youtube-link {
+    color: #8c1a1a !important;
+    background: #ffebeb;
+    border-color: #e39797;
+}
+
+.popup-youtube-link:hover {
+    background: #ffdada;
+}
+
+.popup-website-link {
+    color: var(--forest-dark) !important;
+    background: var(--sand);
+    border-color: rgb(36 74 58 / 28%);
+}
+
+.popup-website-link:hover {
+    background: #e8dec8;
+}
+
+/*
+ * Unterschiedliche Social-Media-Buttons in den Ergebnis-Karten
+ */
+.card-external-link {
+    gap: 6px;
+}
+
+.card-instagram-link {
+    color: #7a244f;
+    background: #fbeaf2;
+    border-color: #c95d91;
+}
+
+.card-instagram-link:hover {
+    background: #f6d3e3;
+}
+
+.card-youtube-link {
+    color: #8c1a1a;
+    background: #ffebeb;
+    border-color: #d65d5d;
+}
+
+.card-youtube-link:hover {
+    background: #ffdada;
+}
+
+.card-website-link {
+    color: var(--forest);
+    background: var(--paper);
+    border-color: var(--forest);
+}
+
+.card-website-link:hover {
+    background: var(--sand);
+}
+
+/*
  * Tablets
  */
 @media (max-width: 900px) {
@@ -1308,6 +1468,14 @@ footer {
 
     .result-card-image {
         height: 180px;
+    }
+
+    .popup-social-links {
+        grid-template-columns: 1fr;
+    }
+
+    .result-card-tags li {
+        font-size: 0.66rem;
     }
 }
 
