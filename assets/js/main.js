@@ -236,75 +236,274 @@ function initializeWebsite() {
 
     // Hover-Preview HTML für Leaflet-Tooltip
     function createLocationPreview(location) {
-        const props = location.properties;
-        const markerData = getCategoryData(props.category);
-        const image = props.image || "./assets/images/placeholder.svg";
-        const title = escapeHtml(props.name || "");
-        const category = escapeHtml(props.category || "Ausflugsziel");
-        const municipality = escapeHtml([props.municipality, props.area].filter(Boolean).join(" · "));
-        const desc = escapeHtml(props.short_description || props.description || "");
+    const props = location.properties;
+    const markerData = getCategoryData(props.category);
 
-        const preview = document.createElement("article");
-        preview.className = "marker-hover-card";
-        preview.innerHTML = `
-            <img src="${image}" alt="" loading="lazy" onerror="this.src='./assets/images/placeholder.svg'">
-            <div class="marker-hover-body">
-                <span class="marker-hover-cat">${markerData.icon} ${category}</span>
-                <strong>${title}</strong>
-                <small>${municipality}</small>
-                ${desc ? `<p>${desc}</p>` : ''}
-                <span class="marker-hover-hint">Klicken für Details</span>
-            </div>
-        `;
-        return preview;
+    const preview = document.createElement("article");
+
+    preview.className = "marker-hover-card";
+
+    const image = document.createElement("img");
+
+    image.src =
+        props.image || "./assets/images/placeholder.svg";
+    image.alt = "";
+    image.loading = "lazy";
+
+    image.addEventListener("error", () => {
+        image.src = "./assets/images/placeholder.svg";
+    });
+
+    const body = document.createElement("div");
+
+    body.className = "marker-hover-body";
+
+    const category = document.createElement("span");
+
+    category.className = "marker-hover-cat";
+    category.textContent =
+        `${markerData.icon} ` +
+        `${props.category || "Ausflugsziel"}`;
+
+    const title = document.createElement("strong");
+
+    title.textContent = props.name || "";
+
+    const municipality = document.createElement("small");
+
+    municipality.textContent = [
+        props.municipality,
+        props.area
+    ]
+        .filter(Boolean)
+        .join(" · ");
+
+    body.append(
+        category,
+        title,
+        municipality
+    );
+
+    const descriptionText =
+        props.short_description ||
+        props.description ||
+        "";
+
+    if (descriptionText) {
+        const description = document.createElement("p");
+
+        description.textContent = descriptionText;
+        body.appendChild(description);
     }
+
+    const tags = createTagsList(
+        props.tags,
+        "marker-hover-tags"
+    );
+
+    if (tags.children.length > 0) {
+        body.appendChild(tags);
+    }
+
+    const availableMedia =
+        createAvailableMediaBadges(props);
+
+    if (availableMedia.children.length > 0) {
+        body.appendChild(availableMedia);
+    }
+
+    const hint = document.createElement("span");
+
+    hint.className = "marker-hover-hint";
+    hint.textContent = "Klicken für Details und Links";
+
+    body.appendChild(hint);
+    preview.append(image, body);
+
+    return preview;
+}
+
+    function createAvailableMediaBadges(props) {
+    const container = document.createElement("div");
+
+    container.className = "marker-hover-media";
+
+    if (isUsableUrl(props.instagram_url)) {
+        const instagram = document.createElement("span");
+
+        instagram.textContent = "📸 Instagram";
+        container.appendChild(instagram);
+    }
+
+    if (isUsableUrl(props.youtube_url)) {
+        const youtube = document.createElement("span");
+
+        youtube.textContent = "▶️ YouTube";
+        container.appendChild(youtube);
+    }
+
+    if (isUsableUrl(props.website_url)) {
+        const website = document.createElement("span");
+
+        website.textContent = "🔗 Infos";
+        container.appendChild(website);
+    }
+
+    return container;
+}
 
     function createPopup(location) {
-        const props = location.properties;
-        const markerData = getCategoryData(props.category);
+    const props = location.properties;
+    const markerData = getCategoryData(props.category);
 
-        const popup = document.createElement("article");
-        popup.className = "map-popup";
+    const popup = document.createElement("article");
 
-        const image = document.createElement("img");
-        image.className = "map-popup-image";
-        image.src = props.image || "./assets/images/placeholder.svg";
-        image.alt = props.image_alt || props.name;
-        image.loading = "lazy";
-        image.onerror = () => { image.src = "./assets/images/placeholder.svg"; };
+    popup.className = "map-popup";
 
-        const category = document.createElement("p");
-        category.className = "popup-category";
-        category.textContent = `${markerData.icon} ${props.category || "Ausflugsziel"}`;
+    const image = document.createElement("img");
 
-        const title = document.createElement("h3");
-        title.textContent = props.name;
+    image.className = "map-popup-image";
+    image.src =
+        props.image || "./assets/images/placeholder.svg";
+    image.alt = props.image_alt || props.name;
+    image.loading = "lazy";
 
-        const locationText = document.createElement("p");
-        locationText.className = "popup-location";
-        locationText.textContent = [props.municipality, props.area].filter(Boolean).join(" · ");
+    image.addEventListener("error", () => {
+        image.src = "./assets/images/placeholder.svg";
+    });
 
-        const description = document.createElement("p");
-        description.className = "popup-description";
-        description.textContent = props.short_description || props.description || "";
+    const category = document.createElement("p");
 
-        popup.append(image, category, title, locationText, description);
+    category.className = "popup-category";
+    category.textContent =
+        `${markerData.icon} ` +
+        `${props.category || "Ausflugsziel"}`;
 
-        const facts = createPopupFacts(props);
-        if (facts.children.length > 0) popup.appendChild(facts);
+    const title = document.createElement("h3");
 
-        if (isUsableUrl(props.website_url)) {
-            const link = document.createElement("a");
-            link.className = "popup-button";
-            link.href = props.website_url;
-            link.target = "_blank";
-            link.rel = "noopener noreferrer";
-            link.textContent = "Weitere Informationen";
-            popup.appendChild(link);
-        }
+    title.textContent = props.name;
 
-        return popup;
+    const locationText = document.createElement("p");
+
+    locationText.className = "popup-location";
+    locationText.textContent = [
+        props.municipality,
+        props.area
+    ]
+        .filter(Boolean)
+        .join(" · ");
+
+    const description = document.createElement("p");
+
+    description.className = "popup-description";
+    description.textContent =
+        props.short_description ||
+        props.description ||
+        "";
+
+    popup.append(
+        image,
+        category,
+        title,
+        locationText,
+        description
+    );
+
+    const facts = createPopupFacts(props);
+
+    if (facts.children.length > 0) {
+        popup.appendChild(facts);
     }
+
+    const tags = createTagsList(
+        props.tags,
+        "popup-tags"
+    );
+
+    if (tags.children.length > 0) {
+        popup.appendChild(tags);
+    }
+
+    const socialLinks = document.createElement("div");
+
+    socialLinks.className = "popup-social-links";
+
+    if (isUsableUrl(props.instagram_url)) {
+        socialLinks.appendChild(
+            createPopupLink(
+                props.instagram_url,
+                "📸",
+                "Instagram",
+                "popup-instagram-link"
+            )
+        );
+    }
+
+    if (isUsableUrl(props.youtube_url)) {
+        socialLinks.appendChild(
+            createPopupLink(
+                props.youtube_url,
+                "▶️",
+                "YouTube",
+                "popup-youtube-link"
+            )
+        );
+    }
+
+    if (isUsableUrl(props.website_url)) {
+        socialLinks.appendChild(
+            createPopupLink(
+                props.website_url,
+                "🔗",
+                "Informationen",
+                "popup-website-link"
+            )
+        );
+    }
+
+    if (socialLinks.children.length > 0) {
+        popup.appendChild(socialLinks);
+    }
+
+    return popup;
+}
+
+function createPopupLink(
+    url,
+    iconText,
+    labelText,
+    additionalClass
+) {
+    const link = document.createElement("a");
+
+    link.className = [
+        "popup-social-link",
+        additionalClass
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.setAttribute(
+        "aria-label",
+        `${labelText} in einem neuen Tab öffnen`
+    );
+
+    const icon = document.createElement("span");
+
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = iconText;
+
+    const label = document.createElement("span");
+
+    label.textContent = labelText;
+
+    link.append(icon, label);
+
+    return link;
+}
 
     function createPopupFacts(props) {
         const list = document.createElement("ul");
@@ -357,12 +556,29 @@ function initializeWebsite() {
         description.className = "result-card-description";
         description.textContent = props.description || props.short_description || "";
 
-        const facts = createFactsList(props);
-        const actions = createCardActions(location);
+       const facts = createFactsList(props);
+const tags = createTagsList(
+    props.tags,
+    "result-card-tags"
+);
+const actions = createCardActions(location);
 
-        content.append(category, title, locationText, description);
-        if (facts.children.length > 0) content.appendChild(facts);
-        content.appendChild(actions);
+content.append(
+    category,
+    title,
+    locationText,
+    description
+);
+
+if (facts.children.length > 0) {
+    content.appendChild(facts);
+}
+
+if (tags.children.length > 0) {
+    content.appendChild(tags);
+}
+
+content.appendChild(actions);
 
         card.append(image, content);
         return card;
@@ -387,37 +603,132 @@ function initializeWebsite() {
     }
 
     function createCardActions(location) {
-        const props = location.properties;
-        const actions = document.createElement("div");
-        actions.className = "result-card-actions";
+    const props = location.properties;
+    const actions = document.createElement("div");
 
-        const mapButton = document.createElement("button");
-        mapButton.className = "card-map-button";
-        mapButton.type = "button";
-        mapButton.textContent = "Auf Karte zeigen";
-        mapButton.addEventListener("click", () => showLocationOnMap(location));
-        actions.appendChild(mapButton);
+    actions.className = "result-card-actions";
 
-        if (isUsableUrl(props.youtube_url)) {
-            actions.appendChild(createExternalLink(props.youtube_url, "YouTube"));
-        } else if (isUsableUrl(props.instagram_url)) {
-            actions.appendChild(createExternalLink(props.instagram_url, "Instagram"));
-        } else if (isUsableUrl(props.website_url)) {
-            actions.appendChild(createExternalLink(props.website_url, "Mehr erfahren"));
+    const mapButton = document.createElement("button");
+
+    mapButton.className = "card-map-button";
+    mapButton.type = "button";
+    mapButton.textContent = "📍 Auf Karte zeigen";
+
+    mapButton.addEventListener("click", () => {
+        showLocationOnMap(location);
+    });
+
+    actions.appendChild(mapButton);
+
+    /*
+     * Die Links werden unabhängig voneinander geprüft.
+     * Dadurch können Instagram, YouTube und Website
+     * gleichzeitig angezeigt werden.
+     */
+    if (isUsableUrl(props.instagram_url)) {
+        actions.appendChild(
+            createExternalLink(
+                props.instagram_url,
+                "Instagram",
+                "card-instagram-link"
+            )
+        );
+    }
+
+    if (isUsableUrl(props.youtube_url)) {
+        actions.appendChild(
+            createExternalLink(
+                props.youtube_url,
+                "YouTube",
+                "card-youtube-link"
+            )
+        );
+    }
+
+    if (isUsableUrl(props.website_url)) {
+        actions.appendChild(
+            createExternalLink(
+                props.website_url,
+                "Mehr erfahren",
+                "card-website-link"
+            )
+        );
+    }
+
+    return actions;
+}
+
+    function createExternalLink(url, platform, additionalClass = "") {
+    const link = document.createElement("a");
+
+    const platformData = {
+        Instagram: {
+            icon: "📸",
+            label: "Instagram"
+        },
+        YouTube: {
+            icon: "▶️",
+            label: "YouTube"
+        },
+        "Mehr erfahren": {
+            icon: "🔗",
+            label: "Mehr erfahren"
         }
+    };
 
-        return actions;
+    function createTagsList(tags, className = "location-tags") {
+    const list = document.createElement("ul");
+
+    list.className = className;
+
+    if (!Array.isArray(tags)) {
+        return list;
     }
 
-    function createExternalLink(url, text) {
-        const link = document.createElement("a");
-        link.className = "card-external-link";
-        link.href = url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.textContent = text;
-        return link;
-    }
+    tags
+        .filter((tag) => typeof tag === "string" && tag.trim())
+        .slice(0, 8)
+        .forEach((tag) => {
+            const item = document.createElement("li");
+
+            item.textContent = `#${tag.trim().replace(/\s+/g, "")}`;
+            list.appendChild(item);
+        });
+
+    return list;
+}
+
+    const data = platformData[platform] || {
+        icon: "🔗",
+        label: platform
+    };
+
+    link.className = [
+        "card-external-link",
+        additionalClass
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.setAttribute(
+        "aria-label",
+        `${data.label} zu diesem Ort in einem neuen Tab öffnen`
+    );
+
+    const icon = document.createElement("span");
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = data.icon;
+
+    const label = document.createElement("span");
+    label.textContent = data.label;
+
+    link.append(icon, label);
+
+    return link;
+}
 
     function showLocationOnMap(location) {
         const [lng, lat] = location.geometry.coordinates;
