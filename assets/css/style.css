@@ -83,7 +83,7 @@ a {
  * Hero mit Video
  *
  * Reihenfolge:
- * 1. hero.jpg als Fallback
+ * 1. hero.png als Fallback
  * 2. Video
  * 3. dunkler Verlauf
  * 4. Navigation und Inhalt
@@ -98,7 +98,7 @@ a {
     color: var(--white);
     background:
         var(--forest-dark)
-        url("../images/hero.jpg")
+        url("../images/hero.png")
         center center / cover
         no-repeat;
 }
