@@ -1,45 +1,86 @@
 {
     "type": "FeatureCollection",
-    "name": "Wetterau entdecken",
+    "name": "Wetterau nach Feierabend",
     "features": [
-       
-{
-    "type": "Feature",
-    "properties": {
-        "id": "REI001",
-        "slug": "bergwerksee-reichelsheim",
-        "name": "Bergwerksee Reichelsheim",
-        "municipality": "Reichelsheim",
-        "area": "Wetterau",
-        "category": "Natur",
-        "short_description": "Ein ehemaliger Braunkohletagebau in der Wetterauer Seenlandschaft.",
-        "description": "Der Bergwerksee zwischen Weckesheim und Dorn-Assenheim entstand aus einem ehemaligen Braunkohletagebau. Rund um den See befinden sich Streuobstwiesen und der Weidenpavillon. Zugänge und örtliche Hinweise müssen beachtet werden.",
-        "visit_time": "1–2 Stunden",
-        "parking": false,
-        "family_friendly": true,
-        "accessible": false,
-        "best_season": "Frühling bis Herbst",
-        "image": "assets/images/locations/bergwerksee-reichelsheim.png",
-        "image_alt": "Blick über den Bergwerksee bei Reichelsheim in der Wetterau",
-        "instagram_url": "https://www.instagram.com/reel/DdudkaCM6V9/?stkn=MThhM2htazdqZ2syYQ%3D%3D",
-        "youtube_url": "",
-        "website_url": "https://www.stadt-reichelsheim.de/freizeit-tourismus/seen-gewaesser/bergwerksee/der-bergwerksee/",
-        "source_url": "https://www.stadt-reichelsheim.de/freizeit-tourismus/seen-gewaesser/bergwerksee/der-bergwerksee/",
-        "verified": true,
-        "tags": [
-            "Braunkohle",
-            "Wetterauer Seenplatte",
-            "Streuobstwiesen",
-            "Weidenpavillon"
-        ]
-    },
-    "geometry": {
-        "type": "Point",
-        "coordinates": [
-            8.8448,
-            50.3497
-        ]
-    }
-}
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "REI001",
+                "slug": "bergwerksee-reichelsheim",
+                "name": "Bergwerksee Reichelsheim",
+                "municipality": "Reichelsheim",
+                "area": "Wetterau",
+                "category": "Natur",
+                "short_description": "Ein ehemaliger Braunkohletagebau in der Wetterauer Seenlandschaft.",
+                "description": "Der Bergwerksee zwischen Weckesheim und Dorn-Assenheim entstand aus einem ehemaligen Braunkohletagebau. Rund um den See befinden sich Streuobstwiesen und der Weidenpavillon. Zugänge und örtliche Hinweise müssen beachtet werden.",
+                "visit_time": "1–2 Stunden",
+                "parking": false,
+                "family_friendly": true,
+                "accessible": false,
+                "best_season": "Frühling bis Herbst",
+                "image": "assets/images/locations/bergwerksee-reichelsheim.png",
+                "image_alt": "Blick über den Bergwerksee bei Reichelsheim in der Wetterau",
+                "instagram_url": "https://www.instagram.com/reel/DdudkaCM6V9/",
+                "youtube_url": "",
+                "website_url": "https://www.stadt-reichelsheim.de/freizeit-tourismus/seen-gewaesser/bergwerksee/der-bergwerksee/",
+                "source_url": "https://www.stadt-reichelsheim.de/freizeit-tourismus/seen-gewaesser/bergwerksee/der-bergwerksee/",
+                "verified": true,
+                "tags": [
+                    "Bergwerksee",
+                    "Braunkohle",
+                    "Wetterauer Seenplatte",
+                    "Streuobstwiesen",
+                    "Weidenpavillon"
+                ]
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.8448,
+                    50.3497
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "id": "KAR001",
+                "slug": "aussichtsplattform-nsg-ludwigsquelle",
+                "name": "Aussichtsplattform NSG Ludwigsquelle",
+                "municipality": "Karben",
+                "area": "Wetterau",
+                "category": "Natur",
+                "short_description": "Eine Aussichtsplattform zur Vogel- und Naturbeobachtung.",
+                "description": "Am Naturschutzgebiet Ludwigsquelle in der Nähe von Groß-Karben befindet sich eine hölzerne Aussichtsplattform direkt am Radweg. Eine Informationstafel informiert über das rund 17 Hektar große Schutzgebiet. Die Plattform ermöglicht Einblicke in die Feuchtwiesen und Lebensräume verschiedener Vogelarten. Im Naturschutzgebiet müssen die ausgewiesenen Wege und örtlichen Schutzregeln beachtet werden.",
+                "visit_time": "30–60 Minuten",
+                "parking": false,
+                "family_friendly": true,
+                "accessible": false,
+                "best_season": "Ganzjährig",
+                "image": "assets/images/locations/beobachtungsturm_ludwigsquelle_karben.jpg",
+                "image_alt": "Hölzerne Aussichtsplattform am Naturschutzgebiet Ludwigsquelle bei Karben",
+                "instagram_url": "",
+                "youtube_url": "",
+                "website_url": "https://www.nabu-karben.de/besondere-orte-in-karben/aussichtsplattform-naturschutzgeb-ludwigsquelle/",
+                "source_url": "https://www.nabu-karben.de/besondere-orte-in-karben/aussichtsplattform-naturschutzgeb-ludwigsquelle/",
+                "verified": true,
+                "tags": [
+                    "Ludwigsquelle",
+                    "Naturschutzgebiet",
+                    "NABU",
+                    "Birdwatching",
+                    "Vogelbeobachtung",
+                    "Aussichtsplattform",
+                    "Feuchtwiesen"
+                ]
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    8.779569358130692,
+                    50.251804934336064
+                ]
+            }
+        }
     ]
 }
