@@ -10,17 +10,11 @@ jeweiligen Beiträgen.
 
 ## Website
 
-Die aktuelle Website ist über GitHub Pages erreichbar:
+Die Website ist unter der folgenden Domain erreichbar:
 
-[Wetterau nach Feierabend](https://hiidenkirnutatlas.github.io/visitwetterau/)
+[Wetterau nach Feierabend](https://wetterau-nach-feierabend.info/)
 
-Als spätere eigene Domain ist vorgesehen:
-
-```text
-wetterau-nach-feierabend.info
-```
-
-Die Domain ist derzeit noch nicht mit der Website verbunden.
+Die technische Bereitstellung erfolgt über GitHub Pages.
 
 ## Instagram
 
@@ -73,6 +67,7 @@ Die Website bietet derzeit:
 ```text
 visitwetterau/
 ├── .nojekyll
+├── CNAME
 ├── README.md
 ├── index.html
 ├── impressum.html
@@ -150,7 +145,7 @@ Beispiel:
 
 ## Koordinaten
 
-GeoJSON verwendet die Koordinatenreihenfolge:
+GeoJSON verwendet die Reihenfolge:
 
 ```text
 [Längengrad, Breitengrad]
@@ -186,7 +181,7 @@ Die Kategorie im GeoJSON muss exakt mit der Bezeichnung in
 
 ## Bilder hinzufügen
 
-Ortsbilder werden im folgenden Verzeichnis gespeichert:
+Ortsbilder werden in diesem Verzeichnis gespeichert:
 
 ```text
 assets/images/locations/
@@ -203,7 +198,7 @@ Empfehlungen:
 - nur eigene oder passend lizenzierte Bilder verwenden
 - Bilder vor dem Hochladen komprimieren
 - Dateinamen kleinschreiben
-- keine Leerzeichen in Dateinamen verwenden
+- keine Leerzeichen verwenden
 - Wörter mit Bindestrichen oder Unterstrichen trennen
 - einen aussagekräftigen Alternativtext eintragen
 
@@ -241,9 +236,8 @@ Feld leer:
 "youtube_url": ""
 ```
 
-Das JavaScript zeigt nur Links an, deren URL-Feld tatsächlich gefüllt
-ist. Instagram, YouTube und die Informationsseite können gleichzeitig
-angezeigt werden.
+Instagram, YouTube und die jeweilige Informationsseite können
+gleichzeitig angezeigt werden.
 
 ## Tags
 
@@ -345,8 +339,8 @@ Die Website verwendet derzeit:
 - keine Analyse-Cookies
 - keine eingebetteten Instagram- oder YouTube-Player
 
-Technische Ressourcen werden derzeit unter anderem von folgenden
-Diensten geladen:
+Technische Ressourcen werden unter anderem von folgenden Diensten
+geladen:
 
 - GitHub Pages
 - jsDelivr
@@ -366,17 +360,7 @@ Die Anbieterkennzeichnung befindet sich in:
 impressum.html
 ```
 
-Vor einer öffentlichen Veröffentlichung müssen dort sämtliche
-Platzhalter durch korrekte Angaben ersetzt werden.
-
-Dazu gehören insbesondere:
-
-```text
-VORNAME NACHNAME
-STRASSE UND HAUSNUMMER
-POSTLEITZAHL ORT
-DEINE-EMAIL@BEISPIEL.DE
-```
+Dort müssen korrekte Angaben zum Betreiber hinterlegt sein.
 
 ## Lokale Vorschau
 
@@ -397,58 +381,58 @@ Die Website ist anschließend unter dieser Adresse erreichbar:
 http://localhost:8000/
 ```
 
-Alternativ kann beispielsweise die Erweiterung „Live Server“ in Visual
-Studio Code verwendet werden.
+Alternativ kann die Erweiterung „Live Server“ in Visual Studio Code
+verwendet werden.
 
-## GitHub Pages
+## GitHub Pages und Domain
 
-Die Website wird über GitHub Pages bereitgestellt.
+Die Website wird über GitHub Pages bereitgestellt und über die eigene
+Domain ausgeliefert:
 
-Konfiguration:
+```text
+https://wetterau-nach-feierabend.info/
+```
 
-1. Repository auf GitHub öffnen.
-2. `Settings` auswählen.
-3. `Pages` öffnen.
-4. Unter `Build and deployment` die Option
-   `Deploy from a branch` auswählen.
-5. Branch `main` auswählen.
-6. Verzeichnis `/root` auswählen.
-7. Einstellungen speichern.
+Die Datei `CNAME` im Hauptverzeichnis enthält:
 
-Die aktuelle Adresse lautet:
+```text
+wetterau-nach-feierabend.info
+```
+
+In den GitHub-Pages-Einstellungen sollte `Enforce HTTPS` aktiviert sein.
+
+Die frühere technische Projektadresse lautet:
 
 ```text
 https://hiidenkirnutatlas.github.io/visitwetterau/
 ```
 
-## Eigene Domain
+Für öffentliche Links sollte bevorzugt die eigene Domain verwendet
+werden.
 
-Als spätere Domain ist vorgesehen:
+## Canonical- und Open-Graph-Angaben
 
-```text
-wetterau-nach-feierabend.info
+In `index.html` sollten die Domainangaben auf die eigene Domain zeigen:
+
+```html
+<link
+    rel="canonical"
+    href="https://wetterau-nach-feierabend.info/"
+>
+
+<meta
+    property="og:url"
+    content="https://wetterau-nach-feierabend.info/"
+>
+
+<meta
+    property="og:image"
+    content="https://wetterau-nach-feierabend.info/assets/images/hero.png"
+>
 ```
 
-Nach dem Domainkauf kann sie unter
-`Settings` → `Pages` → `Custom domain` eingetragen werden.
-
-GitHub verwendet dafür eine Datei namens:
-
-```text
-CNAME
-```
-
-Ihr Inhalt lautet anschließend:
-
-```text
-wetterau-nach-feierabend.info
-```
-
-Nach erfolgreicher DNS-Prüfung sollte `Enforce HTTPS` aktiviert werden.
-
-Solange die eigene Domain nicht verbunden ist, sollten Canonical- und
-Open-Graph-Adressen in `index.html` auf die aktuelle GitHub-Pages-Adresse
-verweisen.
+Auch `impressum.html` und `datenschutz.html` sollten Canonical-Links mit
+der eigenen Domain verwenden.
 
 ## Browser-Cache bei Änderungen
 
@@ -467,7 +451,7 @@ Versionsparameter erhöht werden:
 Dadurch laden Browser die aktuelle Datei statt einer älteren Version aus
 dem Cache.
 
-## Prüfung vor einem neuen Karteneintrag
+## Prüfung vor einem Karteneintrag
 
 Vor der Veröffentlichung eines Ortes sollten insbesondere geprüft
 werden:
