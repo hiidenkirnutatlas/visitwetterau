@@ -342,6 +342,258 @@ section {
 }
 
 /*
+ * Neu auf der Karte
+ */
+.latest-section {
+    width: min(100% - 32px, var(--content-width));
+    margin: 0 auto;
+    padding-top: 40px;
+    padding-bottom: 90px;
+    scroll-margin-top: 20px;
+}
+
+.latest-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+}
+
+.latest-loading {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 32px;
+    color: var(--muted);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.latest-card {
+    display: flex;
+    overflow: hidden;
+    min-width: 0;
+    flex-direction: column;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--small-shadow);
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.latest-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-4px);
+}
+
+.latest-card-newest {
+    border-color: rgb(211 164 73 / 65%);
+}
+
+.latest-card-image-wrapper {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background: var(--sand);
+}
+
+.latest-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 350ms ease;
+}
+
+.latest-card:hover .latest-card-image {
+    transform: scale(1.025);
+}
+
+.latest-new-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 1;
+    padding: 7px 11px;
+    color: var(--forest-dark);
+    background: var(--grain);
+    border: 2px solid rgb(255 255 255 / 78%);
+    border-radius: 999px;
+    box-shadow: 0 5px 16px rgb(17 43 33 / 20%);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.latest-category-badge {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    z-index: 1;
+    padding: 7px 11px;
+    color: var(--white);
+    background: rgb(23 51 41 / 90%);
+    border: 1px solid rgb(255 255 255 / 35%);
+    border-radius: 999px;
+    box-shadow: 0 5px 16px rgb(17 43 33 / 20%);
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1;
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+}
+
+.latest-category-castle {
+    background: rgb(23 51 41 / 92%);
+}
+
+.latest-category-nature {
+    background: rgb(93 120 53 / 92%);
+}
+
+.latest-category-viewpoint {
+    background: rgb(154 112 40 / 92%);
+}
+
+.latest-category-history {
+    background: rgb(133 88 47 / 92%);
+}
+
+.latest-category-town {
+    background: rgb(79 119 126 / 92%);
+}
+
+.latest-category-food {
+    background: rgb(111 121 47 / 92%);
+}
+
+.latest-category-lgs {
+    background: rgb(168 71 105 / 92%);
+}
+
+.latest-category-default {
+    background: rgb(63 80 72 / 92%);
+}
+
+.latest-card-content {
+    display: flex;
+    height: 100%;
+    padding: clamp(22px, 4vw, 32px);
+    flex-direction: column;
+}
+
+.latest-card-meta {
+    margin: 0 0 8px;
+    color: var(--apple-dark);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.latest-card h3 {
+    margin: 0;
+    color: var(--forest-dark);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.65rem, 3vw, 2.25rem);
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+}
+
+.latest-card-description {
+    margin: 14px 0 18px;
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.55;
+}
+
+.latest-card-facts,
+.latest-card-tags {
+    display: flex;
+    gap: 7px;
+    margin: 0 0 18px;
+    padding: 0;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.latest-card-facts li {
+    padding: 5px 9px;
+    color: var(--forest);
+    background: var(--sand);
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 750;
+}
+
+.latest-card-tags li {
+    padding: 4px 8px;
+    color: var(--forest);
+    background: rgb(120 152 70 / 10%);
+    border: 1px solid rgb(120 152 70 / 28%);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.latest-card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.latest-map-button,
+.latest-external-link {
+    display: inline-flex;
+    min-height: 44px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.84rem;
+    font-weight: 750;
+    line-height: 1.15;
+    text-decoration: none;
+    transition:
+        background-color 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+}
+
+.latest-map-button {
+    color: var(--white);
+    background: var(--forest);
+    border: 1px solid var(--forest);
+}
+
+.latest-map-button:hover {
+    background: var(--forest-dark);
+    transform: translateY(-1px);
+}
+
+.latest-external-link {
+    color: #7a244f;
+    background: #fbeaf2;
+    border: 1px solid #c95d91;
+}
+
+.latest-external-link:hover {
+    background: #f6d3e3;
+    transform: translateY(-1px);
+}
+
+.latest-map-button:focus-visible,
+.latest-external-link:focus-visible {
+    outline: 3px solid rgb(211 164 73 / 45%);
+    outline-offset: 3px;
+}
+
+/*
  * Kartenbereich
  */
 .map-section {
@@ -1318,6 +1570,20 @@ footer {
  * Smartphones und kleine Tablets
  */
 @media (max-width: 720px) {
+
+    .latest-section {
+    padding-top: 20px;
+    padding-bottom: 65px;
+}
+
+.latest-grid {
+    grid-template-columns: 1fr;
+}
+
+.latest-card-image-wrapper {
+    aspect-ratio: 16 / 10;
+}
+    
     .hero {
         height: 100vh;
         height: 100svh;
@@ -1410,6 +1676,19 @@ footer {
  * Kleine Smartphones
  */
 @media (max-width: 480px) {
+    .latest-card-actions {
+    flex-direction: column;
+}
+
+.latest-map-button,
+.latest-external-link {
+    width: 100%;
+}
+
+.latest-card-content {
+    padding: 22px;
+}
+    
     .hero {
         min-height: 700px;
     }
