@@ -12,6 +12,17 @@
 /*
  * Kopfzeile
  */
+
+/*
+ * Orts-Hero über die gesamte Bildschirmbreite
+ */
+section.location-hero {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
 .location-header {
     position: absolute;
     top: 0;
