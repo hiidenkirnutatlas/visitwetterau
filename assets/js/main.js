@@ -16,6 +16,8 @@ function initializeWebsite() {
     const resultsElement = document.getElementById("results");
     const resultCountElement =
         document.getElementById("resultCount");
+    const latestLocationsElement =
+    document.getElementById("latestLocations");
     const currentYearElement =
         document.getElementById("currentYear");
 
@@ -183,10 +185,11 @@ function initializeWebsite() {
             }
 
             allLocations = data.features.filter(
-                isValidLocation
-            );
+    isValidLocation
+);
 
-            showLocations(allLocations, true);
+showLatestLocations(allLocations);
+showLocations(allLocations, true);
         } catch (error) {
             console.error(
                 "Ortsdaten konnten nicht geladen werden:",
@@ -227,6 +230,339 @@ function initializeWebsite() {
         );
     }
 
+    /*
+ * Die neuesten Einträge oberhalb der Karte anzeigen.
+ */
+function showLatestLocations(locations) {
+    if (!latestLocationsElement) {
+        return;
+    }
+
+    latestLocationsElement.replaceChildren();
+
+    const latestLocations = [...locations]
+        .filter((location) => {
+            return isValidPublishedDate(
+                location.properties.published_at
+            );
+        })
+        .sort((firstLocation, secondLocation) => {
+            const firstDate = new Date(
+                firstLocation.properties.published_at
+            );
+
+            const secondDate = new Date(
+                secondLocation.properties.published_at
+            );
+
+            return secondDate.getTime() - firstDate.getTime();
+        })
+        .slice(0, 2);
+
+    if (latestLocations.length === 0) {
+        latestLocationsElement.appendChild(
+            createMessage(
+                "Noch wurden keine aktuellen Einträge veröffentlicht."
+            )
+        );
+
+        return;
+    }
+
+    latestLocations.forEach((location, index) => {
+        latestLocationsElement.appendChild(
+            createLatestLocationCard(
+                location,
+                index === 0
+            )
+        );
+    });
+}
+
+/*
+ * Veröffentlichungsdatum prüfen.
+ */
+function isValidPublishedDate(value) {
+    if (
+        typeof value !== "string" ||
+        !value.trim()
+    ) {
+        return false;
+    }
+
+    const date = new Date(value);
+
+    return !Number.isNaN(date.getTime());
+}
+
+/*
+ * Karte für einen aktuellen Eintrag erstellen.
+ */
+function createLatestLocationCard(
+    location,
+    isNewest
+) {
+    const properties = location.properties;
+    const markerData = getCategoryData(
+        properties.category
+    );
+
+    const article = document.createElement("article");
+
+    article.className = "latest-card";
+
+    if (isNewest) {
+        article.classList.add("latest-card-newest");
+    }
+
+    const imageWrapper = document.createElement("div");
+
+    imageWrapper.className = "latest-card-image-wrapper";
+
+    const image = document.createElement("img");
+
+    image.className = "latest-card-image";
+    image.src =
+        properties.image ||
+        FALLBACK_IMAGE;
+    image.alt =
+        properties.image_alt ||
+        properties.name;
+    image.loading = "lazy";
+
+    setFallbackImage(image);
+
+    imageWrapper.appendChild(image);
+
+    if (isNewest) {
+        const newestBadge = document.createElement("span");
+
+        newestBadge.className = "latest-new-badge";
+        newestBadge.textContent = "Neu";
+
+        imageWrapper.appendChild(newestBadge);
+    }
+
+    const categoryBadge = document.createElement("span");
+
+    categoryBadge.className = [
+        "latest-category-badge",
+        getLatestCategoryClass(
+            properties.category
+        )
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+    categoryBadge.textContent =
+        `${markerData.icon} ` +
+        `${properties.category || "Ausflugsziel"}`;
+
+    imageWrapper.appendChild(categoryBadge);
+
+    const content = document.createElement("div");
+
+    content.className = "latest-card-content";
+
+    const meta = document.createElement("p");
+
+    meta.className = "latest-card-meta";
+
+    const locationName = [
+        properties.municipality,
+        properties.area
+    ]
+        .filter(Boolean)
+        .join(" · ");
+
+    const publishedDate = formatPublishedDate(
+        properties.published_at
+    );
+
+    meta.textContent = [
+        locationName,
+        publishedDate
+    ]
+        .filter(Boolean)
+        .join(" · ");
+
+    const title = document.createElement("h3");
+
+    title.textContent = properties.name;
+
+    const description = document.createElement("p");
+
+    description.className = "latest-card-description";
+    description.textContent =
+        properties.short_description ||
+        properties.description ||
+        "";
+
+    const facts = createLatestFacts(properties);
+
+    const tags = createTagsList(
+        properties.tags,
+        "latest-card-tags",
+        4
+    );
+
+    const actions = document.createElement("div");
+
+    actions.className = "latest-card-actions";
+
+    const mapButton = document.createElement("button");
+
+    mapButton.type = "button";
+    mapButton.className = "latest-map-button";
+    mapButton.textContent = "📍 Auf der Karte ansehen";
+
+    mapButton.addEventListener("click", () => {
+        showLocationOnMap(location);
+    });
+
+    actions.appendChild(mapButton);
+
+    if (isUsableUrl(properties.instagram_url)) {
+        actions.appendChild(
+            createLatestExternalLink(
+                properties.instagram_url,
+                "📸 Instagram"
+            )
+        );
+    }
+
+    content.append(
+        meta,
+        title,
+        description
+    );
+
+    if (facts.children.length > 0) {
+        content.appendChild(facts);
+    }
+
+    if (tags.children.length > 0) {
+        content.appendChild(tags);
+    }
+
+    content.appendChild(actions);
+
+    article.append(
+        imageWrapper,
+        content
+    );
+
+    return article;
+}
+
+/*
+ * Datum deutsch ausgeben.
+ */
+function formatPublishedDate(value) {
+    if (!isValidPublishedDate(value)) {
+        return "";
+    }
+
+    const date = new Date(
+        `${value}T12:00:00`
+    );
+
+    return new Intl.DateTimeFormat(
+        "de-DE",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        }
+    ).format(date);
+}
+
+/*
+ * Fakten für aktuelle Einträge erstellen.
+ */
+function createLatestFacts(properties) {
+    const list = document.createElement("ul");
+
+    list.className = "latest-card-facts";
+
+    const facts = [];
+
+    if (properties.visit_time) {
+        facts.push(
+            `⏱ ${properties.visit_time}`
+        );
+    }
+
+    if (properties.best_season) {
+        facts.push(
+            `🍂 ${properties.best_season}`
+        );
+    }
+
+    if (properties.family_friendly === true) {
+        facts.push("👨‍👩‍👧 Familiengeeignet");
+    }
+
+    facts.forEach((fact) => {
+        const item = document.createElement("li");
+
+        item.textContent = fact;
+        list.appendChild(item);
+    });
+
+    return list;
+}
+
+/*
+ * Externen Link für aktuelle Einträge erstellen.
+ */
+function createLatestExternalLink(
+    url,
+    label
+) {
+    const link = document.createElement("a");
+
+    link.className = "latest-external-link";
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = label;
+
+    link.setAttribute(
+        "aria-label",
+        `${label} in einem neuen Tab öffnen`
+    );
+
+    return link;
+}
+
+/*
+ * Farbklasse für Kategorien bestimmen.
+ */
+function getLatestCategoryClass(category) {
+    const categoryClasses = {
+        "Burg und Schloss":
+            "latest-category-castle",
+        Natur:
+            "latest-category-nature",
+        Aussichtspunkt:
+            "latest-category-viewpoint",
+        Geschichte:
+            "latest-category-history",
+        "Stadt und Fachwerk":
+            "latest-category-town",
+        Genuss:
+            "latest-category-food",
+        "Landesgartenschau 2027":
+            "latest-category-lgs"
+    };
+
+    return (
+        categoryClasses[category] ||
+        "latest-category-default"
+    );
+}
+    
     /*
      * Orte als Marker und Ergebnis-Karten anzeigen.
      */
