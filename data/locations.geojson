@@ -11,6 +11,10 @@
                 "municipality": "Reichelsheim",
                 "area": "Wetterau",
                 "category": "Natur",
+                "category_slug": "natur",
+                "published_at": "2026-09-23",
+                "updated_at": "2026-09-29",
+                "detail_url": "/natur/bergwerksee-reichelsheim/",
                 "short_description": "Ein ehemaliger Braunkohletagebau in der Wetterauer Seenlandschaft.",
                 "description": "Der Bergwerksee zwischen Weckesheim und Dorn-Assenheim entstand aus einem ehemaligen Braunkohletagebau. Rund um den See befinden sich Streuobstwiesen und der Weidenpavillon. Zugänge und örtliche Hinweise müssen beachtet werden.",
                 "visit_time": "1–2 Stunden",
@@ -45,12 +49,16 @@
             "type": "Feature",
             "properties": {
                 "id": "KAR001",
-                "slug": "aussichtsplattform-nsg-ludwigsquelle",
+                "slug": "aussichtsplattform-ludwigsquelle-karben",
                 "name": "Aussichtsplattform NSG Ludwigsquelle",
                 "municipality": "Karben",
                 "area": "Wetterau",
                 "category": "Natur",
-                "short_description": "Eine Aussichtsplattform zur Vogel- und Naturbeobachtung.",
+                "category_slug": "natur",
+                "published_at": "2026-09-29",
+                "updated_at": "2026-09-29",
+                "detail_url": "/natur/aussichtsplattform-ludwigsquelle-karben/",
+                "short_description": "Eine ruhige Aussichtsplattform zur Vogel- und Naturbeobachtung.",
                 "description": "Am Naturschutzgebiet Ludwigsquelle in der Nähe von Groß-Karben befindet sich eine hölzerne Aussichtsplattform direkt am Radweg. Eine Informationstafel informiert über das rund 17 Hektar große Schutzgebiet. Die Plattform ermöglicht Einblicke in die Feuchtwiesen und Lebensräume verschiedener Vogelarten. Im Naturschutzgebiet müssen die ausgewiesenen Wege und örtlichen Schutzregeln beachtet werden.",
                 "visit_time": "30–60 Minuten",
                 "parking": false,
@@ -59,7 +67,7 @@
                 "best_season": "Ganzjährig",
                 "image": "assets/images/locations/beobachtungsturm_ludwigsquelle_karben.jpg",
                 "image_alt": "Hölzerne Aussichtsplattform am Naturschutzgebiet Ludwigsquelle bei Karben",
-                "instagram_url": "https://www.instagram.com/reel/DdzJbBRs4bt/",
+                "instagram_url": "",
                 "youtube_url": "",
                 "website_url": "https://www.nabu-karben.de/besondere-orte-in-karben/aussichtsplattform-naturschutzgeb-ludwigsquelle/",
                 "source_url": "https://www.nabu-karben.de/besondere-orte-in-karben/aussichtsplattform-naturschutzgeb-ludwigsquelle/",
@@ -71,7 +79,8 @@
                     "Birdwatching",
                     "Vogelbeobachtung",
                     "Aussichtsplattform",
-                    "Feuchtwiesen"
+                    "Feuchtwiesen",
+                    "Naturfotografie"
                 ]
             },
             "geometry": {
