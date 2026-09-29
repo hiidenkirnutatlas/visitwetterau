@@ -1,1 +1,715 @@
 
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Natur in der Wetterau | Wetterau nach Feierabend
+    </title>
+
+    <meta
+        name="description"
+        content="Naturorte in der Wetterau: Seen, Feuchtwiesen,
+        Aussichtspunkte und ruhige Ziele für kleine Ausflüge nach
+        Feierabend."
+    >
+
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#244a3a">
+
+    <link
+        rel="canonical"
+        href="https://wetterau-nach-feierabend.info/natur/"
+    >
+
+    <meta
+        property="og:title"
+        content="Natur in der Wetterau"
+    >
+
+    <meta
+        property="og:description"
+        content="Seen, Feuchtwiesen, Aussichtspunkte und ruhige
+        Naturorte für kleine Ausflüge nach Feierabend."
+    >
+
+    <meta property="og:type" content="website">
+
+    <meta
+        property="og:url"
+        content="https://wetterau-nach-feierabend.info/natur/"
+    >
+
+    <meta
+        property="og:image"
+        content="https://wetterau-nach-feierabend.info/assets/images/hero.png"
+    >
+
+    <meta property="og:locale" content="de_DE">
+
+    <link
+        rel="icon"
+        href="../assets/images/favicon.svg?v=1"
+        type="image/svg+xml"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css?v=12"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/location.css?v=3"
+    >
+
+    <style>
+        /*
+         * Ergänzungen für Kategorieseiten
+         */
+        .category-header {
+            padding: 24px;
+            color: var(--white);
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--forest-dark),
+                    var(--forest)
+                );
+        }
+
+        .category-navigation {
+            display: flex;
+            width: min(100%, var(--content-width));
+            margin: 0 auto;
+            gap: 28px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .category-logo {
+            color: var(--white);
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+
+        .category-menu {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .category-menu a {
+            color: var(--white);
+            font-size: 0.94rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .category-menu a:hover,
+        .category-menu a:focus-visible {
+            text-decoration: underline;
+            text-underline-offset: 5px;
+        }
+
+        .category-intro {
+            width: min(100% - 32px, var(--content-width));
+            margin: 0 auto;
+            padding-top: 90px;
+            padding-bottom: 60px;
+        }
+
+        .category-breadcrumb {
+            display: flex;
+            gap: 8px;
+            margin: 0 0 24px;
+            padding: 0;
+            align-items: center;
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+            list-style: none;
+        }
+
+        .category-breadcrumb li {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .category-breadcrumb li:not(:last-child)::after {
+            color: #a3ada8;
+            content: "›";
+        }
+
+        .category-breadcrumb a {
+            color: var(--forest);
+            text-decoration: none;
+        }
+
+        .category-breadcrumb a:hover {
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        .category-label {
+            display: inline-flex;
+            gap: 8px;
+            margin: 0 0 14px;
+            padding: 8px 12px;
+            align-items: center;
+            color: var(--forest-dark);
+            background: rgb(120 152 70 / 14%);
+            border: 1px solid rgb(120 152 70 / 30%);
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .category-intro h1 {
+            max-width: 850px;
+            margin: 0;
+            color: var(--forest-dark);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(2.8rem, 8vw, 6rem);
+            letter-spacing: -0.05em;
+            line-height: 0.98;
+            text-wrap: balance;
+        }
+
+        .category-description {
+            max-width: 780px;
+            margin: 25px 0 0;
+            color: var(--muted);
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            line-height: 1.7;
+        }
+
+        .category-overview {
+            width: min(100% - 32px, var(--content-width));
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+
+        .category-overview-header {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 28px;
+            align-items: end;
+            justify-content: space-between;
+        }
+
+        .category-overview-header h2 {
+            margin: 0;
+            color: var(--forest-dark);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .category-count {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 28px;
+        }
+
+        .category-card {
+            display: flex;
+            overflow: hidden;
+            min-width: 0;
+            flex-direction: column;
+            color: inherit;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--small-shadow);
+            text-decoration: none;
+            transition:
+                transform 180ms ease,
+                box-shadow 180ms ease;
+        }
+
+        .category-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .category-card-image-wrapper {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            background: var(--sand);
+        }
+
+        .category-card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 350ms ease;
+        }
+
+        .category-card:hover .category-card-image {
+            transform: scale(1.025);
+        }
+
+        .category-card-badge {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            padding: 7px 11px;
+            color: var(--white);
+            background: rgb(93 120 53 / 92%);
+            border: 1px solid rgb(255 255 255 / 35%);
+            border-radius: 999px;
+            box-shadow: 0 5px 16px rgb(17 43 33 / 20%);
+            font-size: 0.72rem;
+            font-weight: 800;
+            line-height: 1;
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+        }
+
+        .category-card-content {
+            display: flex;
+            height: 100%;
+            padding: clamp(22px, 4vw, 32px);
+            flex-direction: column;
+        }
+
+        .category-card-meta {
+            margin: 0 0 8px;
+            color: var(--apple-dark);
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .category-card h3 {
+            margin: 0;
+            color: var(--forest-dark);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(1.6rem, 3vw, 2.15rem);
+            letter-spacing: -0.025em;
+            line-height: 1.1;
+        }
+
+        .category-card-description {
+            margin: 14px 0 18px;
+            color: var(--muted);
+            font-size: 0.96rem;
+            line-height: 1.6;
+        }
+
+        .category-card-facts {
+            display: flex;
+            gap: 7px;
+            margin: auto 0 0;
+            padding: 0;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+
+        .category-card-facts li {
+            padding: 5px 9px;
+            color: var(--forest);
+            background: var(--sand);
+            border-radius: 999px;
+            font-size: 0.73rem;
+            font-weight: 750;
+        }
+
+        .category-card-link {
+            display: inline-flex;
+            margin-top: 20px;
+            color: var(--forest);
+            font-size: 0.88rem;
+            font-weight: 800;
+            text-underline-offset: 4px;
+        }
+
+        .category-map-cta {
+            display: flex;
+            gap: 28px;
+            width: min(100% - 32px, var(--content-width));
+            margin: 0 auto 100px;
+            padding: clamp(28px, 6vw, 60px);
+            align-items: center;
+            justify-content: space-between;
+            color: var(--white);
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--forest-dark),
+                    var(--forest)
+                );
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .category-map-cta h2 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+
+        .category-map-cta p {
+            max-width: 650px;
+            margin: 13px 0 0;
+            color: rgb(255 255 255 / 76%);
+        }
+
+        .category-map-link {
+            display: inline-flex;
+            min-height: 48px;
+            padding: 12px 20px;
+            flex: 0 0 auto;
+            align-items: center;
+            justify-content: center;
+            color: var(--forest-dark);
+            background: var(--grain);
+            border-radius: 999px;
+            font-weight: 800;
+            text-decoration: none;
+            transition: transform 180ms ease;
+        }
+
+        .category-map-link:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 720px) {
+            .category-header {
+                padding: 20px;
+            }
+
+            .category-navigation {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .category-menu {
+                gap: 15px;
+            }
+
+            .category-intro {
+                padding-top: 65px;
+                padding-bottom: 45px;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-overview-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .category-map-cta {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .category-map-link {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Natur in der Wetterau",
+        "url": "https://wetterau-nach-feierabend.info/natur/",
+        "description": "Naturorte und kleine Ausflugsziele in der Wetterau.",
+        "isPartOf": {
+            "@type": "WebSite",
+            "name": "Wetterau nach Feierabend",
+            "url": "https://wetterau-nach-feierabend.info/"
+        },
+        "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": 2,
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Aussichtsplattform Ludwigsquelle",
+                    "url": "https://wetterau-nach-feierabend.info/natur/aussichtsplattform-ludwigsquelle-karben/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Bergwerksee Reichelsheim",
+                    "url": "https://wetterau-nach-feierabend.info/natur/bergwerksee-reichelsheim/"
+                }
+            ]
+        }
+    }
+    </script>
+</head>
+
+<body class="location-page">
+    <a class="skip-link" href="#main-content">
+        Zum Inhalt springen
+    </a>
+
+    <header class="category-header">
+        <nav
+            class="category-navigation"
+            aria-label="Hauptnavigation"
+        >
+            <a class="category-logo" href="../">
+                Wetterau nach Feierabend
+            </a>
+
+            <div class="category-menu">
+                <a href="../#neu">
+                    Neu entdeckt
+                </a>
+
+                <a href="../#karte">
+                    Karte
+                </a>
+
+                <a href="../#orte">
+                    Alle Orte
+                </a>
+
+                <a href="../#projekt">
+                    Projekt
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section class="category-intro">
+            <nav aria-label="Brotkrümelnavigation">
+                <ol class="category-breadcrumb">
+                    <li>
+                        <a href="../">Startseite</a>
+                    </li>
+
+                    <li aria-current="page">
+                        Natur
+                    </li>
+                </ol>
+            </nav>
+
+            <p class="category-label">
+                <span aria-hidden="true">🌳</span>
+                Kategorie
+            </p>
+
+            <h1>
+                Natur in der Wetterau
+            </h1>
+
+            <p class="category-description">
+                Seen, Feuchtwiesen, Streuobstwiesen und ruhige
+                Aussichtspunkte: Hier findest du Naturorte für kleine
+                Auszeiten und Feierabend-Ausflüge in der Wetterau.
+            </p>
+        </section>
+
+        <section
+            class="category-overview"
+            aria-labelledby="nature-places-title"
+        >
+            <div class="category-overview-header">
+                <h2 id="nature-places-title">
+                    Alle Naturorte
+                </h2>
+
+                <p class="category-count">
+                    2 Orte
+                </p>
+            </div>
+
+            <div class="category-grid">
+                <a
+                    class="category-card"
+                    href="./aussichtsplattform-ludwigsquelle-karben/"
+                >
+                    <div class="category-card-image-wrapper">
+                        <img
+                            class="category-card-image"
+                            src="../assets/images/locations/beobachtungsturm_ludwigsquelle_karben.jpg"
+                            alt="Aussichtsplattform am Naturschutzgebiet Ludwigsquelle bei Karben"
+                            loading="lazy"
+                        >
+
+                        <span class="category-card-badge">
+                            🌳 Natur
+                        </span>
+                    </div>
+
+                    <div class="category-card-content">
+                        <p class="category-card-meta">
+                            Karben · Wetterau
+                        </p>
+
+                        <h3>
+                            Aussichtsplattform Ludwigsquelle
+                        </h3>
+
+                        <p class="category-card-description">
+                            Ein ruhiger Ort zur Vogelbeobachtung und
+                            Naturfotografie am Rand des
+                            Naturschutzgebiets.
+                        </p>
+
+                        <ul class="category-card-facts">
+                            <li>⏱ 30–60 Minuten</li>
+                            <li>🌿 Naturschutzgebiet</li>
+                            <li>📷 Naturfotografie</li>
+                        </ul>
+
+                        <span class="category-card-link">
+                            Ort entdecken →
+                        </span>
+                    </div>
+                </a>
+
+                <a
+                    class="category-card"
+                    href="./bergwerksee-reichelsheim/"
+                >
+                    <div class="category-card-image-wrapper">
+                        <img
+                            class="category-card-image"
+                            src="../assets/images/locations/bergwerksee-reichelsheim.png"
+                            alt="Blick über den Bergwerksee bei Reichelsheim"
+                            loading="lazy"
+                        >
+
+                        <span class="category-card-badge">
+                            🌳 Natur
+                        </span>
+                    </div>
+
+                    <div class="category-card-content">
+                        <p class="category-card-meta">
+                            Reichelsheim · Wetterau
+                        </p>
+
+                        <h3>
+                            Bergwerksee Reichelsheim
+                        </h3>
+
+                        <p class="category-card-description">
+                            Ein ehemaliger Braunkohletagebau in der
+                            Wetterauer Seenlandschaft.
+                        </p>
+
+                        <ul class="category-card-facts">
+                            <li>⏱ 1–2 Stunden</li>
+                            <li>🍂 Frühling bis Herbst</li>
+                            <li>📷 Landschaft</li>
+                        </ul>
+
+                        <span class="category-card-link">
+                            Ort entdecken →
+                        </span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="category-map-cta">
+            <div>
+                <h2>
+                    Alle Orte auf der Karte
+                </h2>
+
+                <p>
+                    Öffne die interaktive Entdeckerkarte und finde
+                    weitere Ziele in der Wetterau.
+                </p>
+            </div>
+
+            <a
+                class="category-map-link"
+                href="../#karte"
+            >
+                🗺️ Karte öffnen
+            </a>
+        </section>
+    </main>
+
+    <footer class="location-footer">
+        <div class="location-footer-content">
+            <div class="location-footer-brand">
+                <strong>
+                    Wetterau nach Feierabend
+                </strong>
+
+                <p>
+                    Orte, Geschichten und kleine Auszeiten aus der
+                    Region.
+                </p>
+            </div>
+
+            <nav
+                class="location-footer-links"
+                aria-label="Rechtliche Informationen"
+            >
+                <a href="../impressum.html">
+                    Impressum
+                </a>
+
+                <a href="../datenschutz.html">
+                    Datenschutz
+                </a>
+
+                <a
+                    href="https://www.instagram.com/wetterau_nach_feierabend/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Instagram
+                </a>
+            </nav>
+        </div>
+
+        <div class="location-footer-notice">
+            <p>
+                Wetterau nach Feierabend ist ein unabhängiges, privat
+                betriebenes Creator-Projekt. Es besteht keine Verbindung
+                zum Wetteraukreis oder zur TourismusRegion Wetterau GmbH.
+            </p>
+        </div>
+
+        <p class="location-copyright">
+            © 2026 Wetterau nach Feierabend
+        </p>
+    </footer>
+</body>
+</html>
