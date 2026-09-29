@@ -99,6 +99,9 @@ function initializeWebsite() {
     const markerLayer = L.layerGroup().addTo(map);
     const activeMarkers = new Map();
 
+    let activeLocationSlug = null;
+    let isHandlingBrowserHistory = false;
+
     loadWetterauBoundary();
     loadLocations();
 
@@ -190,6 +193,17 @@ function initializeWebsite() {
 
 showLatestLocations(allLocations);
 showLocations(allLocations, true);
+
+/*
+ * Falls die Seite mit ?ort=... geöffnet wurde,
+ * nach dem Laden der Marker das passende Popup öffnen.
+ */
+window.setTimeout(() => {
+    openLocationFromCurrentUrl({
+        scrollToMap: true,
+        removeInvalidSlug: true
+    });
+}, 350);
         } catch (error) {
             console.error(
                 "Ortsdaten konnten nicht geladen werden:",
@@ -618,6 +632,48 @@ function getLatestCategoryClass(category) {
                     riseOnHover: true
                 }
             );
+
+            /*
+ * Beim Öffnen des Popups wird die Adresse im Browser
+ * um den Slug des Ortes ergänzt.
+ */
+marker.on("popupopen", () => {
+    activeLocationSlug = properties.slug;
+
+    if (!isHandlingBrowserHistory) {
+        setLocationUrl(
+            properties.slug,
+            "push"
+        );
+    }
+});
+
+/*
+ * Wird das Popup geschlossen, entfernen wir den
+ * Ort wieder aus der URL.
+ *
+ * Der kurze Timeout verhindert Probleme, wenn direkt
+ * von einem Marker zu einem anderen gewechselt wird.
+ */
+marker.on("popupclose", () => {
+    window.setTimeout(() => {
+        const anotherPopupIsOpen =
+            Boolean(map._popup);
+
+        if (
+            anotherPopupIsOpen ||
+            activeLocationSlug !== properties.slug
+        ) {
+            return;
+        }
+
+        activeLocationSlug = null;
+
+        if (!isHandlingBrowserHistory) {
+            removeLocationFromUrl("replace");
+        }
+    }, 0);
+});
 
             /*
              * Großes Popup beim Anklicken.
@@ -1546,6 +1602,232 @@ function getLatestCategoryClass(category) {
     }
 
     /*
+ * Die Browseradresse auf einen Ort einstellen.
+ *
+ * Vorhandene Parameter wie utm_source bleiben erhalten.
+ */
+function setLocationUrl(
+    slug,
+    historyMethod = "push"
+) {
+    if (
+        typeof slug !== "string" ||
+        !slug.trim()
+    ) {
+        return;
+    }
+
+    const url = new URL(window.location.href);
+
+    url.searchParams.set(
+        "ort",
+        slug.trim()
+    );
+
+    const state = {
+        locationSlug: slug.trim()
+    };
+
+    if (historyMethod === "replace") {
+        window.history.replaceState(
+            state,
+            "",
+            url
+        );
+    } else {
+        window.history.pushState(
+            state,
+            "",
+            url
+        );
+    }
+}
+
+/*
+ * Nur den Parameter "ort" entfernen.
+ *
+ * Andere Parameter, zum Beispiel UTM-Parameter,
+ * werden nicht gelöscht.
+ */
+function removeLocationFromUrl(
+    historyMethod = "replace"
+) {
+    const url = new URL(window.location.href);
+
+    url.searchParams.delete("ort");
+
+    if (historyMethod === "push") {
+        window.history.pushState(
+            {},
+            "",
+            url
+        );
+    } else {
+        window.history.replaceState(
+            {},
+            "",
+            url
+        );
+    }
+}
+
+/*
+ * Slug aus der aktuellen Browseradresse auslesen.
+ */
+function getLocationSlugFromUrl() {
+    const url = new URL(window.location.href);
+    const slug = url.searchParams.get("ort");
+
+    return slug ? slug.trim() : "";
+}
+
+/*
+ * Einen Ort anhand seines Slugs suchen.
+ */
+function findLocationBySlug(slug) {
+    if (!slug) {
+        return null;
+    }
+
+    return (
+        allLocations.find((location) => {
+            return (
+                location.properties.slug === slug
+            );
+        }) || null
+    );
+}
+
+/*
+ * Einen Ort anhand des Slugs auf der Karte öffnen.
+ */
+function openLocationBySlug(
+    slug,
+    {
+        scrollToMap = true,
+        zoom = 14
+    } = {}
+) {
+    const location =
+        findLocationBySlug(slug);
+
+    if (!location) {
+        return false;
+    }
+
+    /*
+     * Falls der Ort wegen eines aktiven Filters nicht
+     * mehr als Marker vorhanden ist, Filter zurücksetzen
+     * und alle Marker erneut darstellen.
+     */
+    let marker = activeMarkers.get(
+        location.properties.id
+    );
+
+    if (!marker) {
+        if (searchInput) {
+            searchInput.value = "";
+        }
+
+        if (categoryFilter) {
+            categoryFilter.value = "all";
+        }
+
+        showLocations(allLocations, false);
+
+        marker = activeMarkers.get(
+            location.properties.id
+        );
+    }
+
+    if (!marker) {
+        return false;
+    }
+
+    const [longitude, latitude] =
+        location.geometry.coordinates;
+
+    if (scrollToMap) {
+        const mapSection =
+            document.getElementById("karte");
+
+        if (mapSection) {
+            mapSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }
+
+    window.setTimeout(() => {
+        map.invalidateSize();
+
+        map.setView(
+            [latitude, longitude],
+            zoom,
+            {
+                animate: true
+            }
+        );
+
+        marker.openPopup();
+    }, scrollToMap ? 300 : 0);
+
+    return true;
+}
+
+/*
+ * Den Parameter ?ort=... beim Laden oder bei der
+ * Browsernavigation auswerten.
+ */
+function openLocationFromCurrentUrl(
+    {
+        scrollToMap = false,
+        removeInvalidSlug = false
+    } = {}
+) {
+    const slug = getLocationSlugFromUrl();
+
+    /*
+     * Kein Ort in der URL: offenes Popup schließen.
+     */
+    if (!slug) {
+        isHandlingBrowserHistory = true;
+
+        map.closePopup();
+        activeLocationSlug = null;
+
+        isHandlingBrowserHistory = false;
+        return;
+    }
+
+    isHandlingBrowserHistory = true;
+
+    const wasOpened = openLocationBySlug(
+        slug,
+        {
+            scrollToMap,
+            zoom: 14
+        }
+    );
+
+    if (wasOpened) {
+        activeLocationSlug = slug;
+    } else if (removeInvalidSlug) {
+        removeLocationFromUrl("replace");
+    }
+
+    /*
+     * marker.openPopup() wird gegebenenfalls verzögert
+     * ausgeführt. Deshalb die Sperre ebenfalls verzögert
+     * zurücksetzen.
+     */
+    window.setTimeout(() => {
+        isHandlingBrowserHistory = false;
+    }, scrollToMap ? 400 : 50);
+}
+    
+    /*
      * Aus Ergebnis-Karte zur Karte springen.
      */
     function showLocationOnMap(location) {
@@ -1790,4 +2072,11 @@ function getLatestCategoryClass(category) {
             }
         );
     }
+
+    window.addEventListener("popstate", () => {
+    openLocationFromCurrentUrl({
+        scrollToMap: false,
+        removeInvalidSlug: false
+    });
+});
 }
