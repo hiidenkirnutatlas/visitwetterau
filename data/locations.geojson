@@ -90,6 +90,48 @@
                     50.251804934336064
                 ]
             }
-        }
+        },
+{
+    "type": "Feature",
+    "properties": {
+        "id": "BUT001",
+        "slug": "hausbergturm-butzbach",
+        "name": "Hausbergturm bei Butzbach",
+        "municipality": "Butzbach",
+        "area": "Wetterau und Taunus",
+        "category": "Aussichtspunkt",
+        "short_description": "Ein Aussichtsturm mit weitem Blick über die Wetterau und den Taunus.",
+        "description": "Der Hausbergturm steht auf dem bewaldeten Hausberg südlich von Butzbach. Von der Aussichtsplattform öffnet sich ein weiter Blick über die Wetterau und die umliegende Landschaft. Der Turm lässt sich mit einer kurzen Wanderung oder einer längeren Runde durch den Wald verbinden.",
+        "visit_time": "1–3 Stunden",
+        "parking": false,
+        "family_friendly": true,
+        "accessible": false,
+        "best_season": "Ganzjährig",
+        "image": "assets/images/locations/hausbergturm-butzbach.jpg",
+        "image_alt": "Aussicht vom Hausbergturm bei Butzbach über die Wetterau",
+        "instagram_url": "https://www.instagram.com/wetterau_nach_feierabend/p/DeNKVuRjLKU/",
+        "youtube_url": "",
+        "website_url": "",
+        "source_url": "",
+        "verified": true,
+        "tags": [
+            "Hausberg",
+            "Butzbach",
+            "Hausbergturm",
+            "Aussichtsturm",
+            "Aussichtspunkt",
+            "Wandern",
+            "Taunus",
+            "Wetterau"
+        ]
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            8.607,
+            50.401
+        ]
+    }
+}
     ]
 }
