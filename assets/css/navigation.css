@@ -652,3 +652,14 @@ body.menu-open {
         font-size: 0.9rem;
     }
 }
+
+/*
+ * Abstand für Seiten ohne Hero.
+ */
+.has-solid-header {
+    padding-top: var(--header-height);
+}
+
+.has-solid-header .site-header {
+    top: 0;
+}
