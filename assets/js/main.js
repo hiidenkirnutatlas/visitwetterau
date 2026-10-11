@@ -85,6 +85,11 @@ function initializeWebsite() {
     const markerLayer = L.layerGroup().addTo(map);
     const activeMarkers = new Map();
 
+    const visibleMapCategories = new Set([
+    "Natur",
+    "Aussichtspunkt"
+]);
+
     const tileLayer = L.tileLayer(
         "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
@@ -142,38 +147,15 @@ function initializeWebsite() {
         if (categoryFilter) {
     categoryFilter.addEventListener(
         "change",
-        () => {
-            updateMapFilterButtons(
-                categoryFilter.value
-            );
-
-            filterLocations();
-        }
+        filterLocations
     );
 }
 
 mapCategoryFilters.forEach((button) => {
-    button.addEventListener("click", () => {
-        const category =
-            button.dataset.category || "all";
-
-        if (categoryFilter) {
-            categoryFilter.value = category;
-        }
-
-        updateMapFilterButtons(category);
-        filterLocations();
-
-        const locationsSection =
-            document.getElementById("orte");
-
-        if (locationsSection) {
-            locationsSection.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        }
-    });
+    button.addEventListener(
+        "click",
+        handleMapCategoryToggle
+    );
 });
 
         if (resetFiltersButton) {
@@ -268,11 +250,20 @@ mapCategoryFilters.forEach((button) => {
             }
 
             allLocations = data.features.filter(
-                isValidLocation
-            );
+    isValidLocation
+);
 
-            showLatestLocations(allLocations);
-            showLocations(allLocations, true);
+visibleMapCategories.clear();
+
+getAvailableMapCategories().forEach(
+    (category) => {
+        visibleMapCategories.add(category);
+    }
+);
+
+showLatestLocations(allLocations);
+showLocations(allLocations, true);
+updateMapCategoryButtons();
 
             window.setTimeout(() => {
                 openLocationFromCurrentUrl({
@@ -680,9 +671,17 @@ mapCategoryFilters.forEach((button) => {
             marker.addTo(markerLayer);
 
             activeMarkers.set(
-                properties.id,
-                marker
-            );
+    properties.id,
+    {
+        marker,
+        category: properties.category
+    }
+);
+
+            applyMarkerVisibility(
+    marker,
+    properties.category
+);
 
             bounds.push(latitudeLongitude);
 
@@ -1684,6 +1683,124 @@ mapCategoryFilters.forEach((button) => {
         );
     });
 }
+
+    function handleMapCategoryToggle(event) {
+    const button = event.currentTarget;
+    const category =
+        button.dataset.category || "all";
+
+    if (category === "all") {
+        showAllMapCategories();
+        return;
+    }
+
+    if (visibleMapCategories.has(category)) {
+        visibleMapCategories.delete(category);
+    } else {
+        visibleMapCategories.add(category);
+    }
+
+    updateMapCategoryButtons();
+    updateAllMarkerVisibility();
+}
+
+function showAllMapCategories() {
+    visibleMapCategories.clear();
+
+    getAvailableMapCategories().forEach(
+        (category) => {
+            visibleMapCategories.add(category);
+        }
+    );
+
+    updateMapCategoryButtons();
+    updateAllMarkerVisibility();
+}
+
+function getAvailableMapCategories() {
+    return new Set(
+        allLocations
+            .map((location) => {
+                return location.properties.category;
+            })
+            .filter(Boolean)
+    );
+}
+
+function updateMapCategoryButtons() {
+    const availableCategories =
+        getAvailableMapCategories();
+
+    const allVisible =
+        [...availableCategories].every(
+            (category) => {
+                return visibleMapCategories.has(
+                    category
+                );
+            }
+        );
+
+    mapCategoryFilters.forEach((button) => {
+        const category =
+            button.dataset.category || "all";
+
+        let isActive;
+
+        if (category === "all") {
+            isActive = allVisible;
+        } else {
+            isActive =
+                visibleMapCategories.has(category);
+        }
+
+        button.classList.toggle(
+            "is-active",
+            isActive
+        );
+
+        button.setAttribute(
+            "aria-pressed",
+            String(isActive)
+        );
+
+        if (
+            category !== "all" &&
+            !availableCategories.has(category)
+        ) {
+            button.hidden = true;
+        } else {
+            button.hidden = false;
+        }
+    });
+}
+
+function updateAllMarkerVisibility() {
+    activeMarkers.forEach((entry) => {
+        applyMarkerVisibility(
+            entry.marker,
+            entry.category
+        );
+    });
+}
+
+function applyMarkerVisibility(
+    marker,
+    category
+) {
+    const shouldBeVisible =
+        visibleMapCategories.has(category);
+
+    const isOnMap =
+        markerLayer.hasLayer(marker);
+
+    if (shouldBeVisible && !isOnMap) {
+        markerLayer.addLayer(marker);
+    }
+
+    if (!shouldBeVisible && isOnMap) {
+        markerLayer.removeLayer(marker);
+    }
+}
     
     function filterLocations() {
         const searchValue =
@@ -1752,9 +1869,13 @@ mapCategoryFilters.forEach((button) => {
         const [longitude, latitude] =
             location.geometry.coordinates;
 
-        let marker = activeMarkers.get(
-            location.properties.id
-        );
+        const markerEntry = activeMarkers.get(
+    location.properties.id
+);
+
+const marker = markerEntry
+    ? markerEntry.marker
+    : null;
 
         if (!marker) {
             if (searchInput) {
