@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Aussichtspunkte in der Wetterau | Wetterau nach Feierabend
+    </title>
+
+    <meta
+        name="description"
+        content="Aussichtspunkte und Aussichtstürme in der Wetterau:
+        weite Blicke, kleine Wanderungen und Ziele für den Feierabend."
+    >
+
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#244a3a">
+
+    <link
+        rel="canonical"
+        href="https://wetterau-nach-feierabend.info/aussichtspunkte/"
+    >
+
+    <meta
+        property="og:title"
+        content="Aussichtspunkte in der Wetterau"
+    >
+
+    <meta
+        property="og:description"
+        content="Aussichtstürme, weite Blicke und kleine Wanderungen
+        in der Wetterau."
+    >
+
+    <meta property="og:type" content="website">
+
+    <meta
+        property="og:url"
+        content="https://wetterau-nach-feierabend.info/aussichtspunkte/"
+    >
+
+    <meta
+        property="og:image"
+        content="https://wetterau-nach-feierabend.info/assets/images/locations/hausbergturm-butzbach.jpg"
+    >
+
+    <meta property="og:locale" content="de_DE">
+
+    <link
+        rel="icon"
+        href="../assets/images/favicon.svg?v=1"
+        type="image/svg+xml"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/style.css?v=16"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../assets/css/navigation.css?v=1"
+    >
+
+    <style>
+        .category-page {
+            min-height: 100vh;
+            padding-top: var(--header-height);
+            background: var(--sand-light);
+        }
+
+        .category-intro {
+            width: min(100% - 32px, var(--content-width));
+            margin: 0 auto;
+            padding-top: 80px;
+            padding-bottom: 55px;
+        }
+
+        .category-breadcrumb {
+            display: flex;
+            gap: 8px;
+            margin: 0 0 24px;
+            padding: 0;
+            flex-wrap: wrap;
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 700;
+            list-style: none;
+        }
+
+        .category-breadcrumb li {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .category-breadcrumb li:not(:last-child)::after {
+            color: #a3ada8;
+            content: "›";
+        }
+
+        .category-breadcrumb a {
+            color: var(--forest);
+            text-decoration: none;
+        }
+
+        .category-label {
+            display: inline-flex;
+            gap: 8px;
+            margin: 0 0 15px;
+            padding: 8px 12px;
+            align-items: center;
+            color: #78541e;
+            background: rgb(211 164 73 / 17%);
+            border: 1px solid rgb(154 112 40 / 32%);
+            border-radius: 999px;
+            font-size: 0.76rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .category-intro h1 {
+            max-width: 900px;
+            margin: 0;
+            color: var(--forest-dark);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(2.8rem, 8vw, 6rem);
+            letter-spacing: -0.05em;
+            line-height: 0.98;
+        }
+
+        .category-description {
+            max-width: 760px;
+            margin: 24px 0 0;
+            color: var(--muted);
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            line-height: 1.7;
+        }
+
+        .category-overview {
+            width: min(100% - 32px, var(--content-width));
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+
+        .category-overview-header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 28px;
+            align-items: end;
+            justify-content: space-between;
+        }
+
+        .category-overview-header h2 {
+            margin: 0;
+            color: var(--forest-dark);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+        }
+
+        .category-count {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 28px;
+        }
+
+        .category-card {
+            display: flex;
+            overflow: hidden;
+            min-width: 0;
+            flex-direction: column;
+            color: inherit;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--small-shadow);
+            text-decoration: none;
+            transition:
+                transform 180ms ease,
+                box-shadow 180ms ease;
+        }
+
+        .category-card:hover {
+            box-shadow: var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .category-card-image-wrapper {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+        }
+
+        .category-card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .category-card-badge {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            padding: 7px 11px;
+            color: var(--white);
+            background: rgb(154 112 40 / 92%);
+            border: 1px solid rgb(255 255 255 / 35%);
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 800;
+        }
+
+        .category-card-content {
+            display: flex;
+            height: 100%;
+            padding: clamp(22px, 4vw, 32px);
+            flex-direction: column;
+        }
+
+        .category-card-meta {
+            margin: 0 0 8px;
+            color: var(--apple-dark);
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .category-card h3 {
+            margin: 0;
+            color: var(--forest-dark);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(1.6rem, 3vw, 2.15rem);
+            line-height: 1.1;
+        }
+
+        .category-card-description {
+            margin: 14px 0 18px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .category-card-facts {
+            display: flex;
+            gap: 7px;
+            margin: auto 0 0;
+            padding: 0;
+            flex-wrap: wrap;
+            list-style: none;
+        }
+
+        .category-card-facts li {
+            padding: 5px 9px;
+            color: var(--forest);
+            background: var(--sand);
+            border-radius: 999px;
+            font-size: 0.73rem;
+            font-weight: 750;
+        }
+
+        .category-card-link {
+            display: inline-flex;
+            margin-top: 20px;
+            color: var(--forest);
+            font-weight: 800;
+            text-underline-offset: 4px;
+        }
+
+        @media (max-width: 720px) {
+            .category-intro {
+                padding-top: 55px;
+                padding-bottom: 45px;
+            }
+
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-overview-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body class="category-page">
+    <a class="skip-link" href="#main-content">
+        Zum Inhalt springen
+    </a>
+
+    <header
+        id="siteHeader"
+        class="site-header site-header-solid"
+    >
+        <nav
+            class="site-navigation"
+            aria-label="Hauptnavigation"
+        >
+            <a class="site-logo" href="/">
+                Wetterau nach Feierabend
+            </a>
+
+            <button
+                id="menuToggle"
+                class="menu-toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="siteMenu"
+                aria-label="Menü öffnen"
+            >
+                <span class="menu-toggle-line"></span>
+                <span class="menu-toggle-line"></span>
+                <span class="menu-toggle-line"></span>
+            </button>
+
+            <div id="siteMenu" class="site-menu">
+                <a href="/#neu">Neu entdeckt</a>
+
+                <div
+                    id="placesDropdown"
+                    class="site-dropdown"
+                >
+                    <button
+                        id="placesDropdownToggle"
+                        class="site-dropdown-toggle"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="placesDropdownPanel"
+                    >
+                        Orte
+
+                        <span
+                            class="site-dropdown-arrow"
+                            aria-hidden="true"
+                        >
+                            ▼
+                        </span>
+                    </button>
+
+                    <div
+                        id="placesDropdownPanel"
+                        class="site-dropdown-panel"
+                    >
+                        <a href="/#orte">
+                            📍 Alle Orte
+                        </a>
+
+                        <div
+                            class="site-dropdown-separator"
+                            aria-hidden="true"
+                        ></div>
+
+                        <a href="/natur/">
+                            🌳 Natur
+                        </a>
+
+                        <a href="/aussichtspunkte/">
+                            🌄 Aussichtspunkte
+                        </a>
+                    </div>
+                </div>
+
+                <a href="/#karte">Karte</a>
+                <a href="/#projekt">Projekt</a>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content">
+        <section class="category-intro">
+            <nav aria-label="Brotkrümelnavigation">
+                <ol class="category-breadcrumb">
+                    <li>
+                        <a href="/">Startseite</a>
+                    </li>
+
+                    <li aria-current="page">
+                        Aussichtspunkte
+                    </li>
+                </ol>
+            </nav>
+
+            <p class="category-label">
+                <span aria-hidden="true">🌄</span>
+                Aussichtspunkte
+            </p>
+
+            <h1>
+                Aussichtspunkte in der Wetterau
+            </h1>
+
+            <p class="category-description">
+                Aussichtstürme, bewaldete Höhen und weite Blicke über
+                die Wetterau und den angrenzenden Taunus. Hier findest
+                du Ziele, die sich mit einer kleinen Wanderung oder
+                einem Ausflug nach Feierabend verbinden lassen.
+            </p>
+        </section>
+
+        <section
+            class="category-overview"
+            aria-labelledby="places-title"
+        >
+            <div class="category-overview-header">
+                <h2 id="places-title">
+                    Aussichtspunkte entdecken
+                </h2>
+
+                <p class="category-count">
+                    1 Ort
+                </p>
+            </div>
+
+            <div class="category-grid">
+                <a
+                    class="category-card"
+                    href="./hausbergturm-butzbach/"
+                >
+                    <div class="category-card-image-wrapper">
+                        <img
+                            class="category-card-image"
+                            src="../assets/images/locations/hausbergturm-butzbach.jpg"
+                            alt="Aussicht vom Hausbergturm bei Butzbach"
+                        >
+
+                        <span class="category-card-badge">
+                            🌄 Aussichtspunkt
+                        </span>
+                    </div>
+
+                    <div class="category-card-content">
+                        <p class="category-card-meta">
+                            Butzbach · Wetterau und Taunus
+                        </p>
+
+                        <h3>
+                            Hausbergturm bei Butzbach
+                        </h3>
+
+                        <p class="category-card-description">
+                            Ein Aussichtsturm mit weitem Blick über die
+                            Wetterau und den Taunus.
+                        </p>
+
+                        <ul class="category-card-facts">
+                            <li>⏱ 1–3 Stunden</li>
+                            <li>🥾 Wanderung</li>
+                            <li>📷 Panorama</li>
+                        </ul>
+
+                        <span class="category-card-link">
+                            Ort entdecken →
+                        </span>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="location-footer">
+        <div class="location-footer-content">
+            <div class="location-footer-brand">
+                <strong>
+                    Wetterau nach Feierabend
+                </strong>
+
+                <p>
+                    Orte, Geschichten und kleine Auszeiten aus der
+                    Region.
+                </p>
+            </div>
+
+            <nav
+                class="location-footer-links"
+                aria-label="Rechtliche Informationen"
+            >
+                <a href="/impressum.html">Impressum</a>
+                <a href="/datenschutz.html">Datenschutz</a>
+                <a
+                    href="https://www.instagram.com/wetterau_nach_feierabend/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Instagram
+                </a>
+            </nav>
+        </div>
+
+        <p class="location-copyright">
+            © 2026 Wetterau nach Feierabend
+        </p>
+    </footer>
+
+    <script src="../assets/js/navigation.js?v=1"></script>
+</body>
+</html>
