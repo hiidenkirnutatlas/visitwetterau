@@ -364,3 +364,7 @@ body.menu-open {
         transition: none;
     }
 }
+
+.category-page main {
+    padding-top: var(--header-height);
+}
