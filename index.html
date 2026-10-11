@@ -91,6 +91,7 @@
     >
 
     <link rel="stylesheet" href="./assets/css/style.css?v=14">
+    <link rel="stylesheet" href="./assets/css/navigation.css?v=1">
     <link rel="stylesheet" href="./assets/css/legal.css">
 </head>
 
@@ -98,6 +99,102 @@
     <a class="skip-link" href="#main-content">
         Zum Inhalt springen
     </a>
+
+    <header
+    id="siteHeader"
+    class="site-header site-header-overlay"
+>
+    <nav
+        class="site-navigation"
+        aria-label="Hauptnavigation"
+    >
+        <a class="site-logo" href="/">
+            Wetterau nach Feierabend
+        </a>
+
+        <button
+            id="menuToggle"
+            class="menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="siteMenu"
+            aria-label="Menü öffnen"
+        >
+            <span class="menu-toggle-line"></span>
+            <span class="menu-toggle-line"></span>
+            <span class="menu-toggle-line"></span>
+        </button>
+
+        <div id="siteMenu" class="site-menu">
+            <a href="/#neu">
+                Neu entdeckt
+            </a>
+
+            <div
+                id="placesDropdown"
+                class="site-dropdown"
+            >
+                <button
+                    id="placesDropdownToggle"
+                    class="site-dropdown-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="placesDropdownPanel"
+                >
+                    Orte
+
+                    <span
+                        class="site-dropdown-arrow"
+                        aria-hidden="true"
+                    >
+                        ▼
+                    </span>
+                </button>
+
+                <div
+                    id="placesDropdownPanel"
+                    class="site-dropdown-panel"
+                >
+                    <a href="/#orte">
+                        <span aria-hidden="true">📍</span>
+                        Alle Orte
+                    </a>
+
+                    <div
+                        class="site-dropdown-separator"
+                        aria-hidden="true"
+                    ></div>
+
+                    <a href="/natur/">
+                        <span aria-hidden="true">🌳</span>
+                        Natur
+                    </a>
+
+                    <a href="/aussichtspunkte/">
+                        <span aria-hidden="true">🌄</span>
+                        Aussichtspunkte
+                    </a>
+                </div>
+            </div>
+
+            <a href="/#karte">
+                Karte
+            </a>
+
+            <a href="/#projekt">
+                Projekt
+            </a>
+
+            <a
+                href="https://www.instagram.com/wetterau_nach_feierabend/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Instagram
+            </a>
+        </div>
+    </nav>
+</header>
 
     <header class="hero">
         <video
@@ -119,19 +216,7 @@
         <div class="hero-shade" aria-hidden="true"></div>
 
         <div class="hero-overlay">
-            <nav class="navigation" aria-label="Hauptnavigation">
-                <a class="logo" href="./">
-                    Wetterau nach Feierabend
-                </a>
-
-                <div class="menu">
-                    <a href="#karte">Karte</a>
-                    <a href="#orte">Orte</a>
-                    <a href="#projekt">Projekt</a>
-                    <a href="#social-media">Social Media</a>
-                </div>
-            </nav>
-
+            
             <div class="hero-content">
                 <p class="eyebrow">
                     Zwischen Frankfurt, Taunus und Vogelsberg
@@ -181,17 +266,11 @@
                 <div class="intro-copy">
                     <p>
                         Die Wetterau ist mehr als Felder und Durchfahrt.
-                        Zwischen Frankfurt, Taunus und Vogelsberg warten
-                        Burgen, Fachwerkstädte, Seen, Streuobstwiesen,
-                        Aussichtspunkte und überraschende Geschichten.
+                        Zwischen Frankfurt, Taunus und Vogelsberg warten Burgen, Fachwerkstädte, Seen, Streuobstwiesen, Aussichtspunkte und überraschende Geschichten.
                     </p>
 
                     <p>
-                        Ich arbeite unter der Woche im Rhein-Main-Gebiet
-                        und nutze meine Feierabende, um diese Orte zu
-                        entdecken. Dabei entstehen Videos für Instagram
-                        und YouTube sowie praktische Einträge für diese
-                        .
+                       Ich arbeite unter der Woche im Rhein-Main-Gebiet und nutze meine Feierabende, um diese Orte zu entdecken. Dabei entstehen Videos für Instagram und YouTube sowie praktische Einträge für diese interaktive Karte.
                     </p>
                 </div>
             </div>
@@ -208,12 +287,11 @@
                 </p>
 
                 <h2 id="latest-title">
-                    Neu auf der 
+                    Neu auf der Karte
                 </h2>
 
                 <p>
-                    Die letzten Orte, die ich nach Feierabend besucht
-                    und zur Entdecker hinzugefügt habe.
+                    Die letzten Orte, die ich nach Feierabend besucht und zur Entdeckerkarte hinzugefügt habe.
                 </p>
             </div>
 
@@ -264,40 +342,52 @@
                     Karte wird geladen …
                 </p>
 
-                <div
-                    class="map-legend"
-                    aria-label="Kartenlegende"
-                >
-                    <span class="legend-chip legend-castle">
-                        <span aria-hidden="true">🏰</span>
-                        Burgen
-                    </span>
+                <div class="map-controls">
+    <div
+        id="mapCategoryFilters"
+        class="map-filter-bar"
+        aria-label="Kartenorte nach Kategorie filtern"
+    >
+        <button
+            class="map-filter-chip is-active"
+            type="button"
+            data-category="all"
+            aria-pressed="true"
+        >
+            <span aria-hidden="true">📍</span>
+            Alle
+        </button>
 
-                    <span class="legend-chip legend-nature">
-                        <span aria-hidden="true">🌳</span>
-                        Natur
-                    </span>
+        <button
+            class="map-filter-chip"
+            type="button"
+            data-category="Natur"
+            aria-pressed="false"
+        >
+            <span aria-hidden="true">🌳</span>
+            Natur
+        </button>
 
-                    <span class="legend-chip legend-town">
-                        <span aria-hidden="true">🏘️</span>
-                        Orte
-                    </span>
+        <button
+            class="map-filter-chip"
+            type="button"
+            data-category="Aussichtspunkt"
+            aria-pressed="false"
+        >
+            <span aria-hidden="true">🌄</span>
+            Aussichtspunkte
+        </button>
+    </div>
 
-                    <span class="legend-chip legend-history">
-                        <span aria-hidden="true">🏺</span>
-                        Geschichte
-                    </span>
+    <div class="map-region-note">
+        <span
+            class="map-region-swatch"
+            aria-hidden="true"
+        ></span>
 
-                    <span class="legend-chip legend-lgs">
-                        <span aria-hidden="true">🌸</span>
-                        LGS 2027
-                    </span>
-
-                    <span class="legend-chip legend-region">
-                        <span aria-hidden="true">🌿</span>
-                        Wetteraukreis
-                    </span>
-                </div>
+        Farblich markierte Fläche: Wetteraukreis
+    </div>
+</div>
             </div>
         </section>
 
