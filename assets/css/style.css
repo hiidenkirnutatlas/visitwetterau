@@ -1891,3 +1891,104 @@ footer {
         width: 100%;
     }
 }
+
+/*
+ * Filterleiste unter der Karte
+ */
+.map-controls {
+    padding: 16px 20px;
+    background: var(--paper);
+    border-top: 1px solid var(--border);
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.map-filter-bar {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.map-filter-chip {
+    display: inline-flex;
+    gap: 7px;
+    min-height: 38px;
+    padding: 7px 13px;
+    align-items: center;
+    color: var(--text);
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 750;
+    line-height: 1;
+    transition:
+        color 160ms ease,
+        background-color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.map-filter-chip:hover {
+    border-color: var(--apple);
+    transform: translateY(-1px);
+}
+
+.map-filter-chip:focus-visible {
+    outline: 3px solid rgb(211 164 73 / 40%);
+    outline-offset: 3px;
+}
+
+.map-filter-chip.is-active {
+    color: var(--white);
+    background: var(--forest);
+    border-color: var(--forest);
+    box-shadow: 0 5px 14px rgb(23 51 41 / 18%);
+}
+
+.map-filter-chip.is-unavailable {
+    display: none;
+}
+
+.map-region-note {
+    display: flex;
+    gap: 8px;
+    margin-top: 13px;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 650;
+}
+
+.map-region-swatch {
+    display: inline-block;
+    width: 24px;
+    height: 14px;
+    background: rgb(211 164 73 / 20%);
+    border: 2px solid #244a3a;
+    border-radius: 4px;
+}
+
+@media (max-width: 480px) {
+    .map-controls {
+        padding: 13px;
+    }
+
+    .map-filter-bar {
+        justify-content: flex-start;
+    }
+
+    .map-filter-chip {
+        min-height: 34px;
+        padding: 6px 10px;
+        font-size: 0.76rem;
+    }
+
+    .map-region-note {
+        justify-content: flex-start;
+    }
+}
