@@ -110,34 +110,101 @@
         Zum Inhalt springen
     </a>
 
-    <header class="location-header">
-        <nav
-            class="location-navigation"
-            aria-label="Hauptnavigation"
+    <header
+    id="siteHeader"
+    class="site-header site-header-overlay"
+>
+    <nav
+        class="site-navigation"
+        aria-label="Hauptnavigation"
+    >
+        <a class="site-logo" href="/">
+            Wetterau nach Feierabend
+        </a>
+
+        <button
+            id="menuToggle"
+            class="menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="siteMenu"
+            aria-label="Menü öffnen"
         >
-            <a class="location-logo" href="../../">
-                Wetterau nach Feierabend
+            <span class="menu-toggle-line"></span>
+            <span class="menu-toggle-line"></span>
+            <span class="menu-toggle-line"></span>
+        </button>
+
+        <div id="siteMenu" class="site-menu">
+            <a href="/#neu">
+                Neu entdeckt
             </a>
 
-            <div class="location-menu">
-                <a href="../../#neu">
-                    Neu entdeckt
-                </a>
+            <div
+                id="placesDropdown"
+                class="site-dropdown"
+            >
+                <button
+                    id="placesDropdownToggle"
+                    class="site-dropdown-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="placesDropdownPanel"
+                >
+                    Orte
 
-                <a href="../../#karte">
-                    Karte
-                </a>
+                    <span
+                        class="site-dropdown-arrow"
+                        aria-hidden="true"
+                    >
+                        ▼
+                    </span>
+                </button>
 
-                <a href="../../#orte">
-                    Alle Orte
-                </a>
+                <div
+                    id="placesDropdownPanel"
+                    class="site-dropdown-panel"
+                >
+                    <a href="/#orte">
+                        <span aria-hidden="true">📍</span>
+                        Alle Orte
+                    </a>
 
-                <a href="../../#projekt">
-                    Projekt
-                </a>
+                    <div
+                        class="site-dropdown-separator"
+                        aria-hidden="true"
+                    ></div>
+
+                    <a href="/natur/">
+                        <span aria-hidden="true">🌳</span>
+                        Natur
+                    </a>
+
+                    <a href="/aussichtspunkte/">
+                        <span aria-hidden="true">🌄</span>
+                        Aussichtspunkte
+                    </a>
+                </div>
             </div>
-        </nav>
-    </header>
+
+            <a href="/#karte">
+                Karte
+            </a>
+
+            <a href="/#projekt">
+                Projekt
+            </a>
+
+            <a
+                href="https://www.instagram.com/wetterau_nach_feierabend/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Instagram
+            </a>
+        </div>
+    </nav>
+</header>
 
     <section
         class="location-hero"
