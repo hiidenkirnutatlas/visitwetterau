@@ -2,9 +2,6 @@
     --header-height: 78px;
 }
 
-/*
- * Gemeinsamer Header
- */
 .site-header {
     position: fixed;
     top: 0;
@@ -22,12 +19,6 @@
         -webkit-backdrop-filter 220ms ease;
 }
 
-/*
- * Farbiger Zustand:
- * - nach dem Scrollen
- * - bei geöffnetem Mobilmenü
- * - auf Seiten ohne Hero
- */
 .site-header.is-scrolled,
 .site-header.is-menu-open,
 .site-header.site-header-solid {
@@ -94,9 +85,6 @@
     outline-offset: 4px;
 }
 
-/*
- * Dropdown
- */
 .site-dropdown {
     position: relative;
 }
@@ -170,21 +158,19 @@
     background: var(--border);
 }
 
-/*
- * Burger
- */
 .menu-toggle {
     position: relative;
-    z-index: 5002;
+    z-index: 5003;
     display: none;
     width: 46px;
     height: 46px;
     padding: 9px;
     color: var(--white);
-    background: rgb(18 38 31 / 45%);
-    border: 1px solid rgb(255 255 255 / 35%);
+    background: rgb(18 38 31 / 48%);
+    border: 1px solid rgb(255 255 255 / 38%);
     border-radius: 11px;
     cursor: pointer;
+    appearance: none;
 }
 
 .menu-toggle-line {
@@ -195,6 +181,7 @@
     height: 2px;
     background: currentColor;
     border-radius: 999px;
+    pointer-events: none;
     transition:
         top 190ms ease,
         transform 190ms ease,
@@ -231,9 +218,6 @@ body.menu-open {
     overflow: hidden;
 }
 
-/*
- * Mobile Navigation
- */
 @media (max-width: 820px) {
     :root {
         --header-height: 70px;
@@ -325,9 +309,6 @@ body.menu-open {
         backdrop-filter: none;
     }
 
-    /*
-     * Desktop-Hover auf Mobile ausdrücklich überschreiben.
-     */
     .site-dropdown:hover .site-dropdown-panel,
     .site-dropdown:focus-within .site-dropdown-panel {
         display: none;
@@ -363,8 +344,4 @@ body.menu-open {
     .site-dropdown-panel {
         transition: none;
     }
-}
-
-.category-page main {
-    padding-top: var(--header-height);
 }
