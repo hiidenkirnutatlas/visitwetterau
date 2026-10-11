@@ -19,6 +19,7 @@ function initializeWebsite() {
     const mapStatusElement = document.getElementById("mapStatus");
     const searchInput = document.getElementById("searchInput");
     const categoryFilter = document.getElementById("categoryFilter");
+    const mapCategoryFilters = document.querySelectorAll(".map-filter-chip[data-category]");
     const resetFiltersButton =
         document.getElementById("resetFilters");
     const resultsElement = document.getElementById("results");
@@ -139,11 +140,41 @@ function initializeWebsite() {
         }
 
         if (categoryFilter) {
-            categoryFilter.addEventListener(
-                "change",
-                filterLocations
+    categoryFilter.addEventListener(
+        "change",
+        () => {
+            updateMapFilterButtons(
+                categoryFilter.value
             );
+
+            filterLocations();
         }
+    );
+}
+
+mapCategoryFilters.forEach((button) => {
+    button.addEventListener("click", () => {
+        const category =
+            button.dataset.category || "all";
+
+        if (categoryFilter) {
+            categoryFilter.value = category;
+        }
+
+        updateMapFilterButtons(category);
+        filterLocations();
+
+        const locationsSection =
+            document.getElementById("orte");
+
+        if (locationsSection) {
+            locationsSection.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    });
+});
 
         if (resetFiltersButton) {
             resetFiltersButton.addEventListener(
@@ -1634,6 +1665,26 @@ function initializeWebsite() {
         );
     }
 
+    function updateMapFilterButtons(
+    activeCategory = "all"
+) {
+    mapCategoryFilters.forEach((button) => {
+        const isActive =
+            button.dataset.category ===
+            activeCategory;
+
+        button.classList.toggle(
+            "is-active",
+            isActive
+        );
+
+        button.setAttribute(
+            "aria-pressed",
+            String(isActive)
+        );
+    });
+}
+    
     function filterLocations() {
         const searchValue =
             normalizeText(
