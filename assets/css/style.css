@@ -1916,7 +1916,7 @@ footer {
     min-height: 38px;
     padding: 7px 13px;
     align-items: center;
-    color: var(--text);
+    color: var(--muted);
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: 999px;
@@ -1924,22 +1924,19 @@ footer {
     font-size: 0.82rem;
     font-weight: 750;
     line-height: 1;
+    opacity: 0.68;
     transition:
         color 160ms ease,
         background-color 160ms ease,
         border-color 160ms ease,
         box-shadow 160ms ease,
+        opacity 160ms ease,
         transform 160ms ease;
 }
 
 .map-filter-chip:hover {
-    border-color: var(--apple);
+    opacity: 1;
     transform: translateY(-1px);
-}
-
-.map-filter-chip:focus-visible {
-    outline: 3px solid rgb(211 164 73 / 40%);
-    outline-offset: 3px;
 }
 
 .map-filter-chip.is-active {
@@ -1947,9 +1944,10 @@ footer {
     background: var(--forest);
     border-color: var(--forest);
     box-shadow: 0 5px 14px rgb(23 51 41 / 18%);
+    opacity: 1;
 }
 
-.map-filter-chip.is-unavailable {
+.map-filter-chip[hidden] {
     display: none;
 }
 
