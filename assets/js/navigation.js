@@ -15,12 +15,16 @@ if (document.readyState === "loading") {
 function initializeNavigation() {
     const header =
         document.getElementById("siteHeader");
+
     const menuToggle =
         document.getElementById("menuToggle");
+
     const siteMenu =
         document.getElementById("siteMenu");
+
     const dropdown =
         document.getElementById("placesDropdown");
+
     const dropdownToggle =
         document.getElementById(
             "placesDropdownToggle"
@@ -28,15 +32,25 @@ function initializeNavigation() {
 
     if (!header) {
         console.warn(
-            "Navigation: #siteHeader wurde nicht gefunden."
+            "Navigation: #siteHeader fehlt."
         );
+
         return;
     }
 
-    if (!menuToggle || !siteMenu) {
+    if (!menuToggle) {
         console.warn(
-            "Navigation: Burger oder Menü wurde nicht gefunden."
+            "Navigation: #menuToggle fehlt."
         );
+
+        return;
+    }
+
+    if (!siteMenu) {
+        console.warn(
+            "Navigation: #siteMenu fehlt."
+        );
+
         return;
     }
 
@@ -48,7 +62,8 @@ function initializeNavigation() {
     function updateHeaderState() {
         const shouldBeSolid =
             isSolidHeader ||
-            window.scrollY > 40;
+            window.scrollY > 40 ||
+            siteMenu.classList.contains("is-open");
 
         header.classList.toggle(
             "is-scrolled",
@@ -74,58 +89,60 @@ function initializeNavigation() {
             return;
         }
 
-        const isOpen =
+        const shouldOpen =
             !dropdown.classList.contains(
                 "is-open"
             );
 
         dropdown.classList.toggle(
             "is-open",
-            isOpen
+            shouldOpen
         );
 
         dropdownToggle.setAttribute(
             "aria-expanded",
-            String(isOpen)
+            String(shouldOpen)
         );
     }
 
-    function setMenuState(isOpen) {
+    function setMenuState(shouldOpen) {
         menuToggle.classList.toggle(
             "is-open",
-            isOpen
+            shouldOpen
         );
 
         siteMenu.classList.toggle(
             "is-open",
-            isOpen
+            shouldOpen
         );
 
         header.classList.toggle(
             "is-menu-open",
-            isOpen
+            shouldOpen
         );
 
         document.body.classList.toggle(
             "menu-open",
-            isOpen
+            shouldOpen
         );
 
         menuToggle.setAttribute(
             "aria-expanded",
-            String(isOpen)
+            String(shouldOpen)
         );
 
         menuToggle.setAttribute(
             "aria-label",
-            isOpen
+            shouldOpen
                 ? "Menü schließen"
                 : "Menü öffnen"
         );
 
-        if (!isOpen) {
+        if (!shouldOpen) {
             closeDropdown();
         }
+
+        updateHeaderState();
     }
 
     menuToggle.addEventListener(
@@ -134,12 +151,12 @@ function initializeNavigation() {
             event.preventDefault();
             event.stopPropagation();
 
-            const isOpen =
+            const shouldOpen =
                 menuToggle.getAttribute(
                     "aria-expanded"
                 ) !== "true";
 
-            setMenuState(isOpen);
+            setMenuState(shouldOpen);
         }
     );
 
