@@ -76,20 +76,7 @@
 >
 
     <style>
-
-        .category-menu a {
-            color: var(--white);
-            font-size: 0.94rem;
-            font-weight: 700;
-            text-decoration: none;
-        }
-
-        .category-menu a:hover,
-        .category-menu a:focus-visible {
-            text-decoration: underline;
-            text-underline-offset: 5px;
-        }
-
+        
         .category-intro {
             width: min(100% - 32px, var(--content-width));
             margin: 0 auto;
@@ -370,19 +357,6 @@
         }
 
         @media (max-width: 720px) {
-            .category-header {
-                padding: 20px;
-            }
-
-            .category-navigation {
-                align-items: flex-start;
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .category-menu {
-                gap: 15px;
-            }
 
             .category-intro {
                 padding-top: 65px;
@@ -450,35 +424,101 @@
         Zum Inhalt springen
     </a>
 
-    <header id="siteHeader"
-    class="site-header site-header-solid">
-        <nav
-            class="category-navigation"
-            aria-label="Hauptnavigation"
+    <header
+    id="siteHeader"
+    class="site-header site-header-solid"
+>
+    <nav
+        class="site-navigation"
+        aria-label="Hauptnavigation"
+    >
+        <a class="site-logo" href="/">
+            Wetterau nach Feierabend
+        </a>
+
+        <button
+            id="menuToggle"
+            class="menu-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="siteMenu"
+            aria-label="Menü öffnen"
         >
-            <a class="category-logo" href="../">
-                Wetterau nach Feierabend
+            <span class="menu-toggle-line"></span>
+            <span class="menu-toggle-line"></span>
+            <span class="menu-toggle-line"></span>
+        </button>
+
+        <div id="siteMenu" class="site-menu">
+            <a href="/#neu">
+                Neu entdeckt
             </a>
 
-            <div class="category-menu">
-                <a href="../#neu">
-                    Neu entdeckt
-                </a>
+            <div
+                id="placesDropdown"
+                class="site-dropdown"
+            >
+                <button
+                    id="placesDropdownToggle"
+                    class="site-dropdown-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="placesDropdownPanel"
+                >
+                    Orte
 
-                <a href="../#karte">
-                    Karte
-                </a>
+                    <span
+                        class="site-dropdown-arrow"
+                        aria-hidden="true"
+                    >
+                        ▼
+                    </span>
+                </button>
 
-                <a href="../#orte">
-                    Alle Orte
-                </a>
+                <div
+                    id="placesDropdownPanel"
+                    class="site-dropdown-panel"
+                >
+                    <a href="/#orte">
+                        <span aria-hidden="true">📍</span>
+                        Alle Orte
+                    </a>
 
-                <a href="../#projekt">
-                    Projekt
-                </a>
+                    <div
+                        class="site-dropdown-separator"
+                        aria-hidden="true"
+                    ></div>
+
+                    <a href="/natur/">
+                        <span aria-hidden="true">🌳</span>
+                        Natur
+                    </a>
+
+                    <a href="/aussichtspunkte/">
+                        <span aria-hidden="true">🌄</span>
+                        Aussichtspunkte
+                    </a>
+                </div>
             </div>
-        </nav>
-    </header>
+
+            <a href="/#karte">
+                Karte
+            </a>
+
+            <a href="/#projekt">
+                Projekt
+            </a>
+
+            <a
+                href="https://www.instagram.com/wetterau_nach_feierabend/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Instagram
+            </a>
+        </div>
+    </nav>
+</header>
 
     <main id="main-content">
         <section class="category-intro">
