@@ -136,5 +136,52 @@
         ]
     }
 }
+,
+{
+    "type": "Feature",
+    "properties": {
+        "id": "NID001",
+        "slug": "nidda-altstadt",
+        "name": "Nidda – Altstadt und Stadtrundgang",
+        "municipality": "Nidda",
+        "area": "Wetterau",
+        "category": "Stadt und Fachwerk",
+        "category_slug": "staedte-fachwerk",
+        "published_at": null,
+        "updated_at": null,
+        "detail_url": "",
+        "short_description": "Fachwerk, Fluss und historische Orte für einen kleinen Rundgang durch Nidda.",
+        "description": "Mein erster Besuch führte mich an einem ruhigen Herbstmorgen vom Langen Steg vorbei am alten Mühlhaus über den Marktplatz mit seinen historischen Fachwerkhäusern bis zum Schloss. Auch der Fluss Nidda und der Johanniterturm gehörten zu diesem kleinen Streifzug. Ein ruhiger Stadtrundgang mit Geschichte und Motiven für die Fotografie.",
+        "visit_time": "1–2 Stunden",
+        "parking": false,
+        "family_friendly": true,
+        "accessible": false,
+        "best_season": "Ganzjährig",
+        "image": "assets/images/placeholder.png",
+        "image_alt": "Platzhalterbild für den Stadtrundgang durch Nidda",
+        "instagram_url": "https://www.instagram.com/reel/DfMkea1M_nK/",
+        "youtube_url": "",
+        "website_url": "https://www.nidda.de/",
+        "source_url": "",
+        "verified": false,
+        "tags": [
+            "Nidda",
+            "Altstadt",
+            "Fachwerk",
+            "Marktplatz",
+            "Langer Steg",
+            "Johanniterturm",
+            "Stadtrundgang",
+            "Wetterau"
+        ]
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            9.006,
+            50.413
+        ]
+    }
+}
     ]
 }
