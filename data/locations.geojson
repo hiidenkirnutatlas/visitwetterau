@@ -200,7 +200,7 @@
         "short_description": "Fachwerk, enge Gassen und der historische Kalte Markt in Ortenberg.",
         "description": "Ein kalter Samstagmorgen in Ortenberg: Vom historischen Obertor aus dem 13. Jahrhundert über die Marienkirche durch die verwinkelten Gassen der Altstadt. Fachwerk, Schindeln, die Nidder und das Ortenberger Schloss machen den Rundgang zu einer kleinen Entdeckungsreise durch die Geschichte der Stadt. Der berühmte Kalte Markt, Oberhessens größtes Volksfest mit über 750 Jahren Tradition, gehört ebenfalls zu Ortenbergs Besonderheiten.",
         "visit_time": "1–3 Stunden",
-        "parking": false,
+        "parking": true,
         "family_friendly": true,
         "accessible": false,
         "best_season": "Ganzjährig",
