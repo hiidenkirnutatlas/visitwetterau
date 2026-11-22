@@ -298,7 +298,7 @@
         "family_friendly": true,
         "accessible": false,
         "best_season": "Frühjahr bis Herbst",
-        "image": "assets/images/burgen_schloesser/burg-lissberg.png",
+        "image": "assets/images/burgen_und_schloesser/burg-lissberg.png",
         "image_alt": "Burg Lißberg bei Ortenberg – Aussichtsturm und Mauerreste",
         "instagram_url": "https://www.instagram.com/reel/DEINE_REEL_ID/",
         "youtube_url": "https://www.youtube.com/shorts/DEINE_SHORT_ID",
@@ -319,8 +319,8 @@
     "geometry": {
         "type": "Point",
         "coordinates": [
-            9.073,
-            50.375
+            9.084288898001297,
+            50.37455453729053
         ]
     }
 }
